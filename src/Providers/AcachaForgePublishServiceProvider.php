@@ -2,6 +2,8 @@
 
 namespace Acacha\ForgePublish\Providers;
 
+use Acacha\ForgePublish\Commands\PublishInit;
+use Acacha\ForgePublish\Commands\PublishPush;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -22,7 +24,12 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        dump('BOOT!');
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PublishInit::class,
+                PublishPush::class,
+            ]);
+        }
     }
 
 }
