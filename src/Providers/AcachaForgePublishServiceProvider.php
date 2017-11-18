@@ -2,9 +2,14 @@
 
 namespace Acacha\ForgePublish\Providers;
 
+use Acacha\ForgePublish\Commands\PublishCreateSite;
+use Acacha\ForgePublish\Commands\PublishDomain;
+use Acacha\ForgePublish\Commands\PublishEmail;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishLogin;
 use Acacha\ForgePublish\Commands\PublishPush;
+use Acacha\ForgePublish\Commands\PublishServer;
+use Acacha\ForgePublish\Commands\PublishSite;
 use Acacha\ForgePublish\Commands\PublishToken;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,6 +41,11 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishPush::class,
                 PublishLogin::class,
                 PublishToken::class,
+                PublishEmail::class,
+                PublishDomain::class,
+                PublishServer::class,
+                PublishSite::class,
+                PublishCreateSite::class
             ]);
         }
         

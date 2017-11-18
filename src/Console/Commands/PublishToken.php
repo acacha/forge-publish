@@ -2,19 +2,13 @@
 
 namespace Acacha\ForgePublish\Commands;
 
-use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfNoEnvFileExists;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfTokenIsAlreadyInstalled;
-use Illuminate\Console\Command;
-
 /**
  * Class PublishToken.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishToken extends Command
+class PublishToken extends SaveEnvVariable
 {
-    use SkipsIfNoEnvFileExists, SkipsIfTokenIsAlreadyInstalled, InteractsWithEnvironment;
 
     /**
      * The name and signature of the console command.
@@ -31,38 +25,33 @@ class PublishToken extends Command
     protected $description = 'Save Personal Access Token';
 
     /**
-     * PublishToken constructor.
-     *
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
+     * Env var to set.
      *
      * @return mixed
      */
-    public function handle()
+    protected function envVar()
     {
-        $this->checkIfCommandHaveToBeSkipped();
-
-        $this->info('Please go to http://forge.acacha.org/passport-tokens and create a Personal Access Token. Please copy the token...');
-
-        $token = $this->argument('token') ? $this->argument('token') : $this->ask('Personal Access Token?');
-        $this->addValueToEnv('ACACHA_FORGE_ACCESS_TOKEN', $token);
-
-        $this->info('The access token has been added to file .env with key ACACHA_FORGE_ACCESS_TOKEN');
+        return 'ACACHA_FORGE_ACCESS_TOKEN';
     }
 
     /**
-     * Check if command have to be skipped.
+     * Argument key.
+     *
+     * @return mixed
      */
-    protected function checkIfCommandHaveToBeSkipped()
+    protected function argKey()
     {
-        $this->skipIfNoEnvFileIsFound();
-        $this->skipIfTokenIsAlreadyInstalled();
+        return 'token';
+    }
+
+    /**
+     * Question text.
+     *
+     * @return mixed
+     */
+    protected function questionText()
+    {
+        return 'Personal Access Token?';
     }
 
 }

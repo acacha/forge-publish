@@ -3,25 +3,25 @@
 namespace Acacha\ForgePublish\Commands;
 
 /**
- * Class PublishSite.
+ * Class PublishDomain.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishSite extends SaveEnvVariable
+class PublishDomain extends SaveEnvVariable
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:site {site?}';
+    protected $signature = 'publish:domain {domain?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Save acacha forge site';
+    protected $description = 'Save acacha forge domain';
 
     /**
      * Env var to set.
@@ -30,7 +30,7 @@ class PublishSite extends SaveEnvVariable
      */
     protected function envVar()
     {
-        return 'ACACHA_FORGE_SITE';
+        return 'ACACHA_FORGE_DOMAIN';
     }
 
     /**
@@ -40,7 +40,7 @@ class PublishSite extends SaveEnvVariable
      */
     protected function argKey()
     {
-        return 'site';
+        return 'domain';
     }
 
     /**
@@ -50,6 +50,7 @@ class PublishSite extends SaveEnvVariable
      */
     protected function questionText()
     {
-        return 'Acacha forge site id?';
+        return 'Acacha forge domain?';
     }
+
 }

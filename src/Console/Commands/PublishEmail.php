@@ -3,25 +3,25 @@
 namespace Acacha\ForgePublish\Commands;
 
 /**
- * Class PublishSite.
+ * Class PublishEmail.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishSite extends SaveEnvVariable
+class PublishEmail extends SaveEnvVariable
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:site {site?}';
+    protected $signature = 'publish:email {email?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Save acacha forge site';
+    protected $description = 'Save acacha forge email';
 
     /**
      * Env var to set.
@@ -30,7 +30,7 @@ class PublishSite extends SaveEnvVariable
      */
     protected function envVar()
     {
-        return 'ACACHA_FORGE_SITE';
+        return 'ACACHA_FORGE_EMAIL';
     }
 
     /**
@@ -40,7 +40,7 @@ class PublishSite extends SaveEnvVariable
      */
     protected function argKey()
     {
-        return 'site';
+        return 'email';
     }
 
     /**
@@ -50,6 +50,6 @@ class PublishSite extends SaveEnvVariable
      */
     protected function questionText()
     {
-        return 'Acacha forge site id?';
+        return 'Acacha forge email?';
     }
 }

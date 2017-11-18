@@ -4,8 +4,8 @@ namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
 use Acacha\ForgePublish\Commands\Traits\ShowsErrorResponse;
+use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsAlreadyInstalled;
 use Acacha\ForgePublish\Commands\Traits\SkipsIfNoEnvFileExists;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfTokenIsAlreadyInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -16,7 +16,7 @@ use Illuminate\Console\Command;
  */
 class PublishLogin extends Command
 {
-    use ShowsErrorResponse, SkipsIfNoEnvFileExists, SkipsIfTokenIsAlreadyInstalled, InteractsWithEnvironment;
+    use ShowsErrorResponse, SkipsIfNoEnvFileExists, SkipsIfEnvVariableIsAlreadyInstalled, InteractsWithEnvironment;
 
     /**
      * The name and signature of the console command.
@@ -65,8 +65,8 @@ class PublishLogin extends Command
     {
         $this->checkIfCommandHaveToBeSkipped();
 
-        $email = $this->argument('email') ? $this->argument('email') : $this->ask('What is your email(username)?');
-        $password = $this->secret('What is the password?');
+        $email = $this->argument('email') ? $this->argument('email') : $this->ask('Email?');
+        $password = $this->secret('Password?');
 
         $this->url = config('forge-publish.url') . config('forge-publish.token_uri');
         $response = '';
@@ -98,7 +98,7 @@ class PublishLogin extends Command
     protected function checkIfCommandHaveToBeSkipped()
     {
         $this->skipIfNoEnvFileIsFound();
-        $this->skipIfTokenIsAlreadyInstalled();
+        $this->skipIfEnvVarIsAlreadyInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
 }
