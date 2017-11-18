@@ -28,7 +28,6 @@ class PublishInit extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -38,22 +37,64 @@ class PublishInit extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      */
     public function handle()
     {
-        $this->info('Hello! We are going to config Acacha Laravel Forge publish...');
-        $this->info('Please go to https://forge.acacha.org/passport-tokens an create a Personal Access Token');
+        $this->info('Hello! We are going to config Acacha Laravel Forge publish together...');
+        $this->info('Let me check you have been followed all the previous requirements...');
 
+        while (! $this->confirm('User created at http:://forge.acacha.com?')) {}
+
+        $email = $this->ask('Ok! User email?');
+
+        if ( env('ACACHA_FORGE_ACCESS_TOKEN', null) == null) {
+            $this->info('I need permissions to operate in Acacha Forge in your name...');
+            $this->info('So we need to obtain a valid token. Two options here:');
+            $this->info('1) Login: You provide your user credentials and I obtain the token from Laravel Forge');
+            $this->info('2) Personal Access Token: You provide a Personal Access token');
+
+            $option = $this->choice('Which on you prefer?', ['Login', 'Personal Access Token'], 0);
+
+            if ($option == 'Login') {
+                $this->call('publish:login', [
+                    'email' => $email
+                ]);
+            }
+            else {
+                $this->call('publish:token');
+            }
+        } else {
+            $this->info("Ok I see you already have a token for accessing Acacha Laravel Forge so let's go on!...");
+        }
+
+        while (! $this->confirm('Server permissions requested at http:://forge.acacha.com?')) {}
+
+        $server = $this->ask('Ok! Server name?');
+
+        $domain = $this->ask('Domain in production?');
+
+        $this->info('Ok let me resume: ');
+
+        $headers = ['Task name', 'Done/result?'];
+
+        $tasks = [
+          [ 'User created at http:://forge.acacha.com?', 'Yes'],
+          [ 'Email', $email],
+          [ 'Token obtained', 'Yes'],
+          [ 'Server permissions requested at http:://forge.acacha.com?', 'Yes'],
+          [ 'Server', $server],
+          [ 'domain', $domain],
+        ];
+
+        $this->table($headers, $tasks);
+
+        // LOGIN -> Two options:
+
+        // 1 Personal access token
+        $this->info('Please go to https://forge.acacha.org/passport-tokens an create a Personal Access Token');
         $token = $this->ask('Personal Access Token?');
 
-        // WRITE TOKEN TO .env file
-        $this->filesystem->overwrite(
-            (new LlumRCFile())->path(),
-            $this->compiler->compile(
-                $this->filesystem->get($this->getStubPath()),
-                $this->data));
-
+        // 2 Login. Execute publish:login command
 
     }
 }
