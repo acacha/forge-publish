@@ -38,7 +38,7 @@ return [
     | if you kwnow what you are doing.
     */
 
-    'client_secret' => env('ACACHA_FORGE_CLIENT_SECRET', 'bErvzwH2FWr3QfnCI5miGsNmQ8pp5gn9AUjJvZS8'),
+    'client_secret' => env('ACACHA_FORGE_CLIENT_SECRET', 'dLdsIf3nPMWJC4gOCNcsUn5pBSv5tTPSaU51Gu2F'),
 
 
    /*

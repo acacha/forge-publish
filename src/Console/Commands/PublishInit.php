@@ -3,6 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
+use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use josegonzalez\Dotenv\Loader;
@@ -14,7 +15,7 @@ use josegonzalez\Dotenv\Loader;
  */
 class PublishInit extends Command
 {
-    use ItFetchesServers;
+    use ItFetchesServers, PossibleEmails;
 
     /**
      * The name and signature of the console command.
@@ -214,26 +215,17 @@ class PublishInit extends Command
                         'site' => $site_id
                     ]);
                 }
-
-                $this->info("DONE!!!!!!!!!!!");
-
             }
 
         }
-    }
 
-    /**
-     * Get possible emails
-     *
-     * @return array
-     */
-    protected function getPossibleEmails()
-    {
-        $github_email = null;
-        $github_email = str_replace(array("\r", "\n"), '', shell_exec('git config user.email'));
+        $this->call('publish:ssh', [
+            'email' => $email,
+            'server_name' => $server_id,
+            'ip' => $this->serverIpAddress($servers,$server_id)
+        ]);
 
-        if(filter_var($github_email, FILTER_VALIDATE_EMAIL)) return [ $github_email ];
-        else return [];
+        $this->info("DONE!!!!!!!!!!!");
     }
 
     /**

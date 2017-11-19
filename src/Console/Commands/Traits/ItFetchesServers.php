@@ -56,4 +56,20 @@ trait ItFetchesServers
             return $server->forge_id === $server_id;
         })->first()->name;
     }
+
+    /**
+     *
+     * Get server ip addres by forge server id.
+     * @param $servers
+     * @param $server_id
+     * @return mixed
+     */
+    protected function serverIpAddress($servers, $server_id)
+    {
+        return collect($servers)->filter(function ($server) use ($server_id) {
+            return $server->forge_id === $server_id;
+        })->first()->ipAddress;
+    }
+
+
 }
