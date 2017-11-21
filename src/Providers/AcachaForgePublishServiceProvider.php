@@ -12,6 +12,7 @@ use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
 use Acacha\ForgePublish\Commands\PublishIp;
+use Acacha\ForgePublish\Commands\PublishKey;
 use Acacha\ForgePublish\Commands\PublishLog;
 use Acacha\ForgePublish\Commands\PublishLogin;
 use Acacha\ForgePublish\Commands\PublishOpen;
@@ -66,6 +67,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishDNS::class,
                 PublishOpen::class,
                 PublishLog::class,
+                PublishKey::class,
             ]);
         }
         

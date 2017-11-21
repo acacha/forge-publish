@@ -2,7 +2,9 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -14,10 +16,22 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSsh extends Command
 {
-    const SSH_ID_RSA = '/.ssh/id_rsa';
-    const USR_BIN_SSH = '/usr/bin/ssh';
+    use PossibleEmails, ItFetchesServers;
 
-    use PossibleEmails;
+    /**
+     * SSH_ID_RSA_PRIV
+     */
+    const SSH_ID_RSA_PRIV = '/.ssh/id_rsa';
+
+    /**
+     * SSH_ID_RSA_PUB
+     */
+    const SSH_ID_RSA_PUB = '/.ssh/id_rsa.pub';
+
+    /**
+     * USR_BIN_SSH
+     */
+    const USR_BIN_SSH = '/usr/bin/ssh';
 
     /**
      * Server name
@@ -38,15 +52,23 @@ class PublishSsh extends Command
      *
      * @var string
      */
-    protected $description = 'Add ssh configuration';
+    protected $description = 'Add ssh configuration and publish SSH keys to Laravel Forge server';
+
+    /**
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
 
     /**
      * Create a new command instance.
      *
      */
-    public function __construct()
+    public function __construct(Client $http)
     {
         parent::__construct();
+        $this->http = $http;
     }
 
     /**
@@ -64,15 +86,50 @@ class PublishSsh extends Command
             $this->info('SSH client found in your system (' . self::USR_BIN_SSH .')...');
         }
 
-        if ( File::exists($_SERVER['HOME'] . self::SSH_ID_RSA) ) {
-            $this->info('SSH keys found on your system (~' . self::SSH_ID_RSA .')...');
+        if ( File::exists($_SERVER['HOME'] . self::SSH_ID_RSA_PRIV) ) {
+            $this->info('SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')...');
         } else {
-            $this->info('No SSH keys found on your system (~' . self::SSH_ID_RSA .')!');
+            $this->info('No SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')!');
             $this->createSSHKeys();
         }
 
         $this->appendSSHConfig();
+        $this->installSSHKeyOnServer();
+
         $this->testConnection();
+    }
+
+    /**
+     * Install ssh key on server.
+     */
+    protected function installSSHKeyOnServer()
+    {
+        // We cannot use ssh-copy-id -i ~/.ssh/id_rsa.pub forge@146.185.164.54 because SSH acces via user/password is not enabled on Laravel Forge
+        // We need to use the API
+
+        //TODO Already logged? token exists?
+        $servers = $this->fetchServers();
+        //: $this->fetchServers($this->getTokenFromEnvFile());
+
+        $server_names = collect($servers)->pluck('name')->toArray();
+
+        if ($this->argument('server_name')) {
+            $forge_server = $this->argument('server_name');
+        } else {
+            $server_name = $this->choice('Forge server?', $server_names, 0);
+            $forge_server = $this->getForgeIdServer($servers,$server_name);
+        }
+
+        $uri = str_replace('{forgeserver}', $forge_server , config('forge-publish.post_ssh_keys_uri'));
+        $url = config('forge-publish.url') . $uri;
+
+        $email = $this->argument('email') ? $this->argument('email') : $this->getEmail();
+
+        $key = file_get_contents($_SERVER['HOME'] . self::SSH_ID_RSA_PUB);
+        $this->http->post($url, [
+            'name' => $email,
+            'key' => $key
+        ]);
     }
 
     /**
