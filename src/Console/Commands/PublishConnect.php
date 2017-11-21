@@ -2,10 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands;
 
-use Acacha\ForgePublish\Compiler\RCFileCompiler;
-use Acacha\ForgePublish\ForgePublishRCFile;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -58,9 +55,9 @@ class PublishConnect extends Command
             $this->error('No env variable ACACHA_FORGE_SERVER found. Please run php artisan publish:init');
         }
         $this->info("Connecting to server $forge_server");
-        $domain = env('ACACHA_FORGE_DOMAIN', null);
-        if ( ! $domain ) {
-            passthru('ssh ' . $forge_server);
+        if ( ! $domain = env('ACACHA_FORGE_DOMAIN', null) ) {
+            $this->info('ssh ' . $forge_server. ' "cd ' . $domain. '"' );
+            passthru('ssh ' . $forge_server. ' "cd ' . $domain. '"' );
         } else {
             $this->info('ssh -t ' . $forge_server . ' "cd ' . $domain . ';' . $this->defaultShell() .'"');
             passthru('ssh -t ' . $forge_server . ' "cd ' . $domain . ';' . $this->defaultShell() .'"');

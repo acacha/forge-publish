@@ -54,9 +54,16 @@ class PublishInstall extends Command
     {
         $this->info("I'm going to install this project to production...");
 
+        // Execute on server:
+        // composer install
+        // npm install
+        // php artisan key:generate
+        // php artisan migrate --force
+
         // TODO STEPS
         // 1) Install repository (api don't run composer install) in some cases better to avoid problems with studio/local packages
-        // 2) Enable quick deployment https://forge.laravel.com/api-documentation#deployment
+        // 2) Run composer install
+        // 3) optional Enable quick deployment https://forge.laravel.com/api-documentation#deployment
         // POST /api/v1/servers/{serverId}/sites/{siteId}/deployment
 
 

@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksForRootPermission;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use Acacha\ForgePublish\ForgePublishRCFile;
@@ -17,7 +18,7 @@ use josegonzalez\Dotenv\Loader;
  */
 class PublishInit extends Command
 {
-    use ItFetchesServers, PossibleEmails;
+    use ItFetchesServers, PossibleEmails, ChecksForRootPermission;
 
     /**
      * The name and signature of the console command.
@@ -48,6 +49,13 @@ class PublishInit extends Command
     protected $parser;
 
     /**
+     * Is DNS already configured?
+     *
+     * @var Boolean
+     */
+    protected $dnsAlreadyConfigured = false;
+
+    /**
      * Create a new command instance.
      *
      */
@@ -64,6 +72,7 @@ class PublishInit extends Command
      */
     public function handle()
     {
+        $this->abortCommandExecution();
         $this->info('Hello! Together we are going to config Acacha Laravel Forge publish ...');
         $this->info('');
         $this->info('Let me check the requirements...');
@@ -248,10 +257,23 @@ class PublishInit extends Command
 
         }
 
+        if (! $this->dnsAlreadyConfigured ) {
+            $this->call('publish:dns',[
+                'ip' => $ip_address,
+                'domain' => $domain,
+            ]);
+        }
+
+        // TODO: SSH command encara no instal·la claus al servidor!!!
         $this->call('publish:ssh', [
             'email' => $email,
             'server_name' => $server_id,
             'ip' => $ip_address
+        ]);
+
+        $this->call('publish:dns',[
+            'ip' => $ip_address,
+            'domain' => $domain,
         ]);
 
         if ($this->confirm('Do you want to install your project to production?')) {
@@ -261,6 +283,25 @@ class PublishInit extends Command
         }
 
         $this->info("DONE!!!!!!!!!!!");
+    }
+
+    /**
+     * Abort command execution.
+     */
+    protected function abortCommandExecution()
+    {
+        $domain = env('ACACHA_FORGE_DOMAIN',null);
+        $ip = env('ACACHA_FORGE_IP_ADDRESS',null);
+
+        if ($domain != null && $ip != null ) {
+            $resolved_ip = gethostbyname ($domain);
+            if ( $resolved_ip != $domain && $resolved_ip == $ip ) {
+                $this->dnsAlreadyConfigured = true;
+                return;
+            }
+        }
+
+        $this->checkForRootPermission();
     }
 
     /**

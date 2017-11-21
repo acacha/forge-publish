@@ -87,7 +87,7 @@ class PublishSsh extends Command
 
         if( strpos(file_get_contents($ssh_config_file), $host_string) !== false) {
             $this->info("SSH config for host: $this->server_name already exists");
-            die();
+            return;
         }
 
         $this->info("Adding server config to SSH config file $ssh_config_file");
@@ -116,10 +116,11 @@ class PublishSsh extends Command
     /**
      * Test connection
      */
-    protected function testConnection()
+    protected function  testConnection()
     {
         $this->info('Testing connection...');
-        $ret = exec('timeout 10 ssh -q ' . $this->server_name . ' exit; echo $?');
+        $this->info('sudo -u ' . get_current_user() . ' timeout 10 ssh -q ' . $this->server_name . ' exit; echo $?');
+        $ret = exec('sudo -u ' . get_current_user() . ' timeout 10 ssh -q ' . $this->server_name . ' "exit"; echo $?');
 
         if ($ret == 0 ) $this->info('Connection tested ok!');
         else $this->error('Error connnecting to server!');
