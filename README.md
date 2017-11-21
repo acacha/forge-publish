@@ -9,22 +9,9 @@
 
 Laravel artisan command to automate publish on Laravel Forge
 
-## Structure
-
-If any of the following are applicable to your project, then the directory structure should follow industry best practises by being named the following.
-
-```
-bin/        
-config/
-src/
-tests/
-vendor/
-```
-
-
 ## Install
 
-Via Composer
+Use composer:
 
 ``` bash
 $ composer require acacha/forge-publish
@@ -32,9 +19,24 @@ $ composer require acacha/forge-publish
 
 ## Usage
 
-``` php
-$skeleton = new Acacha\ForgePublish();
-echo $skeleton->echoPhrase('Hello, League!');
+First you have to create and account in https://forge.acacha.org. 
+
+### Server side
+
+Please first visit:
+
+```
+https://forge.acacha.org
+```
+
+Login and ask permissions to Manage a Laravel Forge Server. Wait to recibe a confirmation email 
+
+### publish:init command
+
+Run:
+
+``` bash
+php artisan publish:init
 ```
 
 ## Change log
