@@ -1,0 +1,7 @@
+; Acacha Forge Publish configuration file
+
+[domains]
+domain_suffix = $ACACHA_FORGE_PUBLISH_DOMAIN_PREFIX$
+
+[ssh]
+ssh_shell = $ACACHA_FORGE_PUBLISH_SSH_SHELL$

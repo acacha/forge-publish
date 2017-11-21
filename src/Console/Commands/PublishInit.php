@@ -4,6 +4,8 @@ namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
+use Acacha\ForgePublish\ForgePublishRCFile;
+use Acacha\ForgePublish\Parser\ForgePublishRCParser;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use josegonzalez\Dotenv\Loader;
@@ -39,13 +41,21 @@ class PublishInit extends Command
     protected $http;
 
     /**
+     * ForgePublishRCParser
+     *
+     * @var ForgePublishRCParser
+     */
+    protected $parser;
+
+    /**
      * Create a new command instance.
      *
      */
-    public function __construct(Client $htpp)
+    public function __construct(Client $http, ForgePublishRCParser $parser)
     {
         parent::__construct();
-        $this->http = $htpp;
+        $this->http = $http;
+        $this->parser = $parser;
     }
 
     /**
@@ -54,12 +64,14 @@ class PublishInit extends Command
      */
     public function handle()
     {
-        $this->info('Hello! We are going to config Acacha Laravel Forge publish together...');
+        $this->info('Hello! Together we are going to config Acacha Laravel Forge publish ...');
         $this->info('');
-        $this->info('Let me check you have been followed all the previous requirements...');
+        $this->info('Let me check the requirements...');
+
+        if (! ForgePublishRCFile::exists()) $this->executePublishRc();
 
         $this->info('');
-        $this->info('Visit http:://forge.acacha.com');
+        $this->info('Please visit and login on http:://forge.acacha.com.');
         $this->info('');
         $this->error('Please use Github Social Login for login!!!');
 
@@ -115,7 +127,7 @@ class PublishInit extends Command
         }
 
         if ( env('ACACHA_FORGE_DOMAIN', null) == null) {
-            $domain = $this->ask('Domain in production?');
+            $domain = $this->ask('Domain in production?',$this->defaultDomain());
         } else {
             $domain = env('ACACHA_FORGE_DOMAIN');
             $this->info("Ok! I see you already have a domain configured so let's go on!...");
@@ -132,11 +144,20 @@ class PublishInit extends Command
             $this->info("Ok! I see you already have a site configured so let's go on!...");
         }
 
+        $ip_address = $this->serverIpAddress($servers,$server_id);
+
+        if ( env('ACACHA_FORGE_GITHUB_REPO', null) != null) {
+            $github_repo = env('ACACHA_FORGE_GITHUB_REPO');
+            $this->info("Ok! I see you already have a github repo configured so let's go on!...");
+        }   else {
+            $this->call('publish:git');
+            $github_repo = env('ACACHA_FORGE_GITHUB_REPO');
+        }
+
         $this->info('');
         $this->info('Ok! let me resume: ');
 
         $headers = ['Task/Config name', 'Done/result?'];
-
         $tasks = [
           [ 'User created at http:://forge.acacha.com?', 'Yes'],
           [ 'Email', $email],
@@ -145,7 +166,9 @@ class PublishInit extends Command
           [ 'Server name', $server_name],
           [ 'Server Forge id', $forge_id_server],
           [ 'Domain', $domain],
-          [ 'Server site id', $site_id ? $site_id : 'Site not created yet' ]
+          [ 'Server site id', $site_id ? $site_id : 'Site not created yet' ],
+          [ 'Server IP address', $ip_address ],
+          [ 'Github repo', $github_repo ? $github_repo : 'Repo not created yet' ]
         ];
 
         $this->table($headers, $tasks);
@@ -171,6 +194,12 @@ class PublishInit extends Command
         if ( env('ACACHA_FORGE_SITE', null) == null && $site_id) {
             $this->call('publish:site', [
                 'site' => $site_id
+            ]);
+        }
+
+        if ( env('ACACHA_FORGE_IP_ADDRESS', null) == null) {
+            $this->call('publish:ip', [
+                'ip_address' => $ip_address
             ]);
         }
 
@@ -222,10 +251,35 @@ class PublishInit extends Command
         $this->call('publish:ssh', [
             'email' => $email,
             'server_name' => $server_id,
-            'ip' => $this->serverIpAddress($servers,$server_id)
+            'ip' => $ip_address
         ]);
 
+        if ($this->confirm('Do you want to install your project to production?')) {
+            $this->call('publish:install', [
+                'email' => $email
+            ]);
+        }
+
         $this->info("DONE!!!!!!!!!!!");
+    }
+
+    /**
+     * Default domain.
+     *
+     * @return string
+     */
+    protected function defaultDomain()
+    {
+        if ($suffix = $this->parser->getDomainSuffix()) return strtolower(camel_case(basename(getcwd()))) . '.' . $suffix;
+        return '';
+    }
+
+    /**
+     * Execute publish:rc command
+     */
+    protected function executePublishRc()
+    {
+        $this->call('publish:rc');
     }
 
     /**

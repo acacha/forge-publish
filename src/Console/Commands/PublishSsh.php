@@ -81,12 +81,20 @@ class PublishSsh extends Command
     protected function appendSSHConfig()
     {
         $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
+
+        $this->server_name = $this->argument('server_name') ? camel_case($this->argument('server_name')) : camel_case($this->ask('Server Name?'));
+        $host_string = "Host $this->server_name";
+
+        if( strpos(file_get_contents($ssh_config_file), $host_string) !== false) {
+            $this->info("SSH config for host: $this->server_name already exists");
+            die();
+        }
+
         $this->info("Adding server config to SSH config file $ssh_config_file");
         if (! File::exists($ssh_config_file)) touch($ssh_config_file);
-        $this->server_name = $this->argument('server_name') ? camel_case($this->argument('server_name')) : camel_case($this->ask('Server Name?'));
         $ip_address = $this->argument('ip') ? $this->argument('ip') : $this->ask('IP Address?');
         $this->validateIpAddress($ip_address);
-        $config_string = "\nHost $this->server_name\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n";
+        $config_string = "\n$host_string\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n";
         File::append($ssh_config_file,$config_string);
 
         $this->info('The following config has been added:' . $config_string);
