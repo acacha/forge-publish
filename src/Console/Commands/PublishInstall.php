@@ -52,6 +52,8 @@ class PublishInstall extends Command
         $this->abortCommandExecution();
         $this->info("I'm going to install this project to production...");
 
+        dump('0 $this->server: ' . $this->server);
+        dump('1 $this->domain: ' . $this->domain);
         $this->call('publish:composer', [
             'composer_command' => 'install',
             '--server' => $this->server,

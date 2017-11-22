@@ -164,7 +164,7 @@ class PublishInit extends Command
             $this->info("Ok! I see you already have a github repo configured so let's go on!...");
         }   else {
             $this->call('publish:git');
-            $github_repo = env('ACACHA_FORGE_GITHUB_REPO');
+            $github_repo = $this->getGithubRepoFromEnvFile();
         }
 
         $this->info('');
@@ -270,6 +270,8 @@ class PublishInit extends Command
             '--token' => $this->getTokenFromEnvFile()
         ]);
 
+        dump('$forge_id_server: ' . $forge_id_server);
+        dump('$domain: ' . $domain);
         if ($this->confirm('Do you want to install your project to production?')) {
             $this->call('publish:install', [
                 '--server' => $forge_id_server,
@@ -373,16 +375,36 @@ class PublishInit extends Command
     }
 
     /**
+     * Get variable from env file
+     *
+     * @return mixed
+     */
+    protected function getVariableFromEnvFile($variable)
+    {
+        //NOTE: We cannot use env() helper because the .env file has been changes in this request !!!
+        return (new Loader(base_path('.env')))
+            ->parse()
+            ->toArray()[$variable];
+    }
+
+    /**
      * Get token from env file
      *
      * @return mixed
      */
     protected function getTokenFromEnvFile()
     {
-        //NOTE: We cannot use env() helper because the .env file has been changes in this request !!!
-        return (new Loader(base_path('.env')))
-            ->parse()
-            ->toArray()['ACACHA_FORGE_ACCESS_TOKEN'];
+        return $this->getVariableFromEnvFile('ACACHA_FORGE_ACCESS_TOKEN');
+    }
+
+    /**
+     * Get Github repository from env file
+     *
+     * @return mixed
+     */
+    protected function getGithubRepoFromEnvFile()
+    {
+        return $this->getVariableFromEnvFile('ACACHA_FORGE_GITHUB_REPO');
     }
 
 }

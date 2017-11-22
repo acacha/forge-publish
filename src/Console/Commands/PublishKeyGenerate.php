@@ -69,8 +69,8 @@ class PublishKeyGenerate extends Command
 
         $this->call('publish:artisan', [
             'artisan_command' => 'key:generate',
-            'server' => $this->server,
-            'domain' => $this->domain
+            '--server' => $this->server,
+            '--domain' => $this->domain
         ]);
     }
 

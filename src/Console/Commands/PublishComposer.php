@@ -64,6 +64,9 @@ class PublishComposer extends Command
         $command = $this->argument('composer_command');
         $this->info("Running composer $command on production...");
 
+        dump('10 $this->server: ' . $this->server);
+        dump('11 $this->domain: ' . $this->domain);
+        dump('11 $command: ' . $command);
         $this->runSSH($this->server,"cd $this->domain;composer $command");
     }
 

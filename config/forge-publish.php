@@ -181,6 +181,6 @@ return [
   | if you kwnow what you are doing.
   */
 
-  'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI','/api/v1/user/servers/{serverId}/sites/{siteId}/deploy'),
+  'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deploy'),
 
 ];

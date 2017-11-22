@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -53,12 +54,20 @@ class PublishAutodeploy extends Command
     protected $description = 'Enable Laravel Forge autodeploy';
 
     /**
-     * Constructor.
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
+     * Create a new command instance.
      *
      */
-    public function __construct()
+    public function __construct(Client $http)
     {
         parent::__construct();
+        $this->http = $http;
     }
 
     /**
@@ -68,11 +77,12 @@ class PublishAutodeploy extends Command
     public function handle()
     {
         $this->abortCommandExecution();
-        $this->info("Enablind autodeploy on Laravel Forge Site...");
+        $this->info("Enabling autodeploy on Laravel Forge Site...");
 
         $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_auto_deploy_uri'));
         $uri = str_replace('{forgesite}', $this->site , $uri);
         $url = config('forge-publish.url') . $uri;
+
         $response = $this->http->post($url,
             [
                 'headers' => [
