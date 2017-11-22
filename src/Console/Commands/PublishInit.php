@@ -226,29 +226,17 @@ class PublishInit extends Command
             $this->info("It seems you don't have a Laravel Forge site created with domain: $domain");
 
             if ($this->confirm("Do you want to create site ($domain)?")) {
-                if ($already_logged) {
-                    $this->call('publish:create_site', [
-                        'forge_server' => $forge_id_server,
-                        'domain' => $domain,
-                        'project_type' => config('forge-publish.project_type'),
-                        'site_directory' => config('forge-publish.site_directory')
-                    ]);
-                } else {
-                    $this->call('publish:create_site', [
+                $this->call('publish:create_site', [
                         'forge_server' => $forge_id_server,
                         'domain' => $domain,
                         'project_type' => config('forge-publish.project_type'),
                         'site_directory' => config('forge-publish.site_directory'),
                         '--token' => $this->getTokenFromEnvFile()
                     ]);
-                }
 
                 $server_id = env('ACACHA_FORGE_SERVER',null) ? env('ACACHA_FORGE_SERVER') : $forge_id_server;
-                if ($already_logged) {
-                    $sites = $this->fetchSites($server_id);
-                } else {
-                    $sites = $this->fetchSites($server_id, $this->getTokenFromEnvFile());
-                }
+
+                $sites = $this->fetchSites($server_id, $this->getTokenFromEnvFile());
 
                 $site_id = $this->getSiteId($sites, $domain);
 
@@ -258,14 +246,20 @@ class PublishInit extends Command
                     ]);
                 }
             }
-
         }
+
+        $this->call('publish:install_repo',[
+            'repository' => $github_repo,
+            '--server' => $forge_id_server,
+            '--site' => $site_id,
+            '--token' => $this->getTokenFromEnvFile()
+        ]);
 
         if (! $this->dnsAlreadyConfigured ) {
             $this->call('publish:dns',[
                 'ip' => $ip_address,
                 'domain' => $domain,
-                'type' => 'hosts'
+                '--type' => 'hosts'
             ]);
         }
 
@@ -273,21 +267,21 @@ class PublishInit extends Command
             'email' => $email,
             'server_name' => $server_id,
             'ip' => $ip_address,
-            'token' => $this->getTokenFromEnvFile()
+            '--token' => $this->getTokenFromEnvFile()
         ]);
 
         if ($this->confirm('Do you want to install your project to production?')) {
             $this->call('publish:install', [
-                'server' => $forge_id_server,
-                'domain' => $domain,
+                '--server' => $forge_id_server,
+                '--domain' => $domain,
             ]);
         }
 
         if ($this->confirm('Do you want to enable Laravel Forge autodeploy?')) {
             $this->call('publish:autodeploy', [
-                'server' => $forge_id_server,
-                'site' => $site_id,
-                'token' => $this->getTokenFromEnvFile()
+                '--server' => $forge_id_server,
+                '--site' => $site_id,
+                '--token' => $this->getTokenFromEnvFile()
             ]);
         }
 
@@ -296,10 +290,10 @@ class PublishInit extends Command
 
         if ($this->confirm('Do you want to enable SSL on site using Lets Encrypt?')) {
             $this->call('publish:ssl', [
-                'server' => $forge_id_server,
-                'domain' => $domain,
-                'site' => $site_id,
-                'token' => $this->getTokenFromEnvFile()
+                '--server' => $forge_id_server,
+                '--domain' => $domain,
+                '--site' => $site_id,
+                '--token' => $this->getTokenFromEnvFile()
             ]);
         }
 

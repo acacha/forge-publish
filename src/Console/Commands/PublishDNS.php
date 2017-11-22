@@ -100,8 +100,8 @@ class PublishDNS extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
-        $this->ip = $this->checkEnv('ip','ACACHA_FORGE_IP_ADDRESS');
+        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN', 'argument');
+        $this->ip = $this->checkEnv('ip','ACACHA_FORGE_IP_ADDRESS','argument');
 
         if ($this->dnsIsAlreadyConfigured()) return ;
 

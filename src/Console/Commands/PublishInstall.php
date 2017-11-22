@@ -49,30 +49,31 @@ class PublishInstall extends Command
      */
     public function handle()
     {
+        $this->abortCommandExecution();
         $this->info("I'm going to install this project to production...");
 
         $this->call('publish:composer', [
             'composer_command' => 'install',
-            'server' => $this->server,
-            'domain' => $this->domain
+            '--server' => $this->server,
+            '--domain' => $this->domain
         ]);
 
         $this->call('publish:npm', [
-            'composer_command' => 'install',
-            'server' => $this->server,
-            'domain' => $this->domain
+            'npm_command' => 'install',
+            '--server' => $this->server,
+            '--domain' => $this->domain
         ]);
 
         $this->call('publish:key_generate',[
-            'server' => $this->server,
-            'domain' => $this->domain
+            '--server' => $this->server,
+            '--domain' => $this->domain
         ]);
 
         if ($this->confirm('Do you wish run migrations on production?')) {
             $this->call('publish:artisan',[
                 'artisan_command' => 'migrate --force',
-                'server' => $this->server,
-                'domain' => $this->domain
+                '--server' => $this->server,
+                '--domain' => $this->domain
             ]);
         }
     }
@@ -83,6 +84,7 @@ class PublishInstall extends Command
     protected function abortCommandExecution()
     {
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
+
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
 
         $this->abortIfNoSSHConnection($this->server);

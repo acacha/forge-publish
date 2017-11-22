@@ -130,7 +130,19 @@ return [
   | if you kwnow what you are doing.
   */
 
-    'post_sites_uri' => env('ACACHA_FORGE_POST_SITES_URI', '/api/v1/servers/{forgeserver}/sites'),
+  'post_sites_uri' => env('ACACHA_FORGE_POST_SITES_URI', '/api/v1/servers/{forgeserver}/sites'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST GIT REPOSITORY URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/git
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post git repository URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/git
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_GIT_REPOSITORY_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'post_git_repository_uri' => env('ACACHA_FORGE_POST_GIT_REPOSITORY_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/git'),
 
   /*
   |--------------------------------------------------------------------------

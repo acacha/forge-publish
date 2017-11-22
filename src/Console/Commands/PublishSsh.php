@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSsh extends Command
 {
-    use PossibleEmails, ItFetchesServers, ChecksSSHConnection;
+    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv;
 
     /**
      * SSH_ID_RSA_PRIV
