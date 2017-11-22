@@ -46,15 +46,6 @@ class PublishArtisan extends Command
     protected $description = 'Run artisan on production server';
 
     /**
-     * Constructor.
-     *
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      */

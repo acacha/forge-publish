@@ -289,13 +289,21 @@ class PublishInit extends Command
 
         if ($this->confirm('Do you want to enable Laravel Forge autodeploy?')) {
             $this->call('publish:autodeploy', [
-                'enable' => true
+                'server' => $forge_id_server,
+                'site' => $site_id,
+                'token' => $this->getTokenFromEnvFile()
             ]);
         }
 
-        if ($this->confirm('Do you want to enable SSL on site?')) {
+        $this->info('### SSL. Lets Encrypt will only work on sites with a valid domain (no /etc/hosts/trick) ###');
+        $this->info("### Skip the next step if you don't need SSL or not have a valid domain name");
+
+        if ($this->confirm('Do you want to enable SSL on site using Lets Encrypt?')) {
             $this->call('publish:ssl', [
-                'enable' => true
+                'server' => $forge_id_server,
+                'domain' => $domain,
+                'site' => $site_id,
+                'token' => $this->getTokenFromEnvFile()
             ]);
         }
 

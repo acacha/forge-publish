@@ -3,6 +3,7 @@
 namespace Acacha\ForgePublish\Providers;
 
 use Acacha\ForgePublish\Commands\PublishArtisan;
+use Acacha\ForgePublish\Commands\PublishAutodeploy;
 use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
@@ -25,6 +26,7 @@ use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishSite;
 use Acacha\ForgePublish\Commands\PublishSsh;
+use Acacha\ForgePublish\Commands\PublishSSL;
 use Acacha\ForgePublish\Commands\PublishToken;
 use Illuminate\Support\ServiceProvider;
 
@@ -53,28 +55,30 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PublishArtisan::class,
+                PublishAutodeploy::class,
                 PublishComposer::class,
-                PublishCreateSite::class,
                 PublishConnect::class,
-                PublishDomain::class,
+                PublishCreateSite::class,
                 PublishDNS::class,
+                PublishDomain::class,
                 PublishEmail::class,
                 PublishEnv::class,
                 PublishGit::class,
                 PublishInfo::class,
                 PublishInit::class,
                 PublishInstall::class,
-                PublishKeyGenerate::class,
-                PublishNpm::class,
                 PublishIp::class,
+                PublishKeyGenerate::class,
                 PublishLog::class,
                 PublishLogin::class,
+                PublishNpm::class,
                 PublishOpen::class,
                 PublishPush::class,
                 PublishRc::class,
                 PublishServer::class,
                 PublishSite::class,
                 PublishSsh::class,
+                PublishSSL::class,
                 PublishToken::class,
             ]);
         }

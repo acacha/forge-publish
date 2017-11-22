@@ -137,12 +137,38 @@ return [
   | ACACHA FORGE POST SSH KEYS URI ENDPOINT. Default: /api/v1/servers/{forgeserver}/keys
   |--------------------------------------------------------------------------
   |
-  | Acacha Forge post site URI endpoint: /api/v1/servers/{forgeserver}/keys
+  | Acacha Forge post SSH keys URI endpoint: /api/v1/servers/{forgeserver}/keys
   |
   | This value could be overwriten using ACACHA_FORGE_POST_SSH_KEYS_URI env variable
   | if you kwnow what you are doing.
   */
 
   'post_ssh_keys_uri' => env('ACACHA_FORGE_POST_SSH_KEYS_URI', '/api/v1/user/servers/{forgeserver}/keys'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST LETS ENCRYPT URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates/letsencrypt
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post lets encrypt URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates/letsencrypt
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_LETS_ENCRYPT_URI env variable
+  | if you kwnow what you are doing.
+  */
+
+  'post_lets_encrypt_uri' => env('ACACHA_FORGE_POST_LETS_ENCRYPT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates/letsencrypt'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST AUTO DEPLOY URI ENDPOINT. Default: /api/v1/user/servers/{serverId}/sites/{siteId}/deploy
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post auto deploy URI endpoint: /api/v1/user/servers/{serverId}/sites/{siteId}/deploy
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_AUTO_DEPLOY_URI env variable
+  | if you kwnow what you are doing.
+  */
+
+  'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI','/api/v1/user/servers/{serverId}/sites/{siteId}/deploy'),
 
 ];

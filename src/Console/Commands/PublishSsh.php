@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-
 /**
  * Class PublishSsh.
  *
@@ -42,11 +41,18 @@ class PublishSsh extends Command
     protected $server_name;
 
     /**
+     * Token
+     *
+     * @var String
+     */
+    protected $token;
+
+    /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:ssh {email?} {server_name?} {ip?} {token?}';
+    protected $signature = 'publish:ssh {email?} {server_name?} {ip?} {--token=}';
 
     /**
      * The console command description.
@@ -105,16 +111,12 @@ class PublishSsh extends Command
      */
     protected function installSSHKeyOnServer()
     {
+        $this->abortCommandExecution();
         $this->info('Adding SSH key to Laravel Forge server');
         // We cannot use ssh-copy-id -i ~/.ssh/id_rsa.pub forge@146.185.164.54 because SSH acces via user/password is not enabled on Laravel Forge
         // We need to use the Laravel Forge API to add a key
 
-        $token = $this->argument('token') ? $this->argument('token') : env('ACACHA_FORGE_ACCESS_TOKEN',null) ;
-        if(!$token) {
-            $this->error('No Acacha Laravel Forge token available. Please run first php artisan publish:init');
-            die();
-        }
-        $servers = $this->fetchServers($token);
+        $servers = $this->fetchServers($this->token);
 
         $server_names = collect($servers)->pluck('name')->toArray();
 
@@ -136,8 +138,6 @@ class PublishSsh extends Command
 
         $key = file_get_contents($_SERVER['HOME'] . self::SSH_ID_RSA_PUB);
 
-        $token = null;
-        if (!$token) $token = env('ACACHA_FORGE_ACCESS_TOKEN');
         $response = $this->http->post($url,
             [
                 'form_params' => [
@@ -146,7 +146,7 @@ class PublishSsh extends Command
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $token
+                    'Authorization' => 'Bearer ' . $this->token
                 ]
             ]
         );
@@ -158,6 +158,14 @@ class PublishSsh extends Command
             die();
         }
         if ($result->status == 'installed') $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server $forge_server");
+    }
+
+    /**
+     * Abort command execution?
+     */
+    protected function abortCommandExecution()
+    {
+        $this->token = $this->checkEnv('token','ACACHA_FORGE_ACCESS_TOKEN');
     }
 
     /**
