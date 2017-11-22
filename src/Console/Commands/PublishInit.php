@@ -265,6 +265,7 @@ class PublishInit extends Command
             $this->call('publish:dns',[
                 'ip' => $ip_address,
                 'domain' => $domain,
+                'type' => 'hosts'
             ]);
         }
 
@@ -273,11 +274,6 @@ class PublishInit extends Command
             'server_name' => $server_id,
             'ip' => $ip_address,
             'token' => $this->getTokenFromEnvFile()
-        ]);
-
-        $this->call('publish:dns',[
-            'ip' => $ip_address,
-            'domain' => $domain,
         ]);
 
         if ($this->confirm('Do you want to install your project to production?')) {

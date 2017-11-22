@@ -19,23 +19,11 @@ class PublishDNS extends Command
     use ChecksForRootPermission, DNSisAlreadyConfigured, ChecksEnv;
 
     /**
-     * Constant to /etc/hosts file
-     */
-    const ETC_HOSTS = '/etc/hosts';
-
-    /**
-     * The name and signature of the console command.
+     * The ip address.
      *
      * @var string
      */
-    protected $signature = 'publish:dns {ip?} {domain?} {type?}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Check DNS configuration';
+    protected $ip;
 
     /**
      * The domain name.
@@ -45,11 +33,23 @@ class PublishDNS extends Command
     protected $domain;
 
     /**
-     * The ip address.
+     * Constant to /etc/hosts file
+     */
+    const ETC_HOSTS = '/etc/hosts';
+
+    /**
+     * The name and signature of the console command.
      *
      * @var string
      */
-    protected $ip;
+    protected $signature = 'publish:dns {ip?} {domain?} {--type=}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Check DNS configuration';
 
     /**
      * Execute the console command.
@@ -68,8 +68,8 @@ class PublishDNS extends Command
 
         $this->info("DNS resolution is not configured ok. Let me help you configure it...");
 
-        $type = $this->argument('type') ?
-            $this->argument('type') :
+        $type = $this->option('type') ?
+            $this->option('type') :
             $this->choice('Which system do you want to use?',['hosts'],0);
 
         if ($type != 'hosts') {
@@ -78,8 +78,6 @@ class PublishDNS extends Command
             $this->error('Type not supported');
             die();
         }
-
-        passthru('sudo true');
 
         $this->addEntryToEtcHostsFile($this->domain,$this->ip);
         $this->info('File ' . self::ETC_HOSTS . ' configured ok');
@@ -103,7 +101,7 @@ class PublishDNS extends Command
     protected function abortCommandExecution()
     {
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
-        $this->ip = $this->checkEnv('forge_server','ACACHA_FORGE_IP_ADDRESS');
+        $this->ip = $this->checkEnv('ip','ACACHA_FORGE_IP_ADDRESS');
 
         if ($this->dnsIsAlreadyConfigured()) return ;
 
