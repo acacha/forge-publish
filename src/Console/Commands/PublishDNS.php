@@ -3,6 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksForRootPermission;
+use Acacha\ForgePublish\Commands\Traits\DNSisAlreadyConfigured;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\File;
 class PublishDNS extends Command
 {
 
-    use ChecksForRootPermission;
+    use ChecksForRootPermission, DNSisAlreadyConfigured;
 
     /**
      * Constant to /etc/hosts file
@@ -112,8 +113,9 @@ class PublishDNS extends Command
             $this->error('No env var ACACHA_FORGE_IP_ADDRESS found. Please run php artisan publish:init');
             die();
         }
+        
+        if ($this->dnsIsAlreadyConfigured()) return ;
 
         $this->checkForRootPermission();
     }
-
 }

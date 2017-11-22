@@ -134,15 +134,15 @@ return [
 
   /*
   |--------------------------------------------------------------------------
-  | ACACHA FORGE POST SSH KEYS URI ENDPOINT. Default: /api/v1/servers/{forgeserver}/sites
+  | ACACHA FORGE POST SSH KEYS URI ENDPOINT. Default: /api/v1/servers/{forgeserver}/keys
   |--------------------------------------------------------------------------
   |
-  | Acacha Forge post site URI endpoint: /api/v1/servers/{forgeserver}/sites
+  | Acacha Forge post site URI endpoint: /api/v1/servers/{forgeserver}/keys
   |
   | This value could be overwriten using ACACHA_FORGE_POST_SSH_KEYS_URI env variable
   | if you kwnow what you are doing.
   */
 
-  'post_ssh_keys_uri' => env('ACACHA_FORGE_POST_SSH_KEYS_URI', '/api/v1/servers/{forgeserver}/sites'),
+  'post_ssh_keys_uri' => env('ACACHA_FORGE_POST_SSH_KEYS_URI', '/api/v1/user/servers/{forgeserver}/keys'),
 
 ];

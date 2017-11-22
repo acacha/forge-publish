@@ -3,6 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksForRootPermission;
+use Acacha\ForgePublish\Commands\Traits\DNSisAlreadyConfigured;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use Acacha\ForgePublish\ForgePublishRCFile;
@@ -18,7 +19,7 @@ use josegonzalez\Dotenv\Loader;
  */
 class PublishInit extends Command
 {
-    use ItFetchesServers, PossibleEmails, ChecksForRootPermission;
+    use ItFetchesServers, PossibleEmails, ChecksForRootPermission, DNSisAlreadyConfigured;
 
     /**
      * The name and signature of the console command.
@@ -102,7 +103,7 @@ class PublishInit extends Command
             $this->info('1) Login: You provide your user credentials and I obtain the token from Laravel Forge');
             $this->info('2) Personal Access Token: You provide a Personal Access token');
 
-            $option = $this->choice('Which on you prefer?', ['Login', 'Personal Access Token'], 0);
+            $option = $this->choice('Which one you prefer?', ['Login', 'Personal Access Token'], 0);
 
             if ($option == 'Login') {
                 $this->call('publish:login', [
@@ -125,7 +126,10 @@ class PublishInit extends Command
             }
 
             $server_names = collect($servers)->pluck('name')->toArray();
-
+            if (empty($server_names)) {
+                $this->error('No valid servers assigned to user!');
+                die();
+            }
             $server_name = $this->choice('Ok! Server name?', $server_names, 0);
 
             $forge_id_server = $this->getForgeIdServer($servers, $server_name);
@@ -264,11 +268,11 @@ class PublishInit extends Command
             ]);
         }
 
-        // TODO: SSH command encara no instal·la claus al servidor!!!
         $this->call('publish:ssh', [
             'email' => $email,
             'server_name' => $server_id,
-            'ip' => $ip_address
+            'ip' => $ip_address,
+            'token' => $this->getTokenFromEnvFile()
         ]);
 
         $this->call('publish:dns',[
@@ -290,16 +294,7 @@ class PublishInit extends Command
      */
     protected function abortCommandExecution()
     {
-        $domain = env('ACACHA_FORGE_DOMAIN',null);
-        $ip = env('ACACHA_FORGE_IP_ADDRESS',null);
-
-        if ($domain != null && $ip != null ) {
-            $resolved_ip = gethostbyname ($domain);
-            if ( $resolved_ip != $domain && $resolved_ip == $ip ) {
-                $this->dnsAlreadyConfigured = true;
-                return;
-            }
-        }
+        if ($this->dnsIsAlreadyConfigured()) return ;
 
         $this->checkForRootPermission();
     }

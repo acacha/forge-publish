@@ -45,7 +45,7 @@ class PublishSsh extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:ssh {email?} {server_name?} {ip?}';
+    protected $signature = 'publish:ssh {email?} {server_name?} {ip?} {token?}';
 
     /**
      * The console command description.
@@ -104,18 +104,26 @@ class PublishSsh extends Command
      */
     protected function installSSHKeyOnServer()
     {
+        $this->info('Adding SSH key to Laravel Forge server');
         // We cannot use ssh-copy-id -i ~/.ssh/id_rsa.pub forge@146.185.164.54 because SSH acces via user/password is not enabled on Laravel Forge
-        // We need to use the API
+        // We need to use the Laravel Forge API to add a key
 
-        //TODO Already logged? token exists?
-        $servers = $this->fetchServers();
-        //: $this->fetchServers($this->getTokenFromEnvFile());
+        $token = $this->argument('token') ? $this->argument('token') : env('ACACHA_FORGE_ACCESS_TOKEN',null) ;
+        if(!$token) {
+            $this->error('No Acacha Laravel Forge token available. Please run first php artisan publish:init');
+            die();
+        }
+        $servers = $this->fetchServers($token);
 
         $server_names = collect($servers)->pluck('name')->toArray();
 
         if ($this->argument('server_name')) {
             $forge_server = $this->argument('server_name');
         } else {
+            if (empty($server_names)) {
+                $this->error('No valid servers assigned to user!');
+                die();
+            }
             $server_name = $this->choice('Forge server?', $server_names, 0);
             $forge_server = $this->getForgeIdServer($servers,$server_name);
         }
@@ -123,13 +131,40 @@ class PublishSsh extends Command
         $uri = str_replace('{forgeserver}', $forge_server , config('forge-publish.post_ssh_keys_uri'));
         $url = config('forge-publish.url') . $uri;
 
-        $email = $this->argument('email') ? $this->argument('email') : $this->getEmail();
+        $keyName = $this->getUniqueKeyNameFromEmail();
 
         $key = file_get_contents($_SERVER['HOME'] . self::SSH_ID_RSA_PUB);
-        $this->http->post($url, [
-            'name' => $email,
-            'key' => $key
-        ]);
+
+        $token = null;
+        if (!$token) $token = env('ACACHA_FORGE_ACCESS_TOKEN');
+        $response = $this->http->post($url,
+            [
+                'form_params' => [
+                    'name' => $keyName,
+                    'key' => $key
+                ],
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            ]
+        );
+
+        $result = json_decode($contents = $response->getBody()->getContents());
+
+        if (! isset($result->status)) {
+            $this->error("An error has been succeded: $contents");
+            die();
+        }
+        if ($result->status == 'installed') $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server $forge_server");
+    }
+
+    /**
+     * Get unique key name from email.
+     */
+    protected function getUniqueKeyNameFromEmail()
+    {
+        return str_slug($this->argument('email') ? $this->argument('email') : $this->getEmail()) . '_' . str_random(10);
     }
 
     /**
