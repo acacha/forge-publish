@@ -4,16 +4,18 @@ namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
+use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Illuminate\Console\Command;
 
 /**
- * Class PublishInstall.
+ * Class PublishKeyGenerate.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishInstall extends Command
+class PublishKeyGenerate extends Command
 {
-    use ChecksEnv,ChecksSSHConnection;
+
+    use ChecksSSHConnection, ChecksEnv, RunsSSHCommands;
 
     /**
      * Server name
@@ -34,14 +36,23 @@ class PublishInstall extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:install {--server=} {--domain=}';
+    protected $signature = 'publish:key_generate {--server=} {--domain=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Install project into production Laravel Forge server';
+    protected $description = 'Run artisan key:generate command on production server';
+
+    /**
+     * Constructor.
+     *
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -49,32 +60,32 @@ class PublishInstall extends Command
      */
     public function handle()
     {
-        $this->info("I'm going to install this project to production...");
+        $this->abortCommandExecution();
 
-        $this->call('publish:composer', [
-            'composer_command' => 'install',
-            'server' => $this->server,
-            'domain' => $this->domain
-        ]);
-
-        $this->call('publish:npm', [
-            'composer_command' => 'install',
-            'server' => $this->server,
-            'domain' => $this->domain
-        ]);
-
-        $this->call('publish:key_generate',[
-            'server' => $this->server,
-            'domain' => $this->domain
-        ]);
-
-        if ($this->confirm('Do you wish run migrations on production?')) {
-            $this->call('publish:artisan',[
-                'artisan_command' => 'migrate --force',
-                'server' => $this->server,
-                'domain' => $this->domain
-            ]);
+        if ($this->keyIsAlreadyInstalled()) {
+            $this->info('Key is already installed on production. Skipping...');
+            return;
         }
+
+        $this->call('publish:artisan', [
+            'artisan_command' => 'key:generate',
+            'server' => $this->server,
+            'domain' => $this->domain
+        ]);
+    }
+
+    /**
+     * Key is already installed on production?
+     *
+     * @return bool
+     */
+    protected function keyIsAlreadyInstalled() {
+        $key = 'APP_KEY=base64:';
+        $output = $this->execSSH($this->server, "cd $this->domain;cat .env");
+        if (str_contains($output,$key)) {
+            return true;
+        }
+        return false;
     }
 
     /**

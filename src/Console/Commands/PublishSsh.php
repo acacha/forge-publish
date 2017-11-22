@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use GuzzleHttp\Client;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSsh extends Command
 {
-    use PossibleEmails, ItFetchesServers;
+    use PossibleEmails, ItFetchesServers, ChecksSSHConnection;
 
     /**
      * SSH_ID_RSA_PRIV
@@ -96,7 +97,7 @@ class PublishSsh extends Command
         $this->appendSSHConfig();
         $this->installSSHKeyOnServer();
 
-        $this->testConnection();
+        $this->testSSHConnection();
     }
 
     /**
@@ -208,13 +209,12 @@ class PublishSsh extends Command
     /**
      * Test connection
      */
-    protected function  testConnection()
+    protected function testSSHConnection()
     {
         $this->info('Testing connection...');
         $this->info('sudo -u ' . get_current_user() . ' timeout 10 ssh -q ' . $this->server_name . ' exit; echo $?');
-        $ret = exec('sudo -u ' . get_current_user() . ' timeout 10 ssh -q ' . $this->server_name . ' "exit"; echo $?');
 
-        if ($ret == 0 ) $this->info('Connection tested ok!');
+        if ( $this->checkSSHConnection($this->server_name) ) $this->info('Connection tested ok!');
         else $this->error('Error connnecting to server!');
     }
 

@@ -282,11 +282,28 @@ class PublishInit extends Command
 
         if ($this->confirm('Do you want to install your project to production?')) {
             $this->call('publish:install', [
-                'email' => $email
+                'server' => $forge_id_server,
+                'domain' => $domain,
             ]);
         }
 
-        $this->info("DONE!!!!!!!!!!!");
+        if ($this->confirm('Do you want to enable Laravel Forge autodeploy?')) {
+            $this->call('publish:autodeploy', [
+                'enable' => true
+            ]);
+        }
+
+        if ($this->confirm('Do you want to enable SSL on site?')) {
+            $this->call('publish:ssl', [
+                'enable' => true
+            ]);
+        }
+
+        if ($this->confirm('Do you want open your app in your default browser?')) {
+            $this->call('publish:open');
+        }
+
+        $this->info("I have finished! Congratulations and enjoy!");
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
+use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
 use Illuminate\Console\Command;
 
@@ -12,13 +14,14 @@ use Illuminate\Console\Command;
  */
 class PublishLog extends Command
 {
+    use ChecksEnv,RunsSSHCommands;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:log';
+    protected $signature = 'publish:log {--server=} {--domain=}';
 
     /**
      * The console command description.
@@ -39,7 +42,7 @@ class PublishLog extends Command
      *
      * @var String
      */
-    protected $forge_server;
+    protected $server;
 
     /**
      * Domain.
@@ -66,9 +69,8 @@ class PublishLog extends Command
     {
         $this->abortCommandExecution();
 
-        $this->info("Connecting to server $this->forge_server to see logs");
-        $this->info('ssh ' . $this->forge_server . " tail -f $this->domain/storage/logs/laravel.log");
-        passthru('ssh ' . $this->forge_server . " tail -f $this->domain/storage/logs/laravel.log");
+        $this->info("Connecting to server $this->server to see logs");
+        $this->runSSH($this->server, "tail -f $this->domain/storage/logs/laravel.log");
     }
 
     /**
@@ -76,17 +78,8 @@ class PublishLog extends Command
      *
      */
     protected function abortCommandExecution() {
-        $this->forge_server = env('ACACHA_FORGE_SERVER', null);
-        if (!$this->forge_server) {
-            $this->error('No env variable ACACHA_FORGE_SERVER found. Please run php artisan publish:init');
-            die();
-        }
-        $this->domain = env('ACACHA_FORGE_DOMAIN', null);
-        if (! $this->domain ) {
-            $this->error('No env variable ACACHA_FORGE_DOMAIN found. Please run php artisan publish:init');
-            die();
-        }
+        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
     }
-
 
 }

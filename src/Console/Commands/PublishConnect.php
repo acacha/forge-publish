@@ -2,6 +2,8 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
+use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
 use Illuminate\Console\Command;
 
@@ -12,13 +14,14 @@ use Illuminate\Console\Command;
  */
 class PublishConnect extends Command
 {
+    use RunsSSHCommands, ChecksEnv;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:connect';
+    protected $signature = 'publish:connect {--server=} {--domain=}';
 
     /**
      * The console command description.
@@ -33,6 +36,20 @@ class PublishConnect extends Command
      * @var ForgePublishRCParser
      */
     protected $parser;
+
+    /**
+     * Forge server.
+     *
+     * @var String
+     */
+    protected $server;
+
+    /**
+     * Domain.
+     *
+     * @var String
+     */
+    protected $domain;
 
     /**
      * Create a new command instance.
@@ -50,18 +67,18 @@ class PublishConnect extends Command
      */
     public function handle()
     {
-        $forge_server = env('ACACHA_FORGE_SERVER', null);
-        if ( ! $forge_server ) {
-            $this->error('No env variable ACACHA_FORGE_SERVER found. Please run php artisan publish:init');
-        }
-        $this->info("Connecting to server $forge_server");
-        if ( ! $domain = env('ACACHA_FORGE_DOMAIN', null) ) {
-            $this->info('ssh ' . $forge_server. ' "cd ' . $domain. '"' );
-            passthru('ssh ' . $forge_server. ' "cd ' . $domain. '"' );
-        } else {
-            $this->info('ssh -t ' . $forge_server . ' "cd ' . $domain . ';' . $this->defaultShell() .'"');
-            passthru('ssh -t ' . $forge_server . ' "cd ' . $domain . ';' . $this->defaultShell() .'"');
-        }
+        $this->abortCommandExecution();
+        $this->info("Connecting to server  $this->server");
+        $this->runSSH($this->server,"cd $this->domain;" . $this->defaultShell());
+    }
+
+    /**
+     * Abort command execution.
+     *
+     */
+    protected function abortCommandExecution() {
+        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Illuminate\Console\Command;
 
 /**
@@ -11,13 +12,14 @@ use Illuminate\Console\Command;
  */
 class PublishOpen extends Command
 {
+    use ChecksEnv;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:open';
+    protected $signature = 'publish:open {--domain=}';
 
     /**
      * The console command description.
@@ -52,14 +54,7 @@ class PublishOpen extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->domain = env('ACACHA_FORGE_DOMAIN',null);
-
-        if (env('ACACHA_FORGE_DOMAIN',null) == null ) {
-            $this->error('No env var ACACHA_FORGE_DOMAIN found. Please run php artisan publish:init');
-            die();
-        }
-
+        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
     }
-
 
 }

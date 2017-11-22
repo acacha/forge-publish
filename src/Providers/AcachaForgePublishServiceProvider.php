@@ -2,19 +2,23 @@
 
 namespace Acacha\ForgePublish\Providers;
 
+use Acacha\ForgePublish\Commands\PublishArtisan;
+use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
 use Acacha\ForgePublish\Commands\PublishDNS;
 use Acacha\ForgePublish\Commands\PublishDomain;
 use Acacha\ForgePublish\Commands\PublishEmail;
+use Acacha\ForgePublish\Commands\PublishEnv;
 use Acacha\ForgePublish\Commands\PublishGit;
 use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
 use Acacha\ForgePublish\Commands\PublishIp;
-use Acacha\ForgePublish\Commands\PublishKey;
+use Acacha\ForgePublish\Commands\PublishKeyGenerate;
 use Acacha\ForgePublish\Commands\PublishLog;
 use Acacha\ForgePublish\Commands\PublishLogin;
+use Acacha\ForgePublish\Commands\PublishNpm;
 use Acacha\ForgePublish\Commands\PublishOpen;
 use Acacha\ForgePublish\Commands\PublishPush;
 use Acacha\ForgePublish\Commands\PublishRc;
@@ -48,26 +52,30 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                PublishInit::class,
-                PublishPush::class,
-                PublishLogin::class,
-                PublishToken::class,
-                PublishEmail::class,
+                PublishArtisan::class,
+                PublishComposer::class,
+                PublishCreateSite::class,
+                PublishConnect::class,
                 PublishDomain::class,
+                PublishDNS::class,
+                PublishEmail::class,
+                PublishEnv::class,
+                PublishGit::class,
+                PublishInfo::class,
+                PublishInit::class,
+                PublishInstall::class,
+                PublishKeyGenerate::class,
+                PublishNpm::class,
                 PublishIp::class,
+                PublishLog::class,
+                PublishLogin::class,
+                PublishOpen::class,
+                PublishPush::class,
+                PublishRc::class,
                 PublishServer::class,
                 PublishSite::class,
-                PublishInfo::class,
-                PublishCreateSite::class,
                 PublishSsh::class,
-                PublishRc::class,
-                PublishGit::class,
-                PublishInstall::class,
-                PublishConnect::class,
-                PublishDNS::class,
-                PublishOpen::class,
-                PublishLog::class,
-                PublishKey::class,
+                PublishToken::class,
             ]);
         }
         
