@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Commands\Traits;
 
+use function Couchbase\passthruDecoder;
 use Illuminate\Support\Facades\File;
 
 /**
@@ -19,6 +20,9 @@ trait InteractsWithEnvironment
      */
     protected function addValueToEnv($key, $value)
     {
-        File::append(base_path('.env'), "\n$key=$value\n");
+        $env_path = base_path('.env');
+        $sed_command = "/bin/sed -i '/^$key/d' " . $env_path;
+        passthru($sed_command);
+        File::append($env_path, "\n$key=$value\n");
     }
 }

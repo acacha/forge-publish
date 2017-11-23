@@ -9,7 +9,6 @@ namespace Acacha\ForgePublish\Commands\Traits;
  */
 trait ItFetchesServers
 {
-
     /**
      * Fetch servers
      */
@@ -25,6 +24,7 @@ trait ItFetchesServers
             ]);
         } catch (\Exception $e) {
             $this->error('And error occurs connecting to the api url: ' . $url);
+            dd($e);
             $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
             return [];
         }
@@ -58,8 +58,8 @@ trait ItFetchesServers
     }
 
     /**
-     *
      * Get server ip addres by forge server id.
+     *
      * @param $servers
      * @param $server_id
      * @return mixed

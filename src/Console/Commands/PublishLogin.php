@@ -71,6 +71,8 @@ class PublishLogin extends Command
             $this->argument('email') :
             $this->anticipate('Email?',$emails,$current_value = fp_env('ACACHA_FORGE_EMAIL'));
 
+        if($email != fp_env('ACACHA_FORGE_EMAIL')) $this->addValueToEnv('ACACHA_FORGE_EMAIL', $email);
+
         $password = $this->secret('Password?');
 
         $this->url = config('forge-publish.url') . config('forge-publish.token_uri');

@@ -54,10 +54,38 @@ abstract class SaveEnvVariable extends Command
     {
         $this->checkIfCommandHaveToBeSkipped();
 
-        $value = $this->argument($this->argKey()) ? $this->argument($this->argKey()) : $this->ask($this->questionText(), $this->default());
+        $this->before();
+
+        $value = $this->argument($this->argKey()) ? $this->argument($this->argKey()) : $this->value() ;
         $this->addValueToEnv($this->envVar(), $value);
 
         $this->info('The Acacha Forge ' . $this->argKey() . ' has been added to file .env with key ' . $this->envVar());
+
+        $this->after();
+    }
+
+    /**
+     * Before.
+     */
+    protected function before() {
+
+    }
+
+    /**
+     * After.
+     */
+    protected function after() {
+
+    }
+
+    /**
+     * Get value.
+     *
+     * @return array|string
+     */
+    protected function value()
+    {
+        return $this->ask($this->questionText(), $this->default());
     }
 
     /**

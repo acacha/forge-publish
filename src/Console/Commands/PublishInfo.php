@@ -42,19 +42,19 @@ class PublishInfo extends Command
      */
     public function handle()
     {
-        $this->info('Here is your configuration...');
+        $this->info('Here is your configuration:');
 
         $headers = ['Key', 'Value'];
 
         $tasks = [
-            [ 'ACACHA_FORGE_URL', env('ACACHA_FORGE_URL','Not available!')],
-            [ 'ACACHA_FORGE_ACCESS_TOKEN', env('ACACHA_FORGE_ACCESS_TOKEN',null) ? 'Ok!' : 'Not available!'],
-            [ 'ACACHA_FORGE_EMAIL', env('ACACHA_FORGE_EMAIL','Not available!')],
-            [ 'ACACHA_FORGE_SERVER', env('ACACHA_FORGE_SERVER','Not available!')],
-            [ 'ACACHA_FORGE_DOMAIN', env('ACACHA_FORGE_DOMAIN','Not available!')],
-            [ 'ACACHA_FORGE_SITE', env('ACACHA_FORGE_SITE','Not available!')],
-            [ 'ACACHA_FORGE_IP_ADDRESS', env('ACACHA_FORGE_IP_ADDRESS','Not available!')],
-            [ 'ACACHA_FORGE_GITHUB_REPO', env('ACACHA_FORGE_GITHUB_REPO','Not available!')]
+            [ 'ACACHA_FORGE_URL', fp_env('ACACHA_FORGE_URL','Not available!')],
+            [ 'ACACHA_FORGE_ACCESS_TOKEN', fp_env('ACACHA_FORGE_ACCESS_TOKEN',null) ? 'Ok!' : 'Not available!'],
+            [ 'ACACHA_FORGE_EMAIL', fp_env('ACACHA_FORGE_EMAIL','Not available!')],
+            [ 'ACACHA_FORGE_SERVER', fp_env('ACACHA_FORGE_SERVER','Not available!')],
+            [ 'ACACHA_FORGE_DOMAIN', fp_env('ACACHA_FORGE_DOMAIN','Not available!')],
+            [ 'ACACHA_FORGE_SITE', fp_env('ACACHA_FORGE_SITE','Not available!')],
+            [ 'ACACHA_FORGE_IP_ADDRESS', fp_env('ACACHA_FORGE_IP_ADDRESS','Not available!')],
+            [ 'ACACHA_FORGE_GITHUB_REPO', fp_env('ACACHA_FORGE_GITHUB_REPO','Not available!')]
         ];
 
         $this->table($headers, $tasks);

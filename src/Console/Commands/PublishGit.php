@@ -58,6 +58,16 @@ class PublishGit extends SaveEnvVariable
      *
      */
     protected function default() {
+        return fp_env($this->envVar()) ? fp_env($this->envVar()) : $this->getRepoFromGithubConfig();
+    }
+
+    /**
+     * Get github repo from github.
+     *
+     * @return string
+     */
+    protected function getRepoFromGithubConfig()
+    {
         $remote = `git remote get-url origin`;
         if ( ! starts_with($remote,'git@github.com:')) return '';
         return explode('.', explode(":", $remote)[1])[0];

@@ -14,7 +14,7 @@ class PublishIp extends SaveEnvVariable
      *
      * @var string
      */
-    protected $signature = 'publish:ip {ip_address?}';
+    protected $signature = 'publish:ip {ip?}';
 
     /**
      * The console command description.
@@ -40,7 +40,7 @@ class PublishIp extends SaveEnvVariable
      */
     protected function argKey()
     {
-        return 'ip_address';
+        return 'ip';
     }
 
     /**
