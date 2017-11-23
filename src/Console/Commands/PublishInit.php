@@ -300,7 +300,9 @@ class PublishInit extends Command
         }
 
         if ($this->confirm('Do you want open your app in your default browser?')) {
-            $this->call('publish:open');
+            $this->call('publish:open', [
+                  '--domain' => $domain
+            ]);
         }
 
         $this->info("I have finished! Congratulations and enjoy!");
