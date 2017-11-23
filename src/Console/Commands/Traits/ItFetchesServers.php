@@ -39,7 +39,7 @@ trait ItFetchesServers
     protected function getForgeIdServer($servers, $server_name)
     {
         return collect($servers)->filter(function ($server) use ($server_name) {
-            return $server->name === $server_name;
+            return $server->name == $server_name;
         })->first()->forge_id;
     }
 
@@ -53,7 +53,7 @@ trait ItFetchesServers
     protected function getForgeName($servers, $server_id)
     {
         return collect($servers)->filter(function ($server) use ($server_id) {
-            return $server->forge_id === $server_id;
+            return $server->forge_id == $server_id;
         })->first()->name;
     }
 
@@ -67,8 +67,22 @@ trait ItFetchesServers
     protected function serverIpAddress($servers, $server_id)
     {
         return collect($servers)->filter(function ($server) use ($server_id) {
-            return $server->forge_id === $server_id;
+            return $server->forge_id == $server_id;
         })->first()->ipAddress;
+    }
+
+    /**
+     * Search server by property with a specific value.
+     *
+     * @param $servers
+     * @param $property
+     * @param $value
+     * @return static
+     */
+    protected function searchServer($servers,$property,$value) {
+        return collect($servers)->filter(function ($server) use ($property, $value) {
+            return $server->$property == $value;
+        });
     }
 
 

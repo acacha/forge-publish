@@ -26,7 +26,7 @@ use Acacha\ForgePublish\Commands\PublishPush;
 use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishSite;
-use Acacha\ForgePublish\Commands\PublishSsh;
+use Acacha\ForgePublish\Commands\PublishSSH;
 use Acacha\ForgePublish\Commands\PublishSSL;
 use Acacha\ForgePublish\Commands\PublishToken;
 use Illuminate\Support\ServiceProvider;
@@ -79,7 +79,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishRc::class,
                 PublishServer::class,
                 PublishSite::class,
-                PublishSsh::class,
+                PublishSSH::class,
                 PublishSSL::class,
                 PublishToken::class,
             ]);

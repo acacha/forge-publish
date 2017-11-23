@@ -11,11 +11,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
 /**
- * Class PublishSsh.
+ * Class PublishSSH.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishSsh extends Command
+class PublishSSH extends Command
 {
     use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv;
 
@@ -196,7 +196,7 @@ class PublishSsh extends Command
         if (! File::exists($ssh_config_file)) touch($ssh_config_file);
         $ip_address = $this->argument('ip') ? $this->argument('ip') : $this->ask('IP Address?');
         $this->validateIpAddress($ip_address);
-        $config_string = "\n$host_string\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n";
+        $config_string = "\n$host_string\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n  StrictHostKeyChecking no\n";
         File::append($ssh_config_file,$config_string);
 
         $this->info('The following config has been added:' . $config_string);
