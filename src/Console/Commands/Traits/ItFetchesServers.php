@@ -9,21 +9,23 @@ namespace Acacha\ForgePublish\Commands\Traits;
  */
 trait ItFetchesServers
 {
+
     /**
      * Fetch servers
      */
-    protected function fetchServers ($token = null)
+    protected function fetchServers()
     {
-        if (!$token) $token = env('ACACHA_FORGE_ACCESS_TOKEN');
         $url = config('forge-publish.url') . config('forge-publish.user_servers_uri');
         try {
             $response = $this->http->get($url,[
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $token
+                    'Authorization' => 'Bearer ' . env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]);
         } catch (\Exception $e) {
+            $this->error('And error occurs connecting to the api url: ' . $url);
+            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
             return [];
         }
         return json_decode((string) $response->getBody());
@@ -38,9 +40,8 @@ trait ItFetchesServers
      */
     protected function getForgeIdServer($servers, $server_name)
     {
-        return collect($servers)->filter(function ($server) use ($server_name) {
-            return $server->name == $server_name;
-        })->first()->forge_id;
+        $found_server = $this->searchServer($servers,'name',$server_name);
+        return $found_server->first() ? $found_server->first()->forge_id : null;
     }
 
     /**
@@ -52,9 +53,8 @@ trait ItFetchesServers
      */
     protected function getForgeName($servers, $server_id)
     {
-        return collect($servers)->filter(function ($server) use ($server_id) {
-            return $server->forge_id == $server_id;
-        })->first()->name;
+        $found_server = $this->searchServer($servers,'forge_id',$server_id);
+        return $found_server->first() ? $found_server->first()->name : null;
     }
 
     /**
@@ -66,9 +66,8 @@ trait ItFetchesServers
      */
     protected function serverIpAddress($servers, $server_id)
     {
-        return collect($servers)->filter(function ($server) use ($server_id) {
-            return $server->forge_id == $server_id;
-        })->first()->ipAddress;
+        $found_server = $this->searchServer($servers,'forge_id',$server_id);
+        return $found_server->first() ? $found_server->first()->ipAddress : null;
     }
 
     /**
@@ -84,6 +83,5 @@ trait ItFetchesServers
             return $server->$property == $value;
         });
     }
-
 
 }

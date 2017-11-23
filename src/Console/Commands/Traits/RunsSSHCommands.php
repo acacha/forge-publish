@@ -17,7 +17,8 @@ trait RunsSSHCommands
      */
     protected function runSSH($server, $command)
     {
-        $full_command = "ssh -t $server '$command'";
+        $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
+        $full_command = "ssh -F $ssh_config_file -t $server '$command'";
         $this->info($full_command);
         passthru($full_command);
     }
@@ -31,7 +32,8 @@ trait RunsSSHCommands
      */
     protected function execSSH($server, $command)
     {
-        $full_command = "ssh -t $server '$command'";
+        $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
+        $full_command = "ssh -F $ssh_config_file -t $server '$command'";
         $this->info($full_command);
         return shell_exec($full_command);
     }

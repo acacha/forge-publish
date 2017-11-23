@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
  */
 abstract class SaveEnvVariable extends Command
 {
-    use SkipsIfNoEnvFileExists, SkipsIfEnvVariableIsAlreadyInstalled, InteractsWithEnvironment;
+    use SkipsIfNoEnvFileExists, InteractsWithEnvironment;
 
     /**
      * Env var to set.
@@ -66,7 +66,6 @@ abstract class SaveEnvVariable extends Command
     protected function checkIfCommandHaveToBeSkipped()
     {
         $this->skipIfNoEnvFileIsFound();
-        $this->skipIfEnvVarIsAlreadyInstalled($this->envVar());
     }
 
     /**

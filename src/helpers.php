@@ -1,12 +1,17 @@
 <?php
 
-if (! function_exists('helper_test')) {
+use josegonzalez\Dotenv\Loader;
+
+if (! function_exists('fp_env')) {
 
     /**
      * Helper test.
      */
-    function helper_test()
+    function fp_env($variable, $default = null)
     {
-        dd('Helper test!');
+        //NOTE: We cannot use env() helper because the .env file has been changes in this request !!!
+        $env = (new Loader(base_path('.env')))->parse()->toArray();
+        return in_array($variable, $env) ? $env[$variable] : $default;
     }
+
 }

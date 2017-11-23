@@ -22,7 +22,6 @@ use Acacha\ForgePublish\Commands\PublishLog;
 use Acacha\ForgePublish\Commands\PublishLogin;
 use Acacha\ForgePublish\Commands\PublishNpm;
 use Acacha\ForgePublish\Commands\PublishOpen;
-use Acacha\ForgePublish\Commands\PublishPush;
 use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishSite;
@@ -55,32 +54,31 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                PublishArtisan::class,
-                PublishAutodeploy::class,
-                PublishComposer::class,
-                PublishConnect::class,
-                PublishCreateSite::class,
-                PublishDNS::class,
-                PublishDomain::class,
+//                PublishArtisan::class,
+//                PublishAutodeploy::class,
+//                PublishComposer::class,
+//                PublishConnect::class,
+//                PublishCreateSite::class,
+//                PublishDNS::class,
+//                PublishDomain::class,
                 PublishEmail::class,
-                PublishEnv::class,
-                PublishGit::class,
+//                PublishEnv::class,
+//                PublishGit::class,
                 PublishInfo::class,
                 PublishInit::class,
-                PublishInstall::class,
-                PublishInstallRepo::class,
-                PublishIp::class,
-                PublishKeyGenerate::class,
-                PublishLog::class,
+//                PublishInstall::class,
+//                PublishInstallRepo::class,
+//                PublishIp::class,
+//                PublishKeyGenerate::class,
+//                PublishLog::class,
                 PublishLogin::class,
-                PublishNpm::class,
-                PublishOpen::class,
-                PublishPush::class,
+//                PublishNpm::class,
+//                PublishOpen::class,
                 PublishRc::class,
-                PublishServer::class,
-                PublishSite::class,
-                PublishSSH::class,
-                PublishSSL::class,
+//                PublishServer::class,
+//                PublishSite::class,
+//                PublishSSH::class,
+//                PublishSSL::class,
                 PublishToken::class,
             ]);
         }

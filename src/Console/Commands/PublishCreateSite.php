@@ -23,7 +23,7 @@ class PublishCreateSite extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:create_site {forge_server?} {domain?} {project_type?} {site_directory?} {--token=}\'';
+    protected $signature = 'publish:create_site {forge_server?} {domain?} {project_type?} {site_directory?}';
 
     /**
      * The console command description.
@@ -65,7 +65,7 @@ class PublishCreateSite extends Command
     {
         $this->checkIfCommandHaveToBeSkipped();
 
-        $servers = $this->option('token') ? $this->fetchServers($this->option('token')) : $this->fetchServers();
+        $servers = $this->fetchServers();
         $server_names = collect($servers)->pluck('name')->toArray();
 
         if ($this->argument('forge_server')) {
@@ -86,8 +86,6 @@ class PublishCreateSite extends Command
         $uri = str_replace('{forgeserver}', $forge_server , config('forge-publish.post_sites_uri'));
         $this->url = config('forge-publish.url') . $uri;
 
-        $token = $this->option('token') ? $this->option('token'): env('ACACHA_FORGE_ACCESS_TOKEN');
-
         try {
             $this->http->post($this->url, [
                 'form_params' => [
@@ -97,7 +95,7 @@ class PublishCreateSite extends Command
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $token
+                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]);
         } catch (\Exception $e) {
@@ -113,7 +111,7 @@ class PublishCreateSite extends Command
     protected function checkIfCommandHaveToBeSkipped()
     {
         $this->skipIfNoEnvFileIsFound();
-        if ( ! $this->option('token')) $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+        $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
 }

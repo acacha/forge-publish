@@ -5,12 +5,12 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksForRootPermission;
 use Acacha\ForgePublish\Commands\Traits\DNSisAlreadyConfigured;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
+use Acacha\ForgePublish\Commands\Traits\ItFetchesSites;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use Acacha\ForgePublish\ForgePublishRCFile;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use josegonzalez\Dotenv\Loader;
 
 /**
  * Class PublishInit.
@@ -19,7 +19,7 @@ use josegonzalez\Dotenv\Loader;
  */
 class PublishInit extends Command
 {
-    use ItFetchesServers, PossibleEmails, ChecksForRootPermission, DNSisAlreadyConfigured;
+    use ItFetchesSites,ItFetchesServers, PossibleEmails, ChecksForRootPermission, DNSisAlreadyConfigured;
 
     /**
      * The name and signature of the console command.
@@ -33,7 +33,7 @@ class PublishInit extends Command
      *
      * @var string
      */
-    protected $description = 'Config publish command';
+    protected $description = 'Config acacha forge publish ';
 
     /**
      * Guzzle Http client
@@ -68,153 +68,206 @@ class PublishInit extends Command
     }
 
     /**
-     * Execute the console command.
-     *
+     * Confirm an user is created in Acacha Laravel Forge.
      */
-    public function handle()
+    protected function confirmAnUserIsCreatedInAcachaLaravelForge()
     {
-        $this->abortCommandExecution();
-        $this->info('Hello! Together we are going to config Acacha Laravel Forge publish ...');
-        $this->info('');
-        $this->info('Let me check the requirements...');
-
-        if (! ForgePublishRCFile::exists()) $this->executePublishRc();
-
         $this->info('');
         $this->info('Please visit and login on http:://forge.acacha.com.');
         $this->info('');
         $this->error('Please use Github Social Login for login!!!');
 
-        while (! $this->confirm('User created at http:://forge.acacha.com?')) {}
+        while (! $this->confirm('Do you have an user created at http:://forge.acacha.com?')) {}
+    }
 
-        if ( env('ACACHA_FORGE_EMAIL', null) == null) {
-            $emails = $this->getPossibleEmails();
-            $email = $this->anticipate('Ok! User email?', $emails);
-        } else {
-            $email = env('ACACHA_FORGE_EMAIL');
-            $this->info("Ok! I see you already have a Forge user email configured so let's go on!...");
+    /**
+     * Config env variable.
+     */
+    protected function configEnvVariable($env_var, $command, $default = null)
+    {
+        $current_value = $default ? $default : fp_env($env_var);
+        $value = $this->ask(str_replace('_',' ', title_case($env_var)) . '?', $current_value);
+        if ( $value != $current_value) {
+            $this->call("publish:$command", [
+                $command => $value
+            ]);
         }
+    }
 
-        $already_logged = false;
-
-        if ( env('ACACHA_FORGE_ACCESS_TOKEN', null) == null) {
-            $this->info('I need permissions to operate in Acacha Forge in your name...');
-            $this->info('So we need to obtain a valid token. Two options here:');
-            $this->info('1) Login: You provide your user credentials and I obtain the token from Laravel Forge');
-            $this->info('2) Personal Access Token: You provide a Personal Access token');
-
-            $option = $this->choice('Which one you prefer?', ['Login', 'Personal Access Token'], 0);
-
-            if ($option == 'Login') {
-                $this->call('publish:login', [
-                    'email' => $email
-                ]);
-            }
-            else {
-                $this->call('publish:token');
-            }
-        } else {
-            $this->info("Ok! I see you already have a token for accessing Acacha Laravel Forge so let's go on!...");
-            $already_logged = true;
-        }
-
-        $servers = $already_logged ? $this->fetchServers() : $this->fetchServers($this->getTokenFromEnvFile());
-
-        if ( env('ACACHA_FORGE_SERVER', null) == null) {
-
-            while (!$this->confirm('Server permissions requested at http:://forge.acacha.com?')) {
-            }
-
-            $server_names = collect($servers)->pluck('name')->toArray();
-            if (empty($server_names)) {
-                $this->error('No valid servers assigned to user!');
-                die();
-            }
-            $server_name = $this->choice('Ok! Server name?', $server_names, 0);
-
-            $forge_id_server = $this->getForgeIdServer($servers, $server_name);
-        } else {
-            $forge_id_server = env('ACACHA_FORGE_SERVER');
-            $server_name = $this->getForgeName($servers, $forge_id_server);
-            $this->info("Ok! I see you already have a Forge server configured so let's go on!...");
-        }
-
-        if ( env('ACACHA_FORGE_DOMAIN', null) == null) {
-            $domain = $this->ask('Domain in production?',$this->defaultDomain());
-        } else {
-            $domain = env('ACACHA_FORGE_DOMAIN');
-            $this->info("Ok! I see you already have a domain configured so let's go on!...");
-        }
-        $server_id = env('ACACHA_FORGE_SERVER',null) ? env('ACACHA_FORGE_SERVER') : $forge_id_server;
-        $sites = $already_logged ? $this->fetchSites($server_id) : $this->fetchSites($server_id, $this->getTokenFromEnvFile());
-        $site_id = null;
-        $site_names = collect($sites)->pluck('name')->toArray();
-        if ( env('ACACHA_FORGE_SITE', null) == null) {
-            $site_name = $this->anticipate('Which site?', $site_names, $domain);
-            $site_id = $this->getSiteId($sites, $site_name);
-        } else {
-            $site_id = env('ACACHA_FORGE_SITE');
-            $this->info("Ok! I see you already have a site configured so let's go on!...");
-        }
-
-        $ip_address = $this->serverIpAddress($servers,$server_id);
-
-        if ( env('ACACHA_FORGE_GITHUB_REPO', null) != null) {
-            $github_repo = env('ACACHA_FORGE_GITHUB_REPO');
-            $this->info("Ok! I see you already have a github repo configured so let's go on!...");
-        }   else {
-            $this->call('publish:git');
-            $github_repo = $this->getGithubRepoFromEnvFile();
-        }
-
-        $this->info('');
-        $this->info('Ok! let me resume: ');
-
-        $headers = ['Task/Config name', 'Done/result?'];
-        $tasks = [
-          [ 'User created at http:://forge.acacha.com?', 'Yes'],
-          [ 'Email', $email],
-          [ 'Acacha Forge Token obtained ', 'Yes'],
-          [ 'Server permissions requested at http:://forge.acacha.com?', 'Yes'],
-          [ 'Server name', $server_name],
-          [ 'Server Forge id', $forge_id_server],
-          [ 'Domain', $domain],
-          [ 'Server site id', $site_id ? $site_id : 'Site not created yet' ],
-          [ 'Server IP address', $ip_address ],
-          [ 'Github repo', $github_repo ? $github_repo : 'Repo not created yet' ]
-        ];
-
-        $this->table($headers, $tasks);
-
-        $this->info('');
-        if ( env('ACACHA_FORGE_EMAIL', null) == null) {
-            $this->call('publish:email', [
+    /**
+     * Config email.
+     */
+    protected function configEmail()
+    {
+        $emails = $this->getPossibleEmails();
+        $email = $this->anticipate(
+            str_replace('_',' ', title_case('ACACHA_FORGE_EMAIL')) . '?',
+            $emails,
+            $current_value = fp_env('ACACHA_FORGE_EMAIL'));
+        if ( $email != $current_value) {
+            $this->call("publish:email", [
                 'email' => $email
             ]);
         }
-        if ( env('ACACHA_FORGE_SERVER', null) == null) {
-            $this->call('publish:server', [
-                'server' => $forge_id_server
-            ]);
-        }
-        if ( env('ACACHA_FORGE_DOMAIN', null) == null) {
+    }
 
-            $this->call('publish:domain', [
-                'domain' => $domain
-            ]);
-        }
-
-        if ( env('ACACHA_FORGE_SITE', null) == null && $site_id) {
-            $this->call('publish:site', [
-                'site' => $site_id
-            ]);
+    /**
+     * Login
+     */
+    protected function login()
+    {
+        if ( fp_env('ACACHA_FORGE_ACCESS_TOKEN')) {
+            $this->info('You have a token already configured in your environment.');
+            if (! $this->confirm('Do you want to relogin?')) return;
         }
 
-        if ( env('ACACHA_FORGE_IP_ADDRESS', null) == null) {
-            $this->call('publish:ip', [
-                'ip_address' => $ip_address
+        $this->info('I need permissions to operate in Acacha Forge in your name...');
+        $this->info('So we need to obtain a valid token. Two options here:');
+        $this->info('1) Login: You provide your user credentials and I obtain the token from Laravel Forge');
+        $this->info('2) Personal Access Token: You provide a Personal Access token');
+
+        $option = $this->choice('Which one you prefer?', ['Login', 'Personal Access Token'], 0);
+
+        if ($option == 'Login') {
+            $this->call('publish:login', [
+                'email' => fp_env('ACACHA_FORGE_EMAIL')
             ]);
         }
+        else {
+            $this->call('publish:token');
+        }
+    }
+
+    /**
+     * Execute the console command.
+     *
+     */
+    public function handle()
+    {
+        $this->info('Hello! Together we are going to config Acacha Laravel Forge publish ...');
+
+        if (! ForgePublishRCFile::exists()) $this->executePublishRc();
+
+        $this->confirmAnUserIsCreatedInAcachaLaravelForge();
+
+        $this->configEmail();
+
+        $this->login();
+
+//
+//        if ( ! $token = $this->env('ACACHA_FORGE_ACCESS_TOKEN')) {
+//            $this->info('I need permissions to operate in Acacha Forge in your name...');
+//            $this->info('So we need to obtain a valid token. Two options here:');
+//            $this->info('1) Login: You provide your user credentials and I obtain the token from Laravel Forge');
+//            $this->info('2) Personal Access Token: You provide a Personal Access token');
+//
+//            $option = $this->choice('Which one you prefer?', ['Login', 'Personal Access Token'], 0);
+//
+//            if ($option == 'Login') {
+//                $this->call('publish:login', [
+//                    'email' => $email
+//                ]);
+//            }
+//            else {
+//                $this->call('publish:token');
+//            }
+//        } else {
+//            $this->info("Ok! I see you already have a token for accessing Acacha Laravel Forge so let's go on!...");
+//        }
+//
+//        $servers = $this->fetchServers();
+//
+//        if ( ! $forge_id_server = $this->env('ACACHA_FORGE_SERVER')) {
+//
+//            while (!$this->confirm('Server permissions requested at http:://forge.acacha.com?')) {
+//            }
+//
+//            $server_names = collect($servers)->pluck('name')->toArray();
+//            if (empty($server_names)) {
+//                $this->error('No valid servers assigned to user!');
+//                die();
+//            }
+//            $server_name = $this->choice('Ok! Server name?', $server_names, 0);
+//
+//            $forge_id_server = $this->getForgeIdServer($servers, $server_name);
+//        } else {
+//            $server_name = $this->getForgeName($servers, $forge_id_server);
+//            $this->info("Ok! I see you already have a Forge server configured so let's go on!...");
+//        }
+//
+//        if ( ! $domain = $this->env('ACACHA_FORGE_DOMAIN') ) {
+//            $domain = $this->ask('Domain in production?',$this->defaultDomain());
+//        } else {
+//            $this->info("Ok! I see you already have a domain configured so let's go on!...");
+//        }
+//        $server_id = env('ACACHA_FORGE_SERVER',null) ? env('ACACHA_FORGE_SERVER') : $forge_id_server;
+//        $sites = $this->fetchSites($server_id);
+//        $site_names = collect($sites)->pluck('name')->toArray();
+//        if ( ! $site_id = $this->env('ACACHA_FORGE_SITE') ) {
+//            $site_name = $this->anticipate('Which site?', $site_names, $domain);
+//            $site_id = $this->getSiteId($sites, $site_name);
+//        } else {
+//            $this->info("Ok! I see you already have a site configured so let's go on!...");
+//        }
+//
+//        $ip_address = $this->serverIpAddress($servers,$server_id);
+//
+//        if ( env('ACACHA_FORGE_GITHUB_REPO', null) != null) {
+//            $github_repo = env('ACACHA_FORGE_GITHUB_REPO');
+//            $this->info("Ok! I see you already have a github repo configured so let's go on!...");
+//        }   else {
+//            $this->call('publish:git');
+//            $github_repo = $this->env('ACACHA_FORGE_GITHUB_REPO');
+//        }
+//
+//        $this->info('');
+//        $this->info('Ok! let me resume: ');
+//
+//        $headers = ['Task/Config name', 'Done/result?'];
+//        $tasks = [
+//          [ 'User created at http:://forge.acacha.com?', 'Yes'],
+//          [ 'Email', $email],
+//          [ 'Acacha Forge Token obtained ', 'Yes'],
+//          [ 'Server permissions requested at http:://forge.acacha.com?', 'Yes'],
+//          [ 'Server name', $server_name],
+//          [ 'Server Forge id', $forge_id_server],
+//          [ 'Domain', $domain],
+//          [ 'Server site id', $site_id ? $site_id : 'Site not created yet' ],
+//          [ 'Server IP address', $ip_address ],
+//          [ 'Github repo', $github_repo ? $github_repo : 'Repo not created yet' ]
+//        ];
+//
+//        $this->table($headers, $tasks);
+//
+//        $this->info('');
+//        if ( env('ACACHA_FORGE_EMAIL', null) == null) {
+//            $this->call('publish:email', [
+//                'email' => $email
+//            ]);
+//        }
+//        if ( env('ACACHA_FORGE_SERVER', null) == null) {
+//            $this->call('publish:server', [
+//                'server' => $forge_id_server
+//            ]);
+//        }
+//        if ( env('ACACHA_FORGE_DOMAIN', null) == null) {
+//
+//            $this->call('publish:domain', [
+//                'domain' => $domain
+//            ]);
+//        }
+//
+//        if ( env('ACACHA_FORGE_SITE', null) == null && $site_id) {
+//            $this->call('publish:site', [
+//                'site' => $site_id
+//            ]);
+//        }
+//
+//        if ( env('ACACHA_FORGE_IP_ADDRESS', null) == null) {
+//            $this->call('publish:ip', [
+//                'ip_address' => $ip_address
+//            ]);
+//        }
 
         $this->info('');
         $this->info('Perfect! All info is saved to your environment. Enjoy Acacha forge publish!');
@@ -222,100 +275,7 @@ class PublishInit extends Command
         $this->error('Remember to rerun your server to apply changes in .env file!!!');
         $this->info('');
 
-        if ( ! in_array($domain, $site_names) )  {
-            $this->info("It seems you don't have a Laravel Forge site created with domain: $domain");
-
-            if ($this->confirm("Do you want to create site ($domain)?")) {
-                $this->call('publish:create_site', [
-                        'forge_server' => $forge_id_server,
-                        'domain' => $domain,
-                        'project_type' => config('forge-publish.project_type'),
-                        'site_directory' => config('forge-publish.site_directory'),
-                        '--token' => $this->getTokenFromEnvFile()
-                    ]);
-
-                $server_id = env('ACACHA_FORGE_SERVER',null) ? env('ACACHA_FORGE_SERVER') : $forge_id_server;
-
-                $sites = $this->fetchSites($server_id, $this->getTokenFromEnvFile());
-
-                $site_id = $this->getSiteId($sites, $domain);
-
-                if ( env('ACACHA_FORGE_SITE', null) == null) {
-                    $this->call('publish:site', [
-                        'site' => $site_id
-                    ]);
-                }
-            }
-        }
-
-        $this->call('publish:install_repo',[
-            'repository' => $github_repo,
-            '--server' => $forge_id_server,
-            '--site' => $site_id,
-            '--token' => $this->getTokenFromEnvFile()
-        ]);
-
-        if (! $this->dnsAlreadyConfigured ) {
-            $this->call('publish:dns',[
-                'ip' => $ip_address,
-                'domain' => $domain,
-                '--type' => 'hosts'
-            ]);
-        }
-
-        $this->call('publish:ssh', [
-            'email' => $email,
-            'server_name' => $server_id,
-            'ip' => $ip_address,
-            '--token' => $this->getTokenFromEnvFile()
-        ]);
-
-        dump('$forge_id_server: ' . $forge_id_server);
-        dump('$domain: ' . $domain);
-        if ($this->confirm('Do you want to install your project to production?')) {
-            $this->call('publish:install', [
-                '--server' => $forge_id_server,
-                '--domain' => $domain,
-            ]);
-        }
-
-        if ($this->confirm('Do you want to enable Laravel Forge autodeploy?')) {
-            $this->call('publish:autodeploy', [
-                '--server' => $forge_id_server,
-                '--site' => $site_id,
-                '--token' => $this->getTokenFromEnvFile()
-            ]);
-        }
-
-        $this->info('### SSL. Lets Encrypt will only work on sites with a valid domain (no /etc/hosts/trick) ###');
-        $this->info("### Skip the next step if you don't need SSL or not have a valid domain name");
-
-        if ($this->confirm('Do you want to enable SSL on site using Lets Encrypt?')) {
-            $this->call('publish:ssl', [
-                '--server' => $forge_id_server,
-                '--domain' => $domain,
-                '--site' => $site_id,
-                '--token' => $this->getTokenFromEnvFile()
-            ]);
-        }
-
-        if ($this->confirm('Do you want open your app in your default browser?')) {
-            $this->call('publish:open', [
-                  '--domain' => $domain
-            ]);
-        }
-
         $this->info("I have finished! Congratulations and enjoy!");
-    }
-
-    /**
-     * Abort command execution.
-     */
-    protected function abortCommandExecution()
-    {
-        if ($this->dnsIsAlreadyConfigured()) return ;
-
-        $this->checkForRootPermission();
     }
 
     /**
@@ -338,28 +298,6 @@ class PublishInit extends Command
     }
 
     /**
-     * Fetch sites
-     */
-    protected function fetchSites ($server_id, $token = null)
-    {
-        if (!$token) $token = env('ACACHA_FORGE_ACCESS_TOKEN');
-        $url = config('forge-publish.url') . config('forge-publish.user_sites_uri') . '/' . $server_id;
-        try {
-            $response = $this->http->get($url,[
-                'headers' => [
-                    'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $token
-                ]
-            ]);
-        } catch (\Exception $e) {
-            $this->error('And error occurs connecting to the api url: ' . $url);
-            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
-            return [];
-        }
-        return json_decode((string) $response->getBody());
-    }
-
-    /**
      * Get forge site id from site name.
      *
      * @param $sites
@@ -375,38 +313,4 @@ class PublishInit extends Command
         if ( $site_found ) return $site_found->id;
         return null;
     }
-
-    /**
-     * Get variable from env file
-     *
-     * @return mixed
-     */
-    protected function getVariableFromEnvFile($variable)
-    {
-        //NOTE: We cannot use env() helper because the .env file has been changes in this request !!!
-        return (new Loader(base_path('.env')))
-            ->parse()
-            ->toArray()[$variable];
-    }
-
-    /**
-     * Get token from env file
-     *
-     * @return mixed
-     */
-    protected function getTokenFromEnvFile()
-    {
-        return $this->getVariableFromEnvFile('ACACHA_FORGE_ACCESS_TOKEN');
-    }
-
-    /**
-     * Get Github repository from env file
-     *
-     * @return mixed
-     */
-    protected function getGithubRepoFromEnvFile()
-    {
-        return $this->getVariableFromEnvFile('ACACHA_FORGE_GITHUB_REPO');
-    }
-
 }

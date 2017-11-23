@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -16,7 +17,7 @@ use Illuminate\Console\Command;
 class PublishInstallRepo extends Command
 {
 
-    use ChecksEnv;
+    use ChecksEnv, SkipsIfEnvVariableIsnotInstalled;
 
     /**
      * Github Repository.
@@ -40,18 +41,11 @@ class PublishInstallRepo extends Command
     protected $site;
 
     /**
-     * Token
-     *
-     * @var String
-     */
-    protected $token;
-
-    /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:install_repo {repository?} {--server=} {--site=}{--token=}';
+    protected $signature = 'publish:install_repo {repository?} {--server=} {--site=}';
 
     /**
      * The console command description.
@@ -97,7 +91,7 @@ class PublishInstallRepo extends Command
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->token
+                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]
         );
@@ -111,7 +105,7 @@ class PublishInstallRepo extends Command
         $this->repository = $this->checkEnv('repository','ACACHA_FORGE_GITHUB_REPO','argument');
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
-        $this->token = $this->checkEnv('token','ACACHA_FORGE_ACCESS_TOKEN');
+        $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
 }

@@ -6,6 +6,7 @@ use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
+use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSSH extends Command
 {
-    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv;
+    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv, SkipsIfEnvVariableIsnotInstalled;
 
     /**
      * SSH_ID_RSA_PRIV
@@ -42,18 +43,11 @@ class PublishSSH extends Command
     protected $server_name;
 
     /**
-     * Token
-     *
-     * @var String
-     */
-    protected $token;
-
-    /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:ssh {email?} {server_name?} {ip?} {--token=}';
+    protected $signature = 'publish:ssh {email?} {server_name?} {ip?}';
 
     /**
      * The console command description.
@@ -117,7 +111,7 @@ class PublishSSH extends Command
         // We cannot use ssh-copy-id -i ~/.ssh/id_rsa.pub forge@146.185.164.54 because SSH acces via user/password is not enabled on Laravel Forge
         // We need to use the Laravel Forge API to add a key
 
-        $servers = $this->fetchServers($this->token);
+        $servers = $this->fetchServers();
 
         $server_names = collect($servers)->pluck('name')->toArray();
 
@@ -147,7 +141,7 @@ class PublishSSH extends Command
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->token
+                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]
         );
@@ -166,7 +160,7 @@ class PublishSSH extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->token = $this->checkEnv('token','ACACHA_FORGE_ACCESS_TOKEN');
+        $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
     /**
