@@ -52,7 +52,7 @@ return [
    | if you kwnow what you are doing.
    */
 
-    'url' => env('ACACHA_FORGE_URL', 'http://forge.acacha.com'),
+    'url' => env('ACACHA_FORGE_URL', 'http://forge.acacha.org'),
 
     /*
    |--------------------------------------------------------------------------
