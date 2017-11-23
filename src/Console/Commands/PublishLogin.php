@@ -85,7 +85,14 @@ class PublishLogin extends Command
             $this->showErrorAndDie($e);
         }
 
-        $access_token = json_decode( (string) $response->getBody())->access_token ;
+        $body = json_decode( (string) $response->getBody());
+
+        if(!isset($body->access_token)) {
+            $this->error("The URL $this->url doesn't return an access_token!");
+            die();
+        }
+
+        $access_token = $body->access_token;
 
         $this->addValueToEnv('ACACHA_FORGE_ACCESS_TOKEN', $access_token);
 

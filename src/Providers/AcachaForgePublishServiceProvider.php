@@ -88,6 +88,9 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
         $this->publishConfig();
     }
 
+    /**
+     * Publish config.
+     */
     protected function publishConfig()
     {
         $this->publishes([
