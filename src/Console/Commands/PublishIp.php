@@ -50,6 +50,6 @@ class PublishIp extends SaveEnvVariable
      */
     protected function questionText()
     {
-        return 'Acacha forge ip?';
+        return 'Acacha forge IP address?';
     }
 }

@@ -6,7 +6,7 @@ use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use Acacha\ForgePublish\Commands\Traits\ShowsErrorResponse;
 use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsAlreadyInstalled;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfNoEnvFileExists;
+use Acacha\ForgePublish\Commands\Traits\DiesIfNoEnvFileExists;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -17,7 +17,7 @@ use Illuminate\Console\Command;
  */
 class PublishLogin extends Command
 {
-    use ShowsErrorResponse, SkipsIfNoEnvFileExists, InteractsWithEnvironment, PossibleEmails;
+    use ShowsErrorResponse, DiesIfNoEnvFileExists, InteractsWithEnvironment, PossibleEmails;
 
     /**
      * The name and signature of the console command.
@@ -111,7 +111,7 @@ class PublishLogin extends Command
      */
     protected function checkIfCommandHaveToBeSkipped()
     {
-        $this->skipIfNoEnvFileIsFound();
+        $this->dieIfNoEnvFileIsFound();
     }
 
 }

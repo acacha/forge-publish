@@ -26,7 +26,7 @@ class PublishSite extends SaveEnvVariable
      *
      * @var string
      */
-    protected $description = 'Save acacha forge site';
+    protected $description = 'Save AcachaForge site';
 
     /**
      * Sites.
@@ -41,6 +41,13 @@ class PublishSite extends SaveEnvVariable
      * @var array
      */
     protected $site_names;
+
+    /**
+     * Site already exists?.
+     *
+     * @var boolean
+     */
+    protected $site_already_exists;
 
     /**
      * Server names.
@@ -104,7 +111,18 @@ class PublishSite extends SaveEnvVariable
      */
     protected function default() {
         $current_value = fp_env('ACACHA_FORGE_SITE');
-        return $current_value ? $this->getSiteName($this->sites, $current_value) : fp_env('ACACHA_FORGE_DOMAIN');
+        if (! $current_value ) {
+            $this->site_already_exists = false;
+            return fp_env('ACACHA_FORGE_DOMAIN');
+        } else {
+            if ( ! $site_name = $this->getSiteName($this->sites, $current_value)) {
+                $this->site_already_exists = false;
+                return null;
+            } else {
+                $this->site_already_exists = true;
+                return $site_name;
+            }
+        }
     }
 
     /**
@@ -112,6 +130,9 @@ class PublishSite extends SaveEnvVariable
      */
     protected function value()
     {
+        if (! $this->site_already_exists) {
+            $this->call('publish:create_site');
+        }
         $site_name = $this->anticipate( $this->questionText(), $this->site_names, $this->default());
         return $this->getSiteId($this->sites, $site_name);
     }

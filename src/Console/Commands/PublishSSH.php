@@ -6,7 +6,7 @@ use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsnotInstalled;
+use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSSH extends Command
 {
-    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv, SkipsIfEnvVariableIsnotInstalled;
+    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
      * SSH_ID_RSA_PRIV
@@ -160,7 +160,7 @@ class PublishSSH extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+        $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
     /**

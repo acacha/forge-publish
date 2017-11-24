@@ -12,7 +12,6 @@ use Illuminate\Console\Command;
  */
 class PublishInit extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -39,6 +38,8 @@ class PublishInit extends Command
 
         $this->confirmAnUserIsCreatedInAcachaLaravelForge();
 
+        $this->call('publish:url');
+
         $this->call('publish:email');
 
         $this->login();
@@ -46,6 +47,10 @@ class PublishInit extends Command
         $this->call('publish:server');
 
         $this->call('publish:domain');
+
+        $this->call('publish:project_type');
+
+        $this->call('publish:site_directory');
 
         $this->call('publish:site');
 
@@ -105,12 +110,15 @@ class PublishInit extends Command
         $this->call('publish:info');
 
         $this->info('');
-        $this->info('Perfect! All info is saved to your environment. Enjoy Acacha forge publish!');
+        $this->info('Perfect! All info is saved to your environment (.env file).');
         $this->info('');
-        $this->error('Remember to rerun your server to apply changes in .env file!!!');
+        $this->error('If needed, remember to rerun your server to apply changes in .env file!!!');
         $this->info('');
 
-        $this->info("I have finished! Congratulations and enjoy!");
+        $this->info("I have finished! Congratulations and enjoy Acha Laravel Forge!");
+
+        $this->info("You are now ready to publish your awesome project to Laravel Forge using:");
+
+        $this->info("**** php artisan publish ***");
     }
-
 }

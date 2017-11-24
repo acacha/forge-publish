@@ -3,20 +3,18 @@
 namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
- * Trait SkipsIfEnvVariableIsnotInstalled
+ * Trait DiesIfEnvVariableIsnotInstalled
  *
  * @package Acacha\ForgePublish\Commands
  */
-trait SkipsIfEnvVariableIsnotInstalled
+trait DiesIfEnvVariableIsnotInstalled
 {
-    use GetsEnv;
-
     /**
      * Skip if env var is not installed.
      */
-    protected function skipIfEnvVarIsNotInstalled($env_var)
+    protected function dieIfEnvVarIsNotInstalled($env_var)
     {
-        if ( ! $this->env($env_var) ) {
+        if ( ! fp_env($env_var) ) {
             $this->info("No $env_var key found in .env file.");
             $this->info('Please configure this .env variable manually or run php artisan publish:init. Skipping...');
             die();

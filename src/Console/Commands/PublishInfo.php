@@ -52,7 +52,9 @@ class PublishInfo extends Command
             [ 'ACACHA_FORGE_EMAIL', fp_env('ACACHA_FORGE_EMAIL','Not available!')],
             [ 'ACACHA_FORGE_SERVER', fp_env('ACACHA_FORGE_SERVER','Not available!')],
             [ 'ACACHA_FORGE_DOMAIN', fp_env('ACACHA_FORGE_DOMAIN','Not available!')],
+            [ 'ACACHA_FORGE_PROJECT_TYPE', fp_env('ACACHA_FORGE_PROJECT_TYPE','Not available!')],
             [ 'ACACHA_FORGE_SITE', fp_env('ACACHA_FORGE_SITE','Not available!')],
+            [ 'ACACHA_FORGE_SITE_DIRECTORY', fp_env('ACACHA_FORGE_SITE_DIRECTORY','Not available!')],
             [ 'ACACHA_FORGE_IP_ADDRESS', fp_env('ACACHA_FORGE_IP_ADDRESS','Not available!')],
             [ 'ACACHA_FORGE_GITHUB_REPO', fp_env('ACACHA_FORGE_GITHUB_REPO','Not available!')]
         ];
@@ -60,6 +62,4 @@ class PublishInfo extends Command
         $this->table($headers, $tasks);
 
     }
-
-
 }

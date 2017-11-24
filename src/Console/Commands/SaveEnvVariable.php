@@ -3,8 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsAlreadyInstalled;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfNoEnvFileExists;
+use Acacha\ForgePublish\Commands\Traits\DiesIfNoEnvFileExists;
 use Illuminate\Console\Command;
 
 /**
@@ -14,7 +13,7 @@ use Illuminate\Console\Command;
  */
 abstract class SaveEnvVariable extends Command
 {
-    use SkipsIfNoEnvFileExists, InteractsWithEnvironment;
+    use DiesIfNoEnvFileExists, InteractsWithEnvironment;
 
     /**
      * Env var to set.
@@ -68,14 +67,14 @@ abstract class SaveEnvVariable extends Command
      * Before.
      */
     protected function before() {
-
+        //
     }
 
     /**
      * After.
      */
     protected function after() {
-
+        //
     }
 
     /**
@@ -93,7 +92,7 @@ abstract class SaveEnvVariable extends Command
      */
     protected function checkIfCommandHaveToBeSkipped()
     {
-        $this->skipIfNoEnvFileIsFound();
+        $this->dieIfNoEnvFileIsFound();
     }
 
     /**

@@ -5,16 +5,16 @@ namespace Acacha\ForgePublish\Commands\Traits;
 use Illuminate\Support\Facades\File;
 
 /**
- * Trait SkipsIfNoEnvFileExists
+ * Trait DiesIfNoEnvFileExists
  *
  * @package Acacha\ForgePublish\Commands
  */
-trait SkipsIfNoEnvFileExists
+trait DiesIfNoEnvFileExists
 {
     /**
      * Skip if no .env file found.
      */
-    protected function skipIfNoEnvFileIsFound()
+    protected function dieIfNoEnvFileIsFound()
     {
         if (! File::exists(base_path('.env')) ) {
             $this->info('No .env file found!');

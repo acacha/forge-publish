@@ -22,12 +22,16 @@ use Acacha\ForgePublish\Commands\PublishLog;
 use Acacha\ForgePublish\Commands\PublishLogin;
 use Acacha\ForgePublish\Commands\PublishNpm;
 use Acacha\ForgePublish\Commands\PublishOpen;
+use Acacha\ForgePublish\Commands\PublishProjectType;
 use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishSite;
+use Acacha\ForgePublish\Commands\PublishSiteDirectory;
+use Acacha\ForgePublish\Commands\PublishSites;
 use Acacha\ForgePublish\Commands\PublishSSH;
 use Acacha\ForgePublish\Commands\PublishSSL;
 use Acacha\ForgePublish\Commands\PublishToken;
+use Acacha\ForgePublish\Commands\PublishURL;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -58,7 +62,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
 //                PublishAutodeploy::class,
 //                PublishComposer::class,
 //                PublishConnect::class,
-//                PublishCreateSite::class,
+                PublishCreateSite::class,
 //                PublishDNS::class,
                 PublishDomain::class,
                 PublishEmail::class,
@@ -74,12 +78,16 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishLogin::class,
 //                PublishNpm::class,
 //                PublishOpen::class,
+                PublishProjectType::class,
                 PublishRc::class,
                 PublishServer::class,
+                PublishSiteDirectory::class,
                 PublishSite::class,
+                PublishSites::class,
 //                PublishSSH::class,
 //                PublishSSL::class,
                 PublishToken::class,
+                PublishURL::class,
             ]);
         }
         

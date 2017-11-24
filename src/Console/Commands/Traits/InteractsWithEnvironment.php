@@ -21,7 +21,7 @@ trait InteractsWithEnvironment
     protected function addValueToEnv($key, $value)
     {
         $env_path = base_path('.env');
-        $sed_command = "/bin/sed -i '/^$key/d' " . $env_path;
+        $sed_command = "/bin/sed -i '/^$key=/d' " . $env_path;
         passthru($sed_command);
         File::append($env_path, "\n$key=$value\n");
     }

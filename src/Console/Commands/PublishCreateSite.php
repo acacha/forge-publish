@@ -2,10 +2,10 @@
 
 namespace Acacha\ForgePublish\Commands;
 
-use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
+use Acacha\ForgePublish\Commands\Traits\ItFetchesSites;
 use Acacha\ForgePublish\Commands\Traits\ShowsErrorResponse;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsnotInstalled;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfNoEnvFileExists;
+use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
+use Acacha\ForgePublish\Commands\Traits\DiesIfNoEnvFileExists;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -16,14 +16,36 @@ use Illuminate\Console\Command;
  */
 class PublishCreateSite extends Command
 {
-    use ShowsErrorResponse, SkipsIfNoEnvFileExists, SkipsIfEnvVariableIsnotInstalled, ItFetchesServers;
+    use ShowsErrorResponse, DiesIfNoEnvFileExists, DiesIfEnvVariableIsnotInstalled, ItFetchesSites;
+
+    /**
+     * Project type.
+     *
+     * @var String
+     */
+    protected $project_type;
+
+    /**
+     * Site directory.
+     *
+     * @var String
+     */
+    protected $site_directory;
+
+    /**
+     * Domain.
+     *
+     * @var String
+     */
+    protected $domain;
+
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:create_site {forge_server?} {domain?} {project_type?} {site_directory?}';
+    protected $signature = 'publish:create_site {server?} {domain?} {project_type?} {site_directory?}';
 
     /**
      * The console command description.
@@ -38,6 +60,27 @@ class PublishCreateSite extends Command
      * @var Client
      */
     protected $http;
+
+    /**
+     * Laravel Forge site name.
+     *
+     * @var array
+     */
+    protected $sites;
+
+    /**
+     * Laravel Forge site name.
+     *
+     * @var String
+     */
+    protected $site;
+
+    /**
+     * Laravel Forge site id.
+     *
+     * @var integer
+     */
+    protected $site_id;
 
     /**
      * API endpoint URL
@@ -58,6 +101,60 @@ class PublishCreateSite extends Command
     }
 
     /**
+     * Get Value.
+     *
+     * @return array|int|null|string
+     */
+    protected function getValue($value, $env_var , $command)
+    {
+        if ($this->argument($value)) {
+            return $this->argument($value);
+        } else {
+            return fp_env($env_var) ? fp_env($env_var) :$this->call("publish:$command");
+        }
+    }
+
+    /**
+     * Get Forge server.
+     *
+     * @return array|int|null|string
+     */
+    protected function getForgeServer()
+    {
+        return $this->getValue('server', 'ACACHA_FORGE_SERVER' , 'server');
+    }
+
+    /**
+     * Get Domain.
+     *
+     * @return array|int|null|string
+     */
+    protected function getDomain()
+    {
+        return $this->getValue('domain', 'ACACHA_FORGE_DOMAIN' , 'domain');
+    }
+
+    /**
+     * Get project type.
+     *
+     * @return array|int|null|string
+     */
+    protected function getProjectType()
+    {
+        return $this->getValue('project_type', 'ACACHA_FORGE_PROJECT_TYPE' , 'project_type');
+    }
+
+    /**
+     * Get site directory.
+     *
+     * @return array|int|null|string
+     */
+    protected function getSiteDirectory()
+    {
+        return $this->getValue('site_directory', 'ACACHA_FORGE_SITE_DIRECTORY' , 'site_directory');
+    }
+
+    /**
      * Execute the console command.
      *
      */
@@ -65,44 +162,54 @@ class PublishCreateSite extends Command
     {
         $this->checkIfCommandHaveToBeSkipped();
 
-        $servers = $this->fetchServers();
-        $server_names = collect($servers)->pluck('name')->toArray();
-
-        if ($this->argument('forge_server')) {
-            $forge_server = $this->argument('forge_server');
-        } else {
-            $server_name = $this->choice('Forge server?', $server_names, 0);
-            $forge_server = $this->getForgeIdServer($servers,$server_name);
+        if ($this->siteIsAlreadyCreated()) {
+            $this->info("Site $this->site ($this->site_id) is already created. Skipping...");
+            return;
         }
 
-        $domain = $this->argument('domain') ? $this->argument('domain') : $this->ask('Domain?');
-        $project_type = $this->argument('project_type') ?
-                    $this->argument('project_type') :
-                    $this->ask('Project Type?', config('forge-publish.project_type'));
-        $site_directory = $this->argument('site_directory') ?
-            $this->argument('site_directory') :
-            $this->ask('Directory?', config('forge-publish.site_directory'));
+        $this->obtainFields();
+        $this->url = $this->obtainApiEndPointURL();
+        $this->info('The site has been added to Forge');
+    }
 
-        $uri = str_replace('{forgeserver}', $forge_server , config('forge-publish.post_sites_uri'));
-        $this->url = config('forge-publish.url') . $uri;
+    /**
+     * Obtain fields.
+     */
+    protected function obtainFields()
+    {
+        $this->server = $this->getForgeServer();
+        $this->domain = $this->getDomain();
+        $this->project_type = $this->getProjectType();
+        $this->site_directory = $this->getSiteDirectory();
+    }
 
+    /**
+     * Create site on Forge.
+     */
+    protected function createSiteOnForge() {
         try {
             $this->http->post($this->url, [
                 'form_params' => [
-                    'domain' => $domain,
-                    'project_type' => $project_type,
-                    'directory' => $site_directory
-                ],
-                'headers' => [
-                    'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
-                ]
-            ]);
+                'domain' => $this->domain,
+                'project_type' => $this->project_type,
+                'directory' => $this->site_directory
+            ],
+            'headers' => [
+            'X-Requested-With' => 'XMLHttpRequest',
+            'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
+            ]
+        ]);
         } catch (\Exception $e) {
             $this->showErrorAndDie($e);
         }
+    }
 
-        $this->info('The site has been added to Forge');
+    /**
+     * Obtain API endpoint URL.
+     */
+    protected function obtainApiEndPointURL() {
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_sites_uri'));
+        return config('forge-publish.url') . $uri;
     }
 
     /**
@@ -110,8 +217,18 @@ class PublishCreateSite extends Command
      */
     protected function checkIfCommandHaveToBeSkipped()
     {
-        $this->skipIfNoEnvFileIsFound();
-        $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+        $this->dieIfNoEnvFileIsFound();
+        $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+        $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_SERVER');
+    }
+
+    /**
+     * is site already created?
+     */
+    protected function siteIsAlreadyCreated()
+    {
+        $this->sites = $this->fetchSites(fp_env('ACACHA_FORGE_SERVER'));
+        $this->site = fp_env('ACACHA_FORGE_SITE');
     }
 
 }

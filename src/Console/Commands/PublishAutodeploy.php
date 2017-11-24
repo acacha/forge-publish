@@ -5,7 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
-use Acacha\ForgePublish\Commands\Traits\SkipsIfEnvVariableIsnotInstalled;
+use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -17,7 +17,7 @@ use Illuminate\Console\Command;
 class PublishAutodeploy extends Command
 {
 
-    use ChecksEnv, SkipsIfEnvVariableIsnotInstalled;
+    use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
      * Server name
@@ -99,7 +99,7 @@ class PublishAutodeploy extends Command
     {
       $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
       $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
-      $this->skipIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+      $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 
 }
