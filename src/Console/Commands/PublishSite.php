@@ -36,6 +36,13 @@ class PublishSite extends SaveEnvVariable
     protected $sites;
 
     /**
+     * Default value.
+     *
+     * @var string
+     */
+    protected $default;
+
+    /**
      * Site names.
      *
      * @var array
@@ -47,7 +54,7 @@ class PublishSite extends SaveEnvVariable
      *
      * @var boolean
      */
-    protected $site_already_exists;
+    protected $site_already_exists = false;
 
     /**
      * Server names.
@@ -103,6 +110,7 @@ class PublishSite extends SaveEnvVariable
     {
         $this->sites = $this->fetchSites(fp_env('ACACHA_FORGE_SERVER'));
         $this->site_names = collect($this->sites)->pluck('name')->toArray();
+        $this->default = $this->default();
     }
 
     /**
@@ -111,18 +119,11 @@ class PublishSite extends SaveEnvVariable
      */
     protected function default() {
         $current_value = fp_env('ACACHA_FORGE_SITE');
-        if (! $current_value ) {
-            $this->site_already_exists = false;
-            return fp_env('ACACHA_FORGE_DOMAIN');
-        } else {
-            if ( ! $site_name = $this->getSiteName($this->sites, $current_value)) {
-                $this->site_already_exists = false;
-                return null;
-            } else {
-                $this->site_already_exists = true;
-                return $site_name;
-            }
+        if ( $current_value ) {
+            $site_name = $this->getSiteName($this->sites, $current_value);
+            if ($site_name) return $site_name;
         }
+        return fp_env('ACACHA_FORGE_DOMAIN');
     }
 
     /**
@@ -130,11 +131,19 @@ class PublishSite extends SaveEnvVariable
      */
     protected function value()
     {
-        if (! $this->site_already_exists) {
+        $site_name = $this->anticipate( $this->questionText(), $this->site_names, $this->default);
+        $site_id = $this->getSiteId($this->sites, $site_name);
+        if ( ! $site_id ) {
             $this->call('publish:create_site');
+        } else {
+            $this->info("Site ($site_name) already exists on Laravel Forge with site_id: $site_id");
         }
-        $site_name = $this->anticipate( $this->questionText(), $this->site_names, $this->default());
-        return $this->getSiteId($this->sites, $site_name);
+        $site_id = $this->getSiteId($this->sites, $site_name);
+        if(!$site_id) {
+            $this->error("No site_id obtained! Maybe some error occurs when creating site on Laravel Forge...");
+            die();
+        }
+        return $site_id;
     }
 
 }

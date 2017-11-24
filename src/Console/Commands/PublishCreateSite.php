@@ -76,6 +76,13 @@ class PublishCreateSite extends Command
     protected $site;
 
     /**
+     * Laravel Forge server.
+     *
+     * @var String
+     */
+    protected $server;
+
+    /**
      * Laravel Forge site id.
      *
      * @var integer
@@ -110,7 +117,7 @@ class PublishCreateSite extends Command
         if ($this->argument($value)) {
             return $this->argument($value);
         } else {
-            return fp_env($env_var) ? fp_env($env_var) :$this->call("publish:$command");
+            return fp_env($env_var) ? fp_env($env_var) : $this->call("publish:$command");
         }
     }
 
@@ -161,14 +168,13 @@ class PublishCreateSite extends Command
     public function handle()
     {
         $this->checkIfCommandHaveToBeSkipped();
-
+        $this->obtainFields();
         if ($this->siteIsAlreadyCreated()) {
             $this->info("Site $this->site ($this->site_id) is already created. Skipping...");
             return;
         }
-
-        $this->obtainFields();
         $this->url = $this->obtainApiEndPointURL();
+        $this->createSiteOnForge();
         $this->info('The site has been added to Forge');
     }
 
@@ -188,18 +194,20 @@ class PublishCreateSite extends Command
      */
     protected function createSiteOnForge() {
         try {
+            $this->info('Creating site ' . $this->domain . ' on server ' . $this->server);
             $this->http->post($this->url, [
                 'form_params' => [
-                'domain' => $this->domain,
-                'project_type' => $this->project_type,
-                'directory' => $this->site_directory
-            ],
-            'headers' => [
-            'X-Requested-With' => 'XMLHttpRequest',
-            'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
-            ]
+                    'domain' => $this->domain,
+                    'project_type' => $this->project_type,
+                    'directory' => $this->site_directory
+                ],
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
+                ]
         ]);
         } catch (\Exception $e) {
+            dump($e);
             $this->showErrorAndDie($e);
         }
     }
@@ -223,12 +231,14 @@ class PublishCreateSite extends Command
     }
 
     /**
-     * is site already created?
+     * Is site already created?
      */
     protected function siteIsAlreadyCreated()
     {
         $this->sites = $this->fetchSites(fp_env('ACACHA_FORGE_SERVER'));
         $this->site = fp_env('ACACHA_FORGE_SITE');
+        if (in_array($this->site, collect($this->sites)->pluck('id')->toArray())) return true;
+        return in_array($this->domain, collect($this->sites)->pluck('name')->toArray());
     }
 
 }

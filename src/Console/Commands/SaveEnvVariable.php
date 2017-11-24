@@ -56,6 +56,11 @@ abstract class SaveEnvVariable extends Command
         $this->before();
 
         $value = $this->argument($this->argKey()) ? $this->argument($this->argKey()) : $this->value() ;
+        if (!$value) {
+            $envVar = $this->envVar();
+            $this->error("Value could not be null for env var: $envVar");
+            die();
+        }
         $this->addValueToEnv($this->envVar(), $value);
 
         $this->info('The Acacha Forge ' . $this->argKey() . ' has been added to file .env with key ' . $this->envVar());
