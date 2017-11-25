@@ -167,7 +167,7 @@ class PublishCreateSite extends Command
      */
     public function handle()
     {
-        $this->checkIfCommandHaveToBeSkipped();
+        $this->abortCommandExecution();
         $this->obtainFields();
         if ($this->siteIsAlreadyCreated()) {
             $this->info("Site $this->site ($this->site_id) is already created. Skipping...");
@@ -207,7 +207,6 @@ class PublishCreateSite extends Command
                 ]
         ]);
         } catch (\Exception $e) {
-            dump($e);
             $this->showErrorAndDie($e);
         }
     }
@@ -223,7 +222,7 @@ class PublishCreateSite extends Command
     /**
      * Check if command have to be skipped.
      */
-    protected function checkIfCommandHaveToBeSkipped()
+    protected function abortCommandExecution()
     {
         $this->dieIfNoEnvFileIsFound();
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');

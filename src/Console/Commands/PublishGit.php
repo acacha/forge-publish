@@ -68,7 +68,7 @@ class PublishGit extends SaveEnvVariable
      */
     protected function getRepoFromGithubConfig()
     {
-        $remote = `git remote get-url origin`;
+        $remote = `git remote get-url origin 2> /dev/null`;
         if ( ! starts_with($remote,'git@github.com:')) return '';
         return explode('.', explode(":", $remote)[1])[0];
     }

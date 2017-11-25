@@ -44,6 +44,8 @@ class PublishInit extends Command
 
         $this->login();
 
+        $this->call('publish:check_token');
+
         $this->call('publish:server');
 
         $this->call('publish:domain');

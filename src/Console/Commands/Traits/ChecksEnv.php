@@ -19,7 +19,7 @@ trait ChecksEnv
      */
     protected function checkEnv($option, $env_var, $type = 'option')
     {
-        $value = $this->$type($option) ? $this->$type($option) : $this->env($env_var);
+        $value = $this->$type($option) ? $this->$type($option) : fp_env($env_var);
         if ( !$value) {
             $this->error("No env var $env_var found. Please run php artisan publish:init");
             die();

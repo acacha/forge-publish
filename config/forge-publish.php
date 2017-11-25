@@ -199,4 +199,17 @@ return [
 
   'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deploy'),
 
+    /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE GET CHECK TOKEN URI ENDPOINT. Default: /api/v1/check_token
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge get check token URI endpoint: /api/v1/check_token
+  |
+  | This value could be overwriten using ACACHA_FORGE_GET_CHECK_TOKEN_URI env variable
+  | if you kwnow what you are doing.
+  */
+
+  'get_check_token_uri' => env('ACACHA_FORGE_GET_CHECK_TOKEN_URI','/api/v1/check_token'),
+
 ];
