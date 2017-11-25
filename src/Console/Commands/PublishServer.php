@@ -124,8 +124,12 @@ class PublishServer extends SaveEnvVariable
     protected function after()
     {
         $ip_address = $this->serverIpAddress($this->servers, $this->server);
+        $server_name = $this->getForgeName($this->servers, $this->server);
         $this->call("publish:ip", [
             'ip' => $ip_address
+        ]);
+        $this->call("publish:server_name", [
+            'server_name' => $server_name
         ]);
     }
 

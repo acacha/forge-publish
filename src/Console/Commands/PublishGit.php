@@ -58,7 +58,14 @@ class PublishGit extends SaveEnvVariable
      *
      */
     protected function default() {
-        return fp_env($this->envVar()) ? fp_env($this->envVar()) : $this->getRepoFromGithubConfig();
+        $default = $this->getRepoFromGithubConfig();
+        if ( ! $default) {
+            $this->error('No Github Repository found!');
+            if ($this->confirm('Do you want to run llum github:init command (requires llum installed!)?')) {
+                passthru('llum github:init');
+            }
+        }
+        return fp_env($this->envVar()) ? fp_env($this->envVar()) : $default;
     }
 
     /**

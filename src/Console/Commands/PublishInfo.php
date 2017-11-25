@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksServer;
 use Acacha\ForgePublish\Commands\Traits\ChecksSite;
 use Acacha\ForgePublish\Commands\Traits\ChecksToken;
+use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -17,6 +18,13 @@ use Illuminate\Console\Command;
 class PublishInfo extends Command
 {
     use ChecksToken, ChecksServer, ChecksSite;
+
+    /**
+     * Servers
+     *
+     * @var array
+     */
+    protected $servers;
 
     /**
      * The name and signature of the console command.
@@ -65,11 +73,12 @@ class PublishInfo extends Command
             [ 'ACACHA_FORGE_ACCESS_TOKEN', $this->token() ],
             [ 'ACACHA_FORGE_EMAIL', fp_env('ACACHA_FORGE_EMAIL','Not available!')],
             [ 'ACACHA_FORGE_SERVER', $this->server()],
+            [ 'ACACHA_FORGE_IP_ADDRESS', $this->ip()],
+            [ 'ACACHA_FORGE_SERVER_NAME', $this->name()],
             [ 'ACACHA_FORGE_DOMAIN', fp_env('ACACHA_FORGE_DOMAIN','Not available!')],
             [ 'ACACHA_FORGE_PROJECT_TYPE', fp_env('ACACHA_FORGE_PROJECT_TYPE','Not available!')],
             [ 'ACACHA_FORGE_SITE', $this->site()],
             [ 'ACACHA_FORGE_SITE_DIRECTORY', fp_env('ACACHA_FORGE_SITE_DIRECTORY','Not available!')],
-            [ 'ACACHA_FORGE_IP_ADDRESS', fp_env('ACACHA_FORGE_IP_ADDRESS','Not available!')],
             [ 'ACACHA_FORGE_GITHUB_REPO', fp_env('ACACHA_FORGE_GITHUB_REPO','Not available!')]
         ];
 
@@ -97,13 +106,7 @@ class PublishInfo extends Command
      */
     protected function server()
     {
-        if ($server = fp_env('ACACHA_FORGE_SERVER',null)) {
-            if ($this->checkServer()) return $server;
-            $this->error('Be careful! The server you provided is not valid');
-            return "<error>$server</error>";
-        } else {
-            return 'Not available!';
-        }
+        return $this->check('ACACHA_FORGE_SITE','checkServer');
     }
 
     /**
@@ -113,10 +116,40 @@ class PublishInfo extends Command
      */
     protected function site()
     {
-        if ($site = fp_env('ACACHA_FORGE_SITE',null)) {
-            if ($this->checkSite()) return $site;
-            $this->error('Be careful! The site you provided is not valid');
-            return "<error>$site</error>";
+        return $this->check('ACACHA_FORGE_SITE','checkSite');
+    }
+
+    /**
+     * Check and obtain ip.
+     *
+     * @return null
+     */
+    protected function ip()
+    {
+        return $this->check('ACACHA_FORGE_IP_ADDRESS','checkIp');
+    }
+
+    /**
+     * Check and obtain server name.
+     *
+     * @return null
+     */
+    protected function name()
+    {
+        return $this->check('ACACHA_FORGE_SERVER_NAME','checkServerName');
+    }
+
+    /**
+     * Check and obtain ip.
+     *
+     * @return null
+     */
+    protected function check($env_var,$functionName)
+    {
+        if ($value = fp_env($env_var,null)) {
+            if ($this->$functionName()) return $value;
+            $this->error("Be careful! The $env_var you provided doesn't match Laravel Forge server");
+            return "<error>$value</error>";
         } else {
             return 'Not available!';
         }

@@ -34,43 +34,12 @@ class Publish extends Command
 
         $this->call('publish:install_repo');
 
-//        $this->call('publish:create_site');
+        $this->call('publish:ssh');
 
-//        $this->call('publish:create_site', [
-//            'forge_server' => $forge_id_server,
-//            'domain' => $domain,
-//            'project_type' => config('forge-publish.project_type'),
-//            'site_directory' => config('forge-publish.site_directory'),
-//        ]);
-
-//        if ( ! in_array($domain, $site_names) )  {
-//            $this->info("It seems you don't have a Laravel Forge site created with domain: $domain");
-//
-//            if ($this->confirm("Do you want to create site ($domain)?")) {
-//                $this->call('publish:create_site', [
-//                    'forge_server' => $forge_id_server,
-//                    'domain' => $domain,
-//                    'project_type' => config('forge-publish.project_type'),
-//                    'site_directory' => config('forge-publish.site_directory'),
-//                ]);
-//
-//                $server_id = env('ACACHA_FORGE_SERVER',null) ? env('ACACHA_FORGE_SERVER') : $forge_id_server;
-//
-//                $site_id = $this->getSiteId($sites, $domain);
-//
-//                if ( env('ACACHA_FORGE_SITE', null) == null) {
-//                    $this->call('publish:site', [
-//                        'site' => $site_id
-//                    ]);
-//                }
-//            }
+//        if (! $this->dnsAlreadyConfigured ) {
+//            $this->call('publish:dns');
 //        }
-//
-//        $this->call('publish:install_repo',[
-//            'repository' => $github_repo,
-//            '--server' => $forge_id_server,
-//            '--site' => $site_id,
-//        ]);
+
 //
 //        if (! $this->dnsAlreadyConfigured ) {
 //            $this->call('publish:dns',[

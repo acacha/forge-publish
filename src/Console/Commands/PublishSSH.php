@@ -3,6 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
+use Acacha\ForgePublish\Commands\Traits\ChecksServer;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\File;
  */
 class PublishSSH extends Command
 {
-    use PossibleEmails, ItFetchesServers, ChecksSSHConnection, ChecksEnv, DiesIfEnvVariableIsnotInstalled;
+    use PossibleEmails, ChecksSSHConnection, ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
      * SSH_ID_RSA_PRIV
@@ -36,11 +37,39 @@ class PublishSSH extends Command
     const USR_BIN_SSH = '/usr/bin/ssh';
 
     /**
-     * Server name
+     * Servers.
+     *
+     * @var array
+     */
+    protected $servers;
+
+    /**
+     * Server.
+     *
+     * @var array
+     */
+    protected $server;
+
+    /**
+     * Server name.
+     *
+     * @var array
+     */
+    protected $server_name;
+
+    /**
+     * Server names.
+     *
+     * @var array
+     */
+    protected $server_names;
+
+    /**
+     *API endpint URL
      *
      * @var String
      */
-    protected $server_name;
+    protected $url;
 
     /**
      * The name and signature of the console command.
@@ -81,24 +110,108 @@ class PublishSSH extends Command
     {
         $this->info("Configuring SSH...");
 
+        $this->checkForSSHClientOrInstall();
+
+        $this->checkForSSHKeysOrCreate();
+
+        $this->obtainServersInfo();
+
+        $this->appendSSHConfig();
+
+        $this->abortCommandExecution();
+        $this->installSSHKeyOnServer();
+
+        $this->testSSHConnection();
+    }
+
+    /**
+     * Check for SSH client or install it if missing.
+     */
+    protected function checkForSSHClientOrInstall()
+    {
         if(! File::exists(self::USR_BIN_SSH)) {
             $this->info('No SSH client found on your system (' . self::USR_BIN_SSH .')!');
             $this->installSshClient();
         } else {
             $this->info('SSH client found in your system (' . self::USR_BIN_SSH .')...');
         }
+    }
 
+    /**
+     * Check for SSH client or install it if missing.
+     */
+    protected function checkForSSHKeysOrCreate()
+    {
         if ( File::exists($_SERVER['HOME'] . self::SSH_ID_RSA_PRIV) ) {
             $this->info('SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')...');
         } else {
             $this->info('No SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')!');
             $this->createSSHKeys();
         }
+    }
 
-        $this->appendSSHConfig();
-        $this->installSSHKeyOnServer();
+    protected function obtainServersInfo()
+    {
 
-        $this->testSSHConnection();
+        $this->obtainServers();
+        $this->obtainServer();
+    }
+
+    /**
+     * Obtain servers.
+     */
+    protected function obtainServers()
+    {
+        $this->servers = $this->fetchServers();
+        $this->server_names = collect($this->servers)->pluck('name')->toArray();
+        if (empty($this->server_names)) {
+            $this->error('No valid servers assigned to user. Skipping SSH key installation on server...');
+            die();
+        }
+    }
+
+    /**
+     * Obtain server.
+     */
+    protected function obtainServer()
+    {
+        if (! $this->server) {
+            if ($this->argument('server_name')) {
+                $this->server = $this->getForgeIdServer($this->servers, $this->argument('server_name'));
+                if (!$this->server) {
+                    $this->error('No server name found on servers assigned to user!');
+                    die();
+                }
+                $this->server_name = $this->argument('server_name');
+
+            } else {
+                if (fp_env('ACACHA_FORGE_SERVER')) {
+                    $this->server = fp_env('ACACHA_FORGE_SERVER');
+                    if (fp_env('ACACHA_FORGE_SERVER_NAME')) {
+                        $this->server_name = fp_env('ACACHA_FORGE_SERVER_NAME');
+                    } else {
+                        $this->server_name = $this->getForgeName($this->servers, $this->server);
+                    }
+                } else {
+                    $this->server_name = $this->choice('Forge server?', $this->server_names, 0);
+                    $this->server = $this->getForgeIdServer($this->servers, $this->server_name);
+                }
+            }
+        }
+
+        $this->checkServer($this->server);
+        $this->checkServerName($this->server_name);
+    }
+
+    /**
+     * Get ENDPOINT API URL.
+     *
+     * @return string
+     */
+    protected function endPointAPIURL()
+    {
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_ssh_keys_uri'));
+        return config('forge-publish.url') . $uri;
     }
 
     /**
@@ -106,45 +219,13 @@ class PublishSSH extends Command
      */
     protected function installSSHKeyOnServer()
     {
-        $this->abortCommandExecution();
         $this->info('Adding SSH key to Laravel Forge server');
         // We cannot use ssh-copy-id -i ~/.ssh/id_rsa.pub forge@146.185.164.54 because SSH acces via user/password is not enabled on Laravel Forge
         // We need to use the Laravel Forge API to add a key
 
-        $servers = $this->fetchServers();
+        $this->url = $this->endPointAPIURL();
 
-        $server_names = collect($servers)->pluck('name')->toArray();
-
-        if ($this->argument('server_name')) {
-            $forge_server = $this->argument('server_name');
-        } else {
-            if (empty($server_names)) {
-                $this->error('No valid servers assigned to user!');
-                die();
-            }
-            $server_name = $this->choice('Forge server?', $server_names, 0);
-            $forge_server = $this->getForgeIdServer($servers,$server_name);
-        }
-
-        $uri = str_replace('{forgeserver}', $forge_server , config('forge-publish.post_ssh_keys_uri'));
-        $url = config('forge-publish.url') . $uri;
-
-        $keyName = $this->getUniqueKeyNameFromEmail();
-
-        $key = file_get_contents($_SERVER['HOME'] . self::SSH_ID_RSA_PUB);
-
-        $response = $this->http->post($url,
-            [
-                'form_params' => [
-                    'name' => $keyName,
-                    'key' => $key
-                ],
-                'headers' => [
-                    'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
-                ]
-            ]
-        );
+        $response = $this->postKeyToLaravelForgeServer($keyName = $this->getUniqueKeyNameFromEmail());
 
         $result = json_decode($contents = $response->getBody()->getContents());
 
@@ -152,7 +233,27 @@ class PublishSSH extends Command
             $this->error("An error has been succeded: $contents");
             die();
         }
-        if ($result->status == 'installed') $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server $forge_server");
+        if ($result->status == 'installed') $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server " . $this->server_name . ' (' . $this->server . ')');
+    }
+
+    /**
+     * Post key to Laravel Forge Server.
+     */
+    protected function postKeyToLaravelForgeServer($keyName=null)
+    {
+        $keyName ? $keyName : $this->getUniqueKeyNameFromEmail();
+        return $this->http->post($this->url,
+            [
+                'form_params' => [
+                    'name' => $keyName,
+                    'key' => file_get_contents($_SERVER['HOME'] . self::SSH_ID_RSA_PUB)
+                ],
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
+                ]
+            ]
+        );
     }
 
     /**
@@ -176,24 +277,41 @@ class PublishSSH extends Command
      */
     protected function appendSSHConfig()
     {
-        $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
+        $ssh_config_file = $this->sshConfigFile();
 
-        $this->server_name = $this->argument('server_name') ? camel_case($this->argument('server_name')) : camel_case($this->ask('Server Name?'));
-        $host_string = "Host $this->server_name";
+        $hostname = $this->hostNameForConfigFile();
+
+        $host_string = "Host " . $hostname;
 
         if( strpos(file_get_contents($ssh_config_file), $host_string) !== false) {
-            $this->info("SSH config for host: $this->server_name already exists");
+            $this->info("SSH config for host: $host_string already exists");
             return;
         }
 
         $this->info("Adding server config to SSH config file $ssh_config_file");
         if (! File::exists($ssh_config_file)) touch($ssh_config_file);
-        $ip_address = $this->argument('ip') ? $this->argument('ip') : $this->ask('IP Address?');
-        $this->validateIpAddress($ip_address);
+        $ip_address = $this->ip_address();
         $config_string = "\n$host_string\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n  StrictHostKeyChecking no\n";
         File::append($ssh_config_file,$config_string);
 
         $this->info('The following config has been added:' . $config_string);
+    }
+
+    /**
+     * IP address.
+     *
+     * @return array|string
+     */
+    protected function ip_address()
+    {
+        if (fp_env('ACACHA_FORGE_IP_ADDRESS')) {
+            $ip_address = fp_env('ACACHA_FORGE_IP_ADDRESS');
+        } else {
+            $ip_address = $this->argument('ip') ? $this->argument('ip') : $this->ask('IP Address?');
+        }
+
+        $this->validateIpAddress($ip_address);
+        return $ip_address;
     }
 
     /**
@@ -203,21 +321,23 @@ class PublishSSH extends Command
      */
     protected function validateIpAddress($ip_address)
     {
-        if ( !filter_var($ip_address, FILTER_VALIDATE_IP)) {
+        if ( ! filter_var($ip_address, FILTER_VALIDATE_IP) ) {
             $this->error("$ip_address is not a valid ip address! Exiting!");
+            die();
+        }
+        if ( ! $this->checkIp($ip_address, $this->servers)) {
+            $this->error("$ip_address doesn't match any of your IP addreses Forge Servers");
             die();
         }
     }
 
     /**
-     * Test connection
+     * Test SSH connection.
      */
     protected function testSSHConnection()
     {
         $this->info('Testing connection...');
-        $this->info('sudo -u ' . get_current_user() . ' timeout 10 ssh -q ' . $this->server_name . ' exit; echo $?');
-
-        if ( $this->checkSSHConnection($this->server_name) ) $this->info('Connection tested ok!');
+        if ( $this->checkSSHConnection($this->hostNameForConfigFile()) ) $this->info('Connection tested ok!');
         else $this->error('Error connnecting to server!');
     }
 

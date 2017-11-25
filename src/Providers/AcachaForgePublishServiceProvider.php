@@ -26,6 +26,7 @@ use Acacha\ForgePublish\Commands\PublishOpen;
 use Acacha\ForgePublish\Commands\PublishProjectType;
 use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishServer;
+use Acacha\ForgePublish\Commands\PublishServername;
 use Acacha\ForgePublish\Commands\PublishSite;
 use Acacha\ForgePublish\Commands\PublishSiteDirectory;
 use Acacha\ForgePublish\Commands\PublishSites;
@@ -83,10 +84,11 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishRc::class,
                 PublishRepository::class,
                 PublishServer::class,
+                PublishServername::class,
                 PublishSiteDirectory::class,
                 PublishSite::class,
                 PublishSites::class,
-//                PublishSSH::class,
+                PublishSSH::class,
 //                PublishSSL::class,
                 PublishToken::class,
                 PublishURL::class,

@@ -3,8 +3,8 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
-use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use Acacha\ForgePublish\Commands\Traits\ChecksServer;
+use Acacha\ForgePublish\Commands\Traits\ChecksSite;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -17,7 +17,7 @@ use Illuminate\Console\Command;
 class PublishRepository extends Command
 {
 
-    use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
+    use ChecksEnv, DiesIfEnvVariableIsnotInstalled, ChecksServer, ChecksSite;
 
     /**
      * Github Repository.
@@ -91,7 +91,7 @@ class PublishRepository extends Command
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]
         );
@@ -106,6 +106,9 @@ class PublishRepository extends Command
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+
+        $this->checkServerAndAbort($this->server);
+        $this->checkSiteAndAbort($this->site);
     }
 
 }
