@@ -2,6 +2,8 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\ChecksToken;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 
@@ -12,6 +14,7 @@ use Illuminate\Console\Command;
  */
 class PublishInfo extends Command
 {
+    use ChecksToken;
 
     /**
      * The name and signature of the console command.
@@ -28,12 +31,21 @@ class PublishInfo extends Command
     protected $description = 'Show Acacha Forge info';
 
     /**
-     * Create a new command instance.
+     * Guzzle Http client
      *
+     * @var Client
      */
-    public function __construct()
+    protected $http;
+
+    /**
+     * PublishCreateSite constructor.
+     *
+     * @param Client $client
+     */
+    public function __construct(Client $client)
     {
         parent::__construct();
+        $this->http = $client;
     }
 
     /**
@@ -48,7 +60,7 @@ class PublishInfo extends Command
 
         $tasks = [
             [ 'ACACHA_FORGE_URL', fp_env('ACACHA_FORGE_URL','Not available!')],
-            [ 'ACACHA_FORGE_ACCESS_TOKEN', fp_env('ACACHA_FORGE_ACCESS_TOKEN',null) ? 'Ok!' : 'Not available!'],
+            [ 'ACACHA_FORGE_ACCESS_TOKEN', $this->token() ],
             [ 'ACACHA_FORGE_EMAIL', fp_env('ACACHA_FORGE_EMAIL','Not available!')],
             [ 'ACACHA_FORGE_SERVER', fp_env('ACACHA_FORGE_SERVER','Not available!')],
             [ 'ACACHA_FORGE_DOMAIN', fp_env('ACACHA_FORGE_DOMAIN','Not available!')],
@@ -61,5 +73,18 @@ class PublishInfo extends Command
 
         $this->table($headers, $tasks);
 
+    }
+
+    /**
+     *
+     */
+    protected function token() {
+        if ($token = fp_env('ACACHA_FORGE_ACCESS_TOKEN',null)) {
+            if ($this->checkToken($token)) return 'OK!';
+            $this->error('Be careful! The token you provided is not valid (unauthorized!)');
+            return 'Available but not correct!';
+        } else {
+          return 'Not available!';
+        }
     }
 }

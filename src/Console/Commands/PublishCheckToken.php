@@ -3,6 +3,8 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
+use Acacha\ForgePublish\Commands\Traits\ChecksToken;
+
 use Acacha\ForgePublish\Commands\Traits\DiesIfNoEnvFileExists;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -14,12 +16,17 @@ use Illuminate\Console\Command;
  */
 class PublishCheckToken extends Command
 {
-    use DiesIfNoEnvFileExists, ChecksEnv;
+    use DiesIfNoEnvFileExists, ChecksEnv, ChecksToken;
 
     /**
      * API Access Token.
      */
     protected $token;
+
+    /**
+     * API endpoint URL.
+     */
+    protected $url;
 
     /**
      * The name and signature of the console command.
@@ -63,36 +70,13 @@ class PublishCheckToken extends Command
 
         $this->info("Checking if token is valid...");
 
-        $this->url = $this->url();
-        try {
-            $response = $this->http->get($this->url, [
-                'headers' => [
-                    'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->token
-                ]
-            ]);
-        } catch (\Exception $e) {
-            if ($e->getResponse()) {
-                if ($e->getResponse()->getStatusCode() == 401) $this->error('Authorization error. Token is not valid!');
-                return;
-            }
-            $this->error('And error occurs validating token response!');
-            return;
-        }
-        $content = json_decode($response->getBody()->getContents());
-        if (isset($content->message)) {
-            if ($content->message === 'Token is valid') $this->info('Token is valid!');
-            return;
-        }
-        $this->error('And error occurs validating token response!');
-    }
+        $this->url = $this->checkTokenURL();
 
-    /**
-     * Get api url endpoint.
-     */
-    protected function url()
-    {
-        return config('forge-publish.url') . config('forge-publish.get_check_token_uri');
+        if ($this->checkToken($this->token)) {
+            $this->info('Token is valid!');
+        } else {
+            $this->error('Token not valid!');
+        }
     }
 
     /**
