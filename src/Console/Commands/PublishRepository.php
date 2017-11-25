@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishInstallRepo extends Command
+class PublishRepository extends Command
 {
 
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
@@ -45,14 +45,14 @@ class PublishInstallRepo extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:install_repo {repository?} {--server=} {--site=}';
+    protected $signature = 'publish:repository {repository?} {--server=} {--site=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Install repo on Laravel Forge site';
+    protected $description = 'Install repository on Laravel Forge site';
 
     /**
      * Guzzle http client.

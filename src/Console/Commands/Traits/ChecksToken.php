@@ -3,7 +3,7 @@
 namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
- * Trait CheckToken.
+ * Trait ChecksToken.
  * 
  * @package Acacha\ForgePublish\Commands\Traits
  */

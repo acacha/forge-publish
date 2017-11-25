@@ -2,13 +2,6 @@
 
 namespace Acacha\ForgePublish\Commands;
 
-use Acacha\ForgePublish\Commands\Traits\ChecksForRootPermission;
-use Acacha\ForgePublish\Commands\Traits\DNSisAlreadyConfigured;
-use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
-use Acacha\ForgePublish\Commands\Traits\ItFetchesSites;
-use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
-use Acacha\ForgePublish\Parser\ForgePublishRCParser;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -18,8 +11,6 @@ use Illuminate\Console\Command;
  */
 class Publish extends Command
 {
-    use ItFetchesSites,ItFetchesServers, PossibleEmails, ChecksForRootPermission, DNSisAlreadyConfigured;
-
     /**
      * The name and signature of the console command.
      *
@@ -35,45 +26,15 @@ class Publish extends Command
     protected $description = 'Publish your project to Laravel Forge';
 
     /**
-     * Guzzle Http client
-     *
-     * @var Client
-     */
-    protected $http;
-
-    /**
-     * ForgePublishRCParser
-     *
-     * @var ForgePublishRCParser
-     */
-    protected $parser;
-
-    /**
-     * Is DNS already configured?
-     *
-     * @var Boolean
-     */
-    protected $dnsAlreadyConfigured = false;
-
-    /**
-     * Create a new command instance.
-     *
-     */
-    public function __construct(Client $http, ForgePublishRCParser $parser)
-    {
-        parent::__construct();
-        $this->http = $http;
-        $this->parser = $parser;
-    }
-
-    /**
      * Execute the console command.
      *
      */
     public function handle()
     {
 
-        $this->call('publish:create_site');
+        $this->call('publish:install_repo');
+
+//        $this->call('publish:create_site');
 
 //        $this->call('publish:create_site', [
 //            'forge_server' => $forge_id_server,

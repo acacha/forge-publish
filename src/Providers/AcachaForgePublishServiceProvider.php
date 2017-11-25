@@ -16,7 +16,7 @@ use Acacha\ForgePublish\Commands\PublishGit;
 use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
-use Acacha\ForgePublish\Commands\PublishInstallRepo;
+use Acacha\ForgePublish\Commands\PublishRepository;
 use Acacha\ForgePublish\Commands\PublishIp;
 use Acacha\ForgePublish\Commands\PublishKeyGenerate;
 use Acacha\ForgePublish\Commands\PublishLog;
@@ -73,7 +73,6 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishInfo::class,
                 PublishInit::class,
 //                PublishInstall::class,
-//                PublishInstallRepo::class,
                 PublishIp::class,
 //                PublishKeyGenerate::class,
 //                PublishLog::class,
@@ -82,6 +81,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
 //                PublishOpen::class,
                 PublishProjectType::class,
                 PublishRc::class,
+                PublishRepository::class,
                 PublishServer::class,
                 PublishSiteDirectory::class,
                 PublishSite::class,
