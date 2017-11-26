@@ -87,14 +87,13 @@ class PublishCertificates extends Command
 
         $rows = [];
         foreach ($certificates as $certificate) {
-            dump($certificate);
             $rows[] = [
-                $certificate->id,
-                $certificate->domain,
-                $certificate->request_status,
-                $certificate->created_at,
-                $certificate->existing,
-                $certificate->active,
+                $certificate['id'],
+                $certificate['domain'],
+                $certificate['request_status'],
+                $certificate['created_at'],
+                $certificate['existing'],
+                $certificate['active']
             ];
         }
 
