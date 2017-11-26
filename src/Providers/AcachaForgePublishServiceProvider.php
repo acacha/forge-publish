@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Providers;
 use Acacha\ForgePublish\Commands\Publish;
 use Acacha\ForgePublish\Commands\PublishArtisan;
 use Acacha\ForgePublish\Commands\PublishAutodeploy;
+use Acacha\ForgePublish\Commands\PublishCertificates;
 use Acacha\ForgePublish\Commands\PublishCheckToken;
 use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
@@ -100,6 +101,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishSites::class,
                 PublishSSH::class,
                 PublishSSL::class,
+                PublishCertificates::class,
                 PublishToken::class,
                 PublishURL::class,
             ]);

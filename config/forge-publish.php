@@ -212,4 +212,18 @@ return [
 
   'get_check_token_uri' => env('ACACHA_FORGE_GET_CHECK_TOKEN_URI','/api/v1/check_token'),
 
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE GET CERTIFICATES URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge get certificates URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates
+  |
+  | This value could be overwriten using ACACHA_FORGE_GET_CERTIFICATES_URI env variable
+  | if you kwnow what you are doing.
+  */
+
+  'get_certificates_uri' => env('ACACHA_FORGE_GET_CERTIFICATES_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates'),
+
 ];
