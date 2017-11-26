@@ -8,35 +8,28 @@ use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
- * Class PublishCertificates.
+ * Class PublishDeploy.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishCertificates extends Command
+class PublishDeploy extends Command
 {
 
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
-     /**
+    /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:certificates {--server=} {--site=} {--dump}';
+    protected $signature = 'publish:deploy {--server=} {--site=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'List SSL certificates';
-
-    /**
-     * API endpoint URL
-     *
-     * @var string
-     */
-    protected $url;
+    protected $description = 'Deploy site';
 
     /**
      * Server forge id.
@@ -77,9 +70,11 @@ class PublishCertificates extends Command
     {
         $this->abortCommandExecution();
 
+        $this->info('Executing deploy script for site ' . $this->site . ' in Laravel Forge');
+
         $this->url = $this->obtainAPIURLEndpoint();
-        
-        $response = $this->http->get($this->url, [
+
+        $this->http->post($this->url, [
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
                     'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
@@ -87,34 +82,6 @@ class PublishCertificates extends Command
             ]
         );
 
-        $certificates = json_decode($response->getBody(),true) ;
-        if ($this->option('dump')) {
-            dump($certificates);
-        }
-
-        if (empty($certificates)) {
-            $this->error('No SSL certificates found.');
-            die();
-        }
-
-        $headers = ['Id', 'ServerId','SiteId','Domain','Type','Request Status','Existing','Active','Created at'];
-
-        $rows = [];
-        foreach ($certificates as $certificate) {
-            $rows[] = [
-                $certificate['id'],
-                $certificate['serverId'],
-                $certificate['siteId'],
-                $certificate['domain'],
-                $certificate['type'],
-                $certificate['requestStatus'],
-                $certificate['createdAt'],
-                $certificate['existing'],
-                $certificate['active']
-            ];
-        }
-
-        $this->table($headers, $rows);
     }
 
     /**
@@ -124,13 +91,13 @@ class PublishCertificates extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.get_certificates_uri'));
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_deploy_site_uri'));
         $uri = str_replace('{forgesite}', $this->site , $uri);
         return config('forge-publish.url') . $uri;
     }
 
     /**
-     * Abort command execution?
+     * Abort command execution.
      */
     protected function abortCommandExecution()
     {
@@ -138,5 +105,4 @@ class PublishCertificates extends Command
         $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
-
 }

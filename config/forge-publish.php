@@ -226,4 +226,32 @@ return [
 
   'get_certificates_uri' => env('ACACHA_FORGE_GET_CERTIFICATES_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates'),
 
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST DEPLOY SITE URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/deploy
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post certificates URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/deploy
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_DEPLOY_SITE_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'post_deploy_site_uri' => env('ACACHA_FORGE_POST_DEPLOY_SITE_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/deploy'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST MYSQL URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/mysql
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post mysql URI endpoint: /api/v1/user/servers/{forgeserver}/mysql
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_MYSQL_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'post_mysql_uri' => env('ACACHA_FORGE_POST_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
+
+
+
+
 ];

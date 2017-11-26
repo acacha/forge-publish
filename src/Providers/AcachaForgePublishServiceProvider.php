@@ -10,6 +10,7 @@ use Acacha\ForgePublish\Commands\PublishCheckToken;
 use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
+use Acacha\ForgePublish\Commands\PublishDeploy;
 use Acacha\ForgePublish\Commands\PublishDNS;
 use Acacha\ForgePublish\Commands\PublishDomain;
 use Acacha\ForgePublish\Commands\PublishEmail;
@@ -21,6 +22,7 @@ use Acacha\ForgePublish\Commands\PublishIgnored;
 use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
+use Acacha\ForgePublish\Commands\PublishMySQL;
 use Acacha\ForgePublish\Commands\PublishRepository;
 use Acacha\ForgePublish\Commands\PublishIp;
 use Acacha\ForgePublish\Commands\PublishKeyGenerate;
@@ -72,6 +74,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishComposer::class,
                 PublishConnect::class,
                 PublishCreateSite::class,
+                PublishDeploy::class,
                 PublishDNS::class,
                 PublishDomain::class,
                 PublishEmail::class,
@@ -87,6 +90,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishKeyGenerate::class,
                 PublishLog::class,
                 PublishLogin::class,
+                PublishMySQL::class,
                 PublishNpm::class,
                 PublishOpen::class,
                 PublishProjectType::class,

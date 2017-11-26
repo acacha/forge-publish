@@ -103,6 +103,7 @@ class PublishSites extends Command
      * Server name.
      *
      * @param $server
+     * @return mixed
      */
     protected function serverName($server)
     {
