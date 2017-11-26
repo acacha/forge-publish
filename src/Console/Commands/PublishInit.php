@@ -56,7 +56,7 @@ class PublishInit extends Command
 
         $this->call('publish:site');
 
-        $this->call('publish:git');
+        $this->call('publish:github');
 
         $this->finish();
 

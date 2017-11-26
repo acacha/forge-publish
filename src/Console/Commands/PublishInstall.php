@@ -70,22 +70,23 @@ class PublishInstall extends Command
         $this->abortCommandExecution();
         $this->info("I'm going to install this project to production...");
 
+        if ($this->confirm('Do you have ignored local files you want to add to production?')) {
+            $this->call('publish:ignored');
+        }
+
+        if ($this->confirm('Do you have Github projects ignored in local do you want to add to production?')) {
+            $this->call('publish:git_dependencies');
+        }
+
         $this->call('publish:composer', [
-            'composer_command' => 'install',
-            '--server' => $this->server,
-            '--domain' => $this->domain
+            'composer_command' => 'install'
         ]);
 
         $this->call('publish:npm', [
             'npm_command' => 'install',
-            '--server' => $this->server,
-            '--domain' => $this->domain
         ]);
 
-        $this->call('publish:key_generate',[
-            '--server' => $this->server,
-            '--domain' => $this->domain
-        ]);
+        $this->call('publish:key_generate');
 
         if ($this->confirm('Do you wish run migrations on production?')) {
             $this->call('publish:artisan',[

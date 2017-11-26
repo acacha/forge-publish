@@ -8,11 +8,11 @@ use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
- * Class PublishGit.
+ * Class PublishScp.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishGit extends Command
+class PublishScp extends Command
 {
     use ChecksEnv, RunsSSHCommands;
 
@@ -35,14 +35,14 @@ class PublishGit extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:git {git_command} {--server=} {--domain=}';
+    protected $signature = 'publish:scp {file} {--server=} {--domain=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Execute git command on production';
+    protected $description = 'Copy file or folder to production via scp';
 
     /**
      * Guzzle http client.
@@ -68,10 +68,8 @@ class PublishGit extends Command
     public function handle()
     {
         $this->abortCommandExecution();
-        $command = $this->argument('git_command');
-        $this->info("Running git $command on production...");
-
-        $this->runSSH("cd $this->domain;git $command");
+        $file = $this->argument('file');
+        $this->runScp(base_path($file),$this->domain,null,true);
     }
 
     /**
@@ -81,7 +79,6 @@ class PublishGit extends Command
     {
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
-
         $this->abortIfNoSSHConnection();
     }
 

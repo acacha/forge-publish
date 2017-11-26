@@ -12,6 +12,25 @@ trait RunsSSHCommands
     use ChecksSSHConnection;
 
     /**
+     * Runs scp.
+     *
+     * @param $file
+     * @param null $server
+     * @param bool $verbose
+     */
+    protected function runScp( $file, $destination_path , $server = null, $verbose = false)
+    {
+        $recursive_option = '';
+        if (is_dir($file)) $recursive_option = ' -r';
+        $server = $server ? $server : $this->hostNameForConfigFile();
+        $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
+        $full_command = "scp -F ${ssh_config_file}$recursive_option $file $server:$destination_path";
+
+        if ($verbose) $this->info($full_command);
+        passthru($full_command);
+    }
+
+    /**
      * Runs ssh command on server.
      *
      * @param $command

@@ -14,6 +14,9 @@ use Acacha\ForgePublish\Commands\PublishDomain;
 use Acacha\ForgePublish\Commands\PublishEmail;
 use Acacha\ForgePublish\Commands\PublishEnv;
 use Acacha\ForgePublish\Commands\PublishGit;
+use Acacha\ForgePublish\Commands\PublishGitDependencies;
+use Acacha\ForgePublish\Commands\PublishGithub;
+use Acacha\ForgePublish\Commands\PublishIgnored;
 use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
@@ -26,6 +29,7 @@ use Acacha\ForgePublish\Commands\PublishNpm;
 use Acacha\ForgePublish\Commands\PublishOpen;
 use Acacha\ForgePublish\Commands\PublishProjectType;
 use Acacha\ForgePublish\Commands\PublishRc;
+use Acacha\ForgePublish\Commands\PublishScp;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishServername;
 use Acacha\ForgePublish\Commands\PublishSite;
@@ -72,6 +76,9 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishEmail::class,
                 PublishEnv::class,
                 PublishGit::class,
+                PublishGitDependencies::class,
+                PublishGithub::class,
+                PublishIgnored::class,
                 PublishInfo::class,
                 PublishInit::class,
                 PublishInstall::class,
@@ -85,6 +92,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 Publish::class,
                 PublishRc::class,
                 PublishRepository::class,
+                PublishScp::class,
                 PublishServer::class,
                 PublishServername::class,
                 PublishSiteDirectory::class,
