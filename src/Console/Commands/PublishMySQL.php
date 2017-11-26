@@ -94,7 +94,7 @@ class PublishMySQL extends Command
     {
         if ($this->argument('user')) {
             if ( ! $this->argument('password')) {
-                $this->error('Password arguments is required if user argument is provided!');
+                $this->error('Password argument is required if user argument is provided!');
                 die();
             }
         }
