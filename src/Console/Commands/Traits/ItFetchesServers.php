@@ -19,7 +19,7 @@ trait ItFetchesServers
             $response = $this->http->get($url,[
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . env('ACACHA_FORGE_ACCESS_TOKEN')
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]);
         } catch (\Exception $e) {
