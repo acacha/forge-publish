@@ -22,7 +22,7 @@ class PublishMySQL extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:mysql {name?} {user?} {password?} {--server=}';
+    protected $signature = 'publish:mysql {name?} {user?} {password?} {--server=} {--dump}';
 
     /**
      * The console command description.
@@ -88,6 +88,47 @@ class PublishMySQL extends Command
     }
 
     /**
+     * List MySQL databases.
+     */
+    protected function listMySQLDatabases() {
+        $this->url = $this->obtainAPIURLEndpointForList();
+        $response = $this->http->get($this->url, [
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
+                ]
+            ]
+        );
+
+        $databases = json_decode($response->getBody(),true) ;
+
+
+        if ($this->option('dump')) {
+            dump($databases);
+        }
+
+        if (empty($databases)) {
+            $this->error('No databases found.');
+            die();
+        }
+
+        $headers = ['Id', 'Server Id','Name','Status','Created at'];
+
+        $rows = [];
+        foreach ($databases as $database) {
+            $rows[] = [
+                $database['id'],
+                $database['serverId'],
+                $database['name'],
+                $database['status'],
+                $database['createdAt']
+            ];
+        }
+
+        $this->table($headers, $rows);
+    }
+
+    /**
      * Check parameters.
      */
     protected function checkParameters()
@@ -98,14 +139,6 @@ class PublishMySQL extends Command
                 die();
             }
         }
-    }
-
-    /**
-     * List MySQL databases.
-     */
-    protected function listMySQLDatabases() {
-        $this->url = $this->obtainAPIURLEndpointForList();
-        $this->line('TODO');
     }
 
     /**

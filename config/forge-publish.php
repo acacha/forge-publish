@@ -252,6 +252,16 @@ return [
   'post_mysql_uri' => env('ACACHA_FORGE_POST_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
 
 
-
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE GET MYSQL URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/mysql
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge get mysql URI endpoint: /api/v1/user/servers/{forgeserver}/mysql
+  |
+  | This value could be overwriten using ACACHA_FORGE_GET_MYSQL_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'get_mysql_uri' => env('ACACHA_FORGE_GET_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
 
 ];

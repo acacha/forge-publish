@@ -79,6 +79,11 @@ class PublishSites extends Command
             dump($this->sites);
         }
 
+        if (empty($this->sites)) {
+            $this->error('No Sites found.');
+            die();
+        }
+
         $headers = ['Id', 'Name','Type','Directory','Status','Repository','RepositoryStatus','QuickDeploy'];
 
         $rows = [];
