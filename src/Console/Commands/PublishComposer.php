@@ -3,8 +3,8 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Console\Command;
 class PublishComposer extends Command
 {
 
-    use ChecksSSHConnection, ChecksEnv, RunsSSHCommands;
+    use ChecksEnv, RunsSSHCommands;
 
     /**
      * Server name
@@ -46,12 +46,20 @@ class PublishComposer extends Command
     protected $description = 'Run composer on production server';
 
     /**
-     * Constructor.
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
+     * Create a new command instance.
      *
      */
-    public function __construct()
+    public function __construct(Client $http)
     {
         parent::__construct();
+        $this->http = $http;
     }
 
     /**
@@ -64,10 +72,7 @@ class PublishComposer extends Command
         $command = $this->argument('composer_command');
         $this->info("Running composer $command on production...");
 
-        dump('10 $this->server: ' . $this->server);
-        dump('11 $this->domain: ' . $this->domain);
-        dump('11 $command: ' . $command);
-        $this->runSSH($this->server,"cd $this->domain;composer $command");
+        $this->runSSH("cd $this->domain;composer $command");
     }
 
     /**
@@ -78,7 +83,7 @@ class PublishComposer extends Command
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
 
-        $this->abortIfNoSSHConnection($this->server);
+        $this->abortIfNoSSHConnection();
     }
 
 }

@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -52,12 +53,20 @@ class PublishLog extends Command
     protected $domain;
 
     /**
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
      * Create a new command instance.
      *
      */
-    public function __construct(ForgePublishRCParser $parser)
+    public function __construct(ForgePublishRCParser $parser, Client $http)
     {
         parent::__construct();
+        $this->http = $http;
         $this->parser = $parser;
     }
 
@@ -70,7 +79,7 @@ class PublishLog extends Command
         $this->abortCommandExecution();
 
         $this->info("Connecting to server $this->server to see logs");
-        $this->runSSH($this->server, "tail -f $this->domain/storage/logs/laravel.log");
+        $this->runSSH("tail -f $this->domain/storage/logs/laravel.log");
     }
 
     /**

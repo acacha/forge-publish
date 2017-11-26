@@ -46,7 +46,7 @@ trait ChecksServer
      */
     protected function obtainServers()
     {
-        return $this->servers ? $this->servers : $this->fetchServers();
+        return isset($this->servers) ? $this->servers : $this->fetchServers();
     }
 
     /**

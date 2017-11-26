@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -14,7 +15,7 @@ use Illuminate\Console\Command;
  */
 class PublishEnv extends Command
 {
-    use ChecksSSHConnection, ChecksEnv, RunsSSHCommands;
+    use ChecksEnv, RunsSSHCommands;
 
     /**
      * Server name
@@ -45,6 +46,23 @@ class PublishEnv extends Command
     protected $description = 'Manage environment on production';
 
     /**
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
+     * Create a new command instance.
+     *
+     */
+    public function __construct(Client $http)
+    {
+        parent::__construct();
+        $this->http = $http;
+    }
+
+    /**
      * Execute the console command.
      *
      */
@@ -73,7 +91,7 @@ class PublishEnv extends Command
      */
     protected function listEnvVariables()
     {
-        $this->runSSH($this->server, "cd $this->domain;cat .env");
+        $this->runSSH("cd $this->domain;cat .env");
     }
 
     /**
@@ -81,7 +99,7 @@ class PublishEnv extends Command
      */
     protected function editEnvVariables()
     {
-        $this->runSSH($this->server, "cd $this->domain;editor .env");
+        $this->runSSH("cd $this->domain;editor .env");
     }
 
     /**
@@ -90,7 +108,7 @@ class PublishEnv extends Command
     protected function checkEnvVariable()
     {
         $key = $this->checkKey();
-        $output = $this->execSSH($this->server, "cd $this->domain;cat .env");
+        $output = $this->execSSH("cd $this->domain;cat .env");
         if (str_contains($output,$key)) {
             $this->info("Key $key found in remote environment file");
         } else {
@@ -113,26 +131,14 @@ class PublishEnv extends Command
     }
 
     /**
-     * Check value.
-     * @return array|string
-     */
-    protected function checkValue()
-    {
-        if (! $value = $this->argument('value')) {
-            $this->error('No value argument has been provided!');
-            die();
-        }
-        return $value;
-    }
-
-    /**
      * Abort command execution?
      */
     protected function abortCommandExecution()
     {
+
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
 
-        $this->abortIfNoSSHConnection($this->server);
+        $this->abortIfNoSSHConnection();
     }
 }

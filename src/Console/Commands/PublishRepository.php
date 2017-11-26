@@ -34,6 +34,13 @@ class PublishRepository extends Command
     protected $server;
 
     /**
+     * Servers.
+     *
+     * @var array
+     */
+    protected $servers;
+
+    /**
      * Forge site id.
      *
      * @var String
@@ -95,6 +102,8 @@ class PublishRepository extends Command
                 ]
             ]
         );
+
+        $this->info("Repository " . $this->repository . " installed on Laravel Forge Site...");
     }
 
     /**

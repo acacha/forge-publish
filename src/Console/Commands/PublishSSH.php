@@ -3,9 +3,7 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksServer;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
-use Acacha\ForgePublish\Commands\Traits\ItFetchesServers;
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
@@ -337,12 +335,12 @@ class PublishSSH extends Command
     protected function testSSHConnection()
     {
         $this->info('Testing connection...');
-        if ( $this->checkSSHConnection($this->hostNameForConfigFile()) ) $this->info('Connection tested ok!');
+        if ( $this->checkSSHConnection() ) $this->info('Connection tested ok!');
         else $this->error('Error connnecting to server!');
     }
 
     /**
-     * Create SSH Keys
+     * Create SSH Keys.
      */
     protected function createSSHKeys()
     {

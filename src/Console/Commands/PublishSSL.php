@@ -3,8 +3,6 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
-use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -55,6 +53,13 @@ class PublishSSL extends Command
     protected $description = 'Obtain lets encrypt certificate';
 
     /**
+     * API endpoint URL
+     *
+     * @var string
+     */
+    protected $url;
+
+    /**
      * Guzzle http client.
      *
      * @var Client
@@ -80,20 +85,32 @@ class PublishSSL extends Command
         $this->abortCommandExecution();
         $this->info("Obtaining Lets Encrypt Certificate on production...");
 
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_lets_encrypt_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
-        $url = config('forge-publish.url') . $uri;
-        $this->http->post($url,
+        $this->url = $this->obtainAPIURLEndpoint();
+
+        
+        $this->http->post($this->url,
             [
                 'form_params' => [
                     'domains' => [$this->domain]
                 ],
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]
         );
+    }
+
+    /**
+     * Obtain API URL endpoint.
+     *
+     * @return string
+     */
+    protected function obtainAPIURLEndpoint()
+    {
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_lets_encrypt_uri'));
+        $uri = str_replace('{forgesite}', $this->site , $uri);
+        return config('forge-publish.url') . $uri;
     }
 
     /**

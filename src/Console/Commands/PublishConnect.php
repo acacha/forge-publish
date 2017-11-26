@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -52,13 +53,22 @@ class PublishConnect extends Command
     protected $domain;
 
     /**
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
      * Create a new command instance.
      *
      */
-    public function __construct(ForgePublishRCParser $parser)
+    public function __construct(Client $http, ForgePublishRCParser $parser)
     {
         parent::__construct();
+        $this->http = $http;
         $this->parser = $parser;
+
     }
 
     /**
@@ -68,8 +78,8 @@ class PublishConnect extends Command
     public function handle()
     {
         $this->abortCommandExecution();
-        $this->info("Connecting to server  $this->server");
-        $this->runSSH($this->server,"cd $this->domain;" . $this->defaultShell());
+        $this->info("Connecting to server $this->server");
+        $this->runSSH("cd $this->domain;" . $this->defaultShell());
     }
 
     /**

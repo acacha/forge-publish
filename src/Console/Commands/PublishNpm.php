@@ -3,8 +3,8 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Console\Command;
 class PublishNpm extends Command
 {
 
-    use ChecksSSHConnection, ChecksEnv, RunsSSHCommands;
+    use ChecksEnv, RunsSSHCommands;
 
     /**
      * Server name
@@ -46,12 +46,20 @@ class PublishNpm extends Command
     protected $description = 'Run npm on production server';
 
     /**
-     * Constructor.
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
+     * Create a new command instance.
      *
      */
-    public function __construct()
+    public function __construct(Client $http)
     {
         parent::__construct();
+        $this->http = $http;
     }
 
     /**
@@ -64,7 +72,7 @@ class PublishNpm extends Command
         $command = $this->argument('npm_command');
         $this->info("Running npm $command on production...");
 
-        $this->runSSH($this->server,"cd $this->domain;npm $command");
+        $this->runSSH("cd $this->domain;npm $command");
     }
 
     /**
@@ -75,7 +83,7 @@ class PublishNpm extends Command
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
 
-        $this->abortIfNoSSHConnection($this->server);
+        $this->abortIfNoSSHConnection();
     }
 
 }

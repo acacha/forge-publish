@@ -5,6 +5,7 @@ namespace Acacha\ForgePublish\Commands;
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
 use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
@@ -15,7 +16,7 @@ use Illuminate\Console\Command;
 class PublishKeyGenerate extends Command
 {
 
-    use ChecksSSHConnection, ChecksEnv, RunsSSHCommands;
+    use ChecksEnv, RunsSSHCommands;
 
     /**
      * Server name
@@ -46,12 +47,20 @@ class PublishKeyGenerate extends Command
     protected $description = 'Run artisan key:generate command on production server';
 
     /**
-     * Constructor.
+     * Guzzle http client.
+     *
+     * @var Client
+     */
+    protected $http;
+
+    /**
+     * Create a new command instance.
      *
      */
-    public function __construct()
+    public function __construct(Client $http)
     {
         parent::__construct();
+        $this->http = $http;
     }
 
     /**
@@ -68,9 +77,7 @@ class PublishKeyGenerate extends Command
         }
 
         $this->call('publish:artisan', [
-            'artisan_command' => 'key:generate',
-            '--server' => $this->server,
-            '--domain' => $this->domain
+            'artisan_command' => 'key:generate'
         ]);
     }
 
@@ -81,7 +88,7 @@ class PublishKeyGenerate extends Command
      */
     protected function keyIsAlreadyInstalled() {
         $key = 'APP_KEY=base64:';
-        $output = $this->execSSH($this->server, "cd $this->domain;cat .env");
+        $output = $this->execSSH("cd $this->domain;cat .env");
         if (str_contains($output,$key)) {
             return true;
         }
@@ -96,7 +103,7 @@ class PublishKeyGenerate extends Command
         $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
 
-        $this->abortIfNoSSHConnection($this->server);
+        $this->abortIfNoSSHConnection();
     }
 
 }

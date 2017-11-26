@@ -3,8 +3,6 @@
 namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
-use Acacha\ForgePublish\Commands\Traits\ChecksSSHConnection;
-use Acacha\ForgePublish\Commands\Traits\RunsSSHCommands;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -77,19 +75,16 @@ class PublishAutodeploy extends Command
         $uri = str_replace('{forgesite}', $this->site , $uri);
         $url = config('forge-publish.url') . $uri;
 
-        $response = $this->http->post($url,
+        $this->http->post($url,
             [
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
-                    'Authorization' => 'Bearer ' . $this->env('ACACHA_FORGE_ACCESS_TOKEN')
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]
         );
+        $this->info("Enabled autodeploy on Laravel Forge Site!");
 
-        $result = json_decode($contents = $response->getBody()->getContents());
-
-        //TODO
-        dump($result);
     }
 
     /**

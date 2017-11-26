@@ -2,6 +2,7 @@
 
 namespace Acacha\ForgePublish\Providers;
 
+use Acacha\ForgePublish\Commands\Publish;
 use Acacha\ForgePublish\Commands\PublishArtisan;
 use Acacha\ForgePublish\Commands\PublishAutodeploy;
 use Acacha\ForgePublish\Commands\PublishCheckToken;
@@ -60,27 +61,28 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-//                PublishArtisan::class,
-//                PublishAutodeploy::class,
+                PublishArtisan::class,
+                PublishAutodeploy::class,
                 PublishCheckToken::class,
-//                PublishComposer::class,
-//                PublishConnect::class,
+                PublishComposer::class,
+                PublishConnect::class,
                 PublishCreateSite::class,
-//                PublishDNS::class,
+                PublishDNS::class,
                 PublishDomain::class,
                 PublishEmail::class,
-//                PublishEnv::class,
+                PublishEnv::class,
                 PublishGit::class,
                 PublishInfo::class,
                 PublishInit::class,
-//                PublishInstall::class,
+                PublishInstall::class,
                 PublishIp::class,
-//                PublishKeyGenerate::class,
-//                PublishLog::class,
+                PublishKeyGenerate::class,
+                PublishLog::class,
                 PublishLogin::class,
-//                PublishNpm::class,
-//                PublishOpen::class,
+                PublishNpm::class,
+                PublishOpen::class,
                 PublishProjectType::class,
+                Publish::class,
                 PublishRc::class,
                 PublishRepository::class,
                 PublishServer::class,
@@ -89,7 +91,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishSite::class,
                 PublishSites::class,
                 PublishSSH::class,
-//                PublishSSL::class,
+                PublishSSL::class,
                 PublishToken::class,
                 PublishURL::class,
             ]);

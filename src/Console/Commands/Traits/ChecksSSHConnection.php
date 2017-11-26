@@ -9,7 +9,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
  */
 trait ChecksSSHConnection
 {
-    use ChecksServer;
+    use ChecksServer, SSHHostname;
 
     /**
      * SSH config file path.
@@ -22,25 +22,13 @@ trait ChecksSSHConnection
     }
 
     /**
-     * hostname for config file.
-     */
-    protected function hostNameForConfigFile($server_name = null, $server =null)
-    {
-        $server_name = $server_name ? $server_name: $this->getServerName();
-        $server = $server ? $server: $this->getServer();
-        $this->checkServerName($server_name);
-        $this->checkServer($server);
-        return snake_case($server_name) . '_' . $server;
-    }
-
-    /**
      * Get Server name.
      *
      * @return null
      */
     protected function getServerName()
     {
-        $server_name = $this->server_name ? $this->server_name : fp_env('ACACHA_FORGE_SERVER_NAME');
+        $server_name = isset($this->server_name) ? $this->server_name : fp_env('ACACHA_FORGE_SERVER_NAME');
         return $server_name;
     }
 
@@ -59,10 +47,11 @@ trait ChecksSSHConnection
      *
      * @return bool
      */
-    protected function checkSSHConnection($server, $ssh_config_file = null)
+    protected function checkSSHConnection($server = null, $ssh_config_file = null, $verbose = false)
     {
+        $server = $server ? $server : $this->hostNameForConfigFile();
         $ssh_config_file =  $ssh_config_file ? $ssh_config_file : $this->sshConfigFile();
-        $this->info("timeout 10 ssh -F $ssh_config_file -q " . $server . ' exit; echo $?');
+        if ($verbose) $this->info("timeout 10 ssh -F $ssh_config_file -q " . $server . ' exit; echo $?');
 
         $ret = exec("timeout 10 ssh -F $ssh_config_file -q " . $server . ' "exit"; echo $?');
         if ($ret == 0 ) return true;
@@ -74,8 +63,9 @@ trait ChecksSSHConnection
      *
      * @return bool
      */
-    protected function abortIfNoSSHConnection($server)
+    protected function abortIfNoSSHConnection($server = null)
     {
+        $server = $server ? $server : $this->hostNameForConfigFile();
         if (!$this->checkSSHConnection($server)) {
             $this->error("SSH connection to server $server doesn't works. Please run php artisan publish:init or publish:ssh");
             die();

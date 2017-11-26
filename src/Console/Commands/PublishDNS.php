@@ -26,6 +26,13 @@ class PublishDNS extends Command
     protected $ip;
 
     /**
+     * Is DNS already resolved.
+     *
+     * @var string
+     */
+    protected $dnsAlreadyResolved = false;
+
+    /**
      * The domain name.
      *
      * @var string
@@ -59,14 +66,13 @@ class PublishDNS extends Command
     {
         $this->info('Checking DNS configuration');
         $this->abortCommandExecution();
-        $resolved_ip = gethostbyname ($this->domain);
-        $this->info("domain: $this->domain | IP : $resolved_ip");
-        if ( $resolved_ip != $this->domain && $resolved_ip == $this->ip ) {
+
+        if ($this->dnsAlreadyResolved) {
             $this->info("DNS resolution is ok. ");
             return;
         }
 
-        $this->info("DNS resolution is not configured ok. Let me help you configure it...");
+        $this->info("DNS resolution is not correct. Let me help you configure it...");
 
         $type = $this->option('type') ?
             $this->option('type') :
@@ -103,7 +109,7 @@ class PublishDNS extends Command
         $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN', 'argument');
         $this->ip = $this->checkEnv('ip','ACACHA_FORGE_IP_ADDRESS','argument');
 
-        if ($this->dnsIsAlreadyConfigured()) return ;
+        if ($this->dnsResolutionIsOk()) return ;
 
         $this->checkForRootPermission();
     }
