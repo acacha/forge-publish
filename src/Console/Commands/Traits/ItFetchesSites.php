@@ -31,6 +31,40 @@ trait ItFetchesSites
     }
 
     /**
+     * Get forge site from sites by name.
+     *
+     * @param $sites
+     * @param $site_id
+     * @return mixed
+     */
+    protected function getSiteByName($sites, $site_name)
+    {
+        $site_found = collect($sites)->filter(function ($site) use ($site_name) {
+            return $site->name === $site_name;
+        })->first();
+
+        if ( $site_found ) return $site_found;
+        return null;
+    }
+
+    /**
+     * Get forge site from sites.
+     *
+     * @param $sites
+     * @param $site_id
+     * @return mixed
+     */
+    protected function getSite($sites, $site_id)
+    {
+        $site_found = collect($sites)->filter(function ($site) use ($site_id) {
+            return $site->id === $site_id;
+        })->first();
+
+        if ( $site_found ) return $site_found;
+        return null;
+    }
+
+    /**
      * Get forge site name from site id.
      *
      * @param $sites
@@ -39,11 +73,7 @@ trait ItFetchesSites
      */
     protected function getSiteName($sites, $site_id)
     {
-        $site_found = collect($sites)->filter(function ($site) use ($site_id) {
-            return $site->id === $site_id;
-        })->first();
-
-        if ( $site_found ) return $site_found->name;
+        if ($site = $this->getSite($sites,$site_id)) return $site->name;
         return null;
     }
 
@@ -56,11 +86,7 @@ trait ItFetchesSites
      */
     protected function getSiteId($sites, $site_name)
     {
-        $site_found = collect($sites)->filter(function ($site) use ($site_name) {
-            return $site->name === $site_name;
-        })->first();
-
-        if ( $site_found ) return $site_found->id;
+        if ($site = $this->getSiteByName($sites,$site_name)) return $site->name;
         return null;
     }
 }

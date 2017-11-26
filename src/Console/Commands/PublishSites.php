@@ -72,7 +72,6 @@ class PublishSites extends Command
         $this->abortCommandExecution();
 
         $this->sites = $this->fetchSites( $server = fp_env('ACACHA_FORGE_SERVER'));
-
         $server_name = $this->serverName($server);
         $this->info("Sites on server $server_name ($server)");
 

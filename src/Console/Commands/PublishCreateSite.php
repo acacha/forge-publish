@@ -2,10 +2,11 @@
 
 namespace Acacha\ForgePublish\Commands;
 
-use Acacha\ForgePublish\Commands\Traits\ItFetchesSites;
+use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
 use Acacha\ForgePublish\Commands\Traits\ShowsErrorResponse;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
 use Acacha\ForgePublish\Commands\Traits\DiesIfNoEnvFileExists;
+use Acacha\ForgePublish\Commands\Traits\WaitsForSite;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -16,7 +17,7 @@ use Illuminate\Console\Command;
  */
 class PublishCreateSite extends Command
 {
-    use ShowsErrorResponse, DiesIfNoEnvFileExists, DiesIfEnvVariableIsnotInstalled, ItFetchesSites;
+    use WaitsForSite, InteractsWithEnvironment, ShowsErrorResponse, DiesIfNoEnvFileExists, DiesIfEnvVariableIsnotInstalled;
 
     /**
      * Project type.
@@ -101,10 +102,10 @@ class PublishCreateSite extends Command
      *
      * @param Client $client
      */
-    public function __construct(Client $client)
+    public function __construct(Client $http)
     {
         parent::__construct();
-        $this->http = $client;
+        $this->http = $http;
     }
 
     /**
@@ -174,9 +175,12 @@ class PublishCreateSite extends Command
             return;
         }
         $this->url = $this->obtainApiEndPointURL();
-        $this->createSiteOnForge();
+        $site = $this->createSiteOnForge();
+        $this->waitForSite($site['id']);
+        $this->addValueToEnv('ACACHA_FORGE_SITE',$site['id']);
         $this->info('The site has been added to Forge');
     }
+
 
     /**
      * Obtain fields.
@@ -195,7 +199,7 @@ class PublishCreateSite extends Command
     protected function createSiteOnForge() {
         try {
             $this->info('Creating site ' . $this->domain . ' on server ' . $this->server);
-            $this->http->post($this->url, [
+            $response =  $this->http->post($this->url, [
                 'form_params' => [
                     'domain' => $this->domain,
                     'project_type' => $this->project_type,
@@ -205,9 +209,11 @@ class PublishCreateSite extends Command
                     'X-Requested-With' => 'XMLHttpRequest',
                     'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
-        ]);
+            ]);
+            return json_decode($response->getBody(),true);
         } catch (\Exception $e) {
             $this->showErrorAndDie($e);
+            return null;
         }
     }
 

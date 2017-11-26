@@ -131,19 +131,27 @@ class PublishSite extends SaveEnvVariable
      */
     protected function value()
     {
-        $site_name = $this->anticipate( $this->questionText(), $this->site_names, $this->default);
+        $default=null;
+        $choices = $this->site_names ;
+        if ($result = array_search($this->default,$this->site_names)) {
+            $default = $result;
+        } else {
+            $newChoice = 'Create new Site using domain name: ' . fp_env('ACACHA_FORGE_DOMAIN');
+            $choices = array_merge([$newChoice], $this->site_names);
+            $default = array_search($newChoice,$this->site_names);
+        }
+
+        $site_name = $this->choice( $this->questionText(), $choices, $default);
         $site_id = $this->getSiteId($this->sites, $site_name);
         if ( ! $site_id ) {
             $this->call('publish:create_site');
+            return fp_env('ACACHA_FORGE_SITE');
         } else {
             $this->info("Site ($site_name) already exists on Laravel Forge with site_id: $site_id");
+            return $site_id;
         }
-        $site_id = $this->getSiteId($this->sites, $site_name);
-        if(!$site_id) {
-            $this->error("No site_id obtained! Maybe some error occurs when creating site on Laravel Forge...");
-            die();
-        }
-        return $site_id;
     }
+
+
 
 }
