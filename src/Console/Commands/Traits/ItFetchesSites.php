@@ -86,7 +86,7 @@ trait ItFetchesSites
      */
     protected function getSiteId($sites, $site_name)
     {
-        if ($site = $this->getSiteByName($sites,$site_name)) return $site->name;
+        if ($site = $this->getSiteByName($sites,$site_name)) return $site->id;
         return null;
     }
 }
