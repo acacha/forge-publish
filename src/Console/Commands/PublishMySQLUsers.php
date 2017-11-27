@@ -4,33 +4,32 @@ namespace Acacha\ForgePublish\Commands;
 
 use Acacha\ForgePublish\Commands\Traits\ChecksEnv;
 use Acacha\ForgePublish\Commands\Traits\DiesIfEnvVariableIsnotInstalled;
-use Acacha\ForgePublish\Commands\Traits\WaitsForMySQLDatabase;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
- * Class PublishMySQL.
+ * Class PublishMySQLUsers.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishMySQL extends Command
+class PublishMySQLUsers extends Command
 {
 
-    use ChecksEnv, DiesIfEnvVariableIsnotInstalled, WaitsForMySQLDatabase;
+    use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:mysql {name?} {user?} {password?} {--server=} {--dump} {--wait}';
+    protected $signature = 'publish:mysql-users {name?} {user?} {databases?} {--server=} {--dump}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Manage MySQL databases';
+    protected $description = 'Manage MySQL user databases';
 
     /**
      * Server forge id.
@@ -38,13 +37,6 @@ class PublishMySQL extends Command
      * @var string
      */
     protected $server;
-
-    /**
-     * API endpoint URL.
-     *
-     * @var string
-     */
-    protected $url;
 
     /**
      * Guzzle http client.
@@ -72,69 +64,64 @@ class PublishMySQL extends Command
         $this->abortCommandExecution();
 
         if ($this->argument('name')) {
-            $this->createMySQLDatabase();
+            $this->createMySQLUser();
         } else {
-            $this->listMySQLDatabases();
+            $this->listMySQLUsers();
         }
     }
 
     /**
-     * Create MySQL database.
+     * Create MySQL user.
      */
-    protected function createMySQLDatabase()
+    protected function createMySQLUser()
     {
         $this->checkParameters();
         $this->url = $this->obtainAPIURLEndpoint();
-//        try {
-            $this->http->post($this->url, [
-                    'form_params' => $data = $this->getData(),
-                    'headers' => [
-                        'X-Requested-With' => 'XMLHttpRequest',
-                        'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
-                    ]
+        $this->http->post($this->url, [
+                'form_params' => $this->getData(),
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
-            );
-            if ($this->option('wait')) {
-                $this->info('Waiting for database to be installed in Laravel Forge server...');
-                // Wait for database to be installed
-                $this->waitForMySQLDatabaseByName($data['name']);
-                $this->info('Installed!');
-            }
-//        } catch(\GuzzleHttp\Exception\ServerException $se) {
-//            if( str_contains($se->getResponse()->getBody()->getContents(), 'The given data failed to pass validation') ) {
-//                $this->error('Skipping installation. Some of the data you provided already exists in server');
-//            }
-//        } catch (\Exception $e) {
-//            dump($e->getMessage());
-//        }
+            ]
+        );
     }
 
     /**
-     * List MySQL databases.
+     * List MySQL users.
      */
-    protected function listMySQLDatabases() {
+    protected function listMySQLUsers() {
+        $this->url = $this->obtainAPIURLEndpointForList();
+        $response = $this->http->get($this->url, [
+                'headers' => [
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
+                ]
+            ]
+        );
 
-        $databases = $this->fetchMySQLDatabases();
+        $users = json_decode($response->getBody(),true) ;
+
 
         if ($this->option('dump')) {
-            dump($databases);
+            dump($users);
         }
 
-        if (empty($databases)) {
-            $this->error('No databases found.');
+        if (empty($users)) {
+            $this->error('No users found.');
             die();
         }
 
         $headers = ['Id', 'Server Id','Name','Status','Created at'];
 
         $rows = [];
-        foreach ($databases as $database) {
+        foreach ($users as $user) {
             $rows[] = [
-                $database['id'],
-                $database['serverId'],
-                $database['name'],
-                $database['status'],
-                $database['createdAt']
+                $user['id'],
+                $user['serverId'],
+                $user['name'],
+                $user['status'],
+                $user['createdAt']
             ];
         }
 
@@ -181,10 +168,20 @@ class PublishMySQL extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_mysql_uri'));
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_mysql_users_uri'));
         return config('forge-publish.url') . $uri;
     }
 
+    /**
+     * Obtain API URL endpoint.
+     *
+     * @return string
+     */
+    protected function obtainAPIURLEndpointForList()
+    {
+        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.get_mysql_users_uri'));
+        return config('forge-publish.url') . $uri;
+    }
 
     /**
      * Abort command execution.

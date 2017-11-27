@@ -32,6 +32,13 @@ class PublishDeploy extends Command
     protected $description = 'Deploy site';
 
     /**
+     * API endpint URL.
+     *
+     * @var string
+     */
+    protected $url;
+
+    /**
      * Server forge id.
      *
      * @var string

@@ -11,10 +11,12 @@ use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
 use Acacha\ForgePublish\Commands\PublishDeploy;
+use Acacha\ForgePublish\Commands\PublishDeploymentScript;
 use Acacha\ForgePublish\Commands\PublishDNS;
 use Acacha\ForgePublish\Commands\PublishDomain;
 use Acacha\ForgePublish\Commands\PublishEmail;
 use Acacha\ForgePublish\Commands\PublishEnv;
+use Acacha\ForgePublish\Commands\PublishEnvProduction;
 use Acacha\ForgePublish\Commands\PublishGit;
 use Acacha\ForgePublish\Commands\PublishGitDependencies;
 use Acacha\ForgePublish\Commands\PublishGithub;
@@ -23,6 +25,7 @@ use Acacha\ForgePublish\Commands\PublishInfo;
 use Acacha\ForgePublish\Commands\PublishInit;
 use Acacha\ForgePublish\Commands\PublishInstall;
 use Acacha\ForgePublish\Commands\PublishMySQL;
+use Acacha\ForgePublish\Commands\PublishMySQLUsers;
 use Acacha\ForgePublish\Commands\PublishRepository;
 use Acacha\ForgePublish\Commands\PublishIp;
 use Acacha\ForgePublish\Commands\PublishKeyGenerate;
@@ -75,10 +78,12 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishConnect::class,
                 PublishCreateSite::class,
                 PublishDeploy::class,
+                PublishDeploymentScript::class,
                 PublishDNS::class,
                 PublishDomain::class,
                 PublishEmail::class,
                 PublishEnv::class,
+                PublishEnvProduction::class,
                 PublishGit::class,
                 PublishGitDependencies::class,
                 PublishGithub::class,
@@ -91,6 +96,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishLog::class,
                 PublishLogin::class,
                 PublishMySQL::class,
+                PublishMySQLUsers::class,
                 PublishNpm::class,
                 PublishOpen::class,
                 PublishProjectType::class,

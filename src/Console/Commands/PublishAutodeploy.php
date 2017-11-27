@@ -36,7 +36,7 @@ class PublishAutodeploy extends Command
      *
      * @var string
      */
-    protected $signature = 'publish:autodeploy {--server=} {--site=}';
+    protected $signature = 'publish:autodeploy {--server=} {--site=} {--disable}';
 
     /**
      * The console command description.
@@ -69,13 +69,22 @@ class PublishAutodeploy extends Command
     public function handle()
     {
         $this->abortCommandExecution();
-        $this->info("Enabling autodeploy on Laravel Forge Site...");
+        $http_method = 'post';
+        $action = 'Enabling';
+        $actionp = 'Enabled';
+        if ($this->option('disable')) {
+            $action = 'Disabling';
+            $http_method = 'delete';
+            $actionp = 'Disabled';
+        }
+
+        $this->info("$action autodeploy on Laravel Forge Site...");
 
         $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_auto_deploy_uri'));
         $uri = str_replace('{forgesite}', $this->site , $uri);
         $url = config('forge-publish.url') . $uri;
 
-        $this->http->post($url,
+        $this->http->$http_method($url,
             [
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
@@ -83,7 +92,8 @@ class PublishAutodeploy extends Command
                 ]
             ]
         );
-        $this->info("Enabled autodeploy on Laravel Forge Site!");
+
+        $this->info("Autodeploy on Laravel Forge Site $actionp!");
 
     }
 

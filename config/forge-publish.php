@@ -264,4 +264,53 @@ return [
   */
   'get_mysql_uri' => env('ACACHA_FORGE_GET_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
 
+    /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE POST MYSQL USERS URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/mysql_users
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge post mysql users URI endpoint: /api/v1/user/servers/{forgeserver}/mysql_users
+  |
+  | This value could be overwriten using ACACHA_FORGE_POST_MYSQL_USERS_URI env variable
+  | if you kwnow what you are doing.
+  */
+    'post_mysql_users_uri' => env('ACACHA_FORGE_POST_MYSQL_USERS_URI','/api/v1/user/servers/{forgeserver}/mysql_users'),
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACACHA FORGE GET MYSQL USERS URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/mysql_users
+    |--------------------------------------------------------------------------
+    |
+    | Acacha Forge get mysql users URI endpoint: /api/v1/user/servers/{forgeserver}/mysql_users
+    |
+    | This value could be overwriten using ACACHA_FORGE_GET_MYSQL_USERS_URI env variable
+    | if you kwnow what you are doing.
+    */
+    'get_mysql_users_uri' => env('ACACHA_FORGE_GET_MYSQL_USERS_URI','/api/v1/user/servers/{forgeserver}/mysql_users'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACACHA FORGE SHOW DEPLOYMENT SCRIPT URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}deployment/script
+    |--------------------------------------------------------------------------
+    |
+    | Acacha Forge show mysql users URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}deployment/script
+    |
+    | This value could be overwriten using ACACHA_FORGE_SHOW_DEPLOYMENT_SCRIPT_URI env variable
+    | if you kwnow what you are doing.
+    */
+    'show_deployment_script_uri' => env('ACACHA_FORGE_SHOW_DEPLOYMENT_SCRIPT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACACHA FORGE UPDATE DEPLOYMENT SCRIPT URI ENDPOINT. Default: /api/v1/user/servers/{forgeserver}/sites/{forgesite}deployment/script
+    |--------------------------------------------------------------------------
+    |
+    | Acacha Forge update mysql users URI endpoint: /api/v1/user/servers/{forgeserver}/sites/{forgesite}deployment/script
+    |
+    | This value could be overwriten using ACACHA_FORGE_UPDATE_DEPLOYMENT_URI env variable
+    | if you kwnow what you are doing.
+    */
+    'update_deployment_script_uri' => env('ACACHA_FORGE_UPDATE_DEPLOYMENT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
+
 ];

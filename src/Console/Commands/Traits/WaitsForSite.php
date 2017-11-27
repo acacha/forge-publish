@@ -2,8 +2,6 @@
 
 namespace Acacha\ForgePublish\Commands\Traits;
 
-use Acacha\ForgePublish\Exceptions\TimeoutException;
-
 /**
  * Class WaitsForSite.
  *
@@ -11,7 +9,7 @@ use Acacha\ForgePublish\Exceptions\TimeoutException;
  */
 trait WaitsForSite
 {
-    use ItFetchesSites;
+    use ItFetchesSites, Retries;
 
     /**
      * Wait for site to be available by name!
@@ -39,32 +37,5 @@ trait WaitsForSite
             $site = $this->getSite($this->sites,$site_id);
             return $site->status == 'installed' ? $site : null;
         });
-    }
-
-    /**
-     * Retry the callback or fail after x seconds.
-     *
-     * @param $timeout
-     * @param $callback
-     * @return mixed
-     * @throws TimeoutException
-     */
-    public function retry($timeout, $callback)
-    {
-        $start = time();
-
-        beginning:
-
-        if ($output = $callback()) {
-            return $output;
-        }
-
-        if (time() - $start < $timeout) {
-            sleep(5);
-
-            goto beginning;
-        }
-
-        throw new TimeoutException($output);
     }
 }
