@@ -85,7 +85,7 @@ class PublishMySQL extends Command
     {
         $this->checkParameters();
         $this->url = $this->obtainAPIURLEndpoint();
-//        try {
+        try {
             $this->http->post($this->url, [
                     'form_params' => $data = $this->getData(),
                     'headers' => [
@@ -100,13 +100,13 @@ class PublishMySQL extends Command
                 $this->waitForMySQLDatabaseByName($data['name']);
                 $this->info('Installed!');
             }
-//        } catch(\GuzzleHttp\Exception\ServerException $se) {
-//            if( str_contains($se->getResponse()->getBody()->getContents(), 'The given data failed to pass validation') ) {
-//                $this->error('Skipping installation. Some of the data you provided already exists in server');
-//            }
-//        } catch (\Exception $e) {
-//            dump($e->getMessage());
-//        }
+        } catch(\GuzzleHttp\Exception\ServerException $se) {
+            if( str_contains($se->getResponse()->getBody()->getContents(), 'The given data failed to pass validation') ) {
+                $this->error('Skipping installation. Some of the data you provided already exists in server');
+            }
+        } catch (\Exception $e) {
+            dump($e->getMessage());
+        }
     }
 
     /**

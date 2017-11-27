@@ -15,7 +15,6 @@ use Acacha\ForgePublish\ForgePublishRCFile;
  */
 class ForgePublishRCParser
 {
-
     /**
      * File to parse.
      *

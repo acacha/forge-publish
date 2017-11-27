@@ -30,7 +30,6 @@ trait DNSisAlreadyConfigured
                 return true;
             }
         }
-        dump(4);
         return false;
     }
 

@@ -12,6 +12,7 @@ use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
 use Acacha\ForgePublish\Commands\PublishDeploy;
 use Acacha\ForgePublish\Commands\PublishDeploymentScript;
+use Acacha\ForgePublish\Commands\PublishDeploymentScriptWithHooks;
 use Acacha\ForgePublish\Commands\PublishDNS;
 use Acacha\ForgePublish\Commands\PublishDomain;
 use Acacha\ForgePublish\Commands\PublishEmail;
@@ -79,6 +80,7 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishCreateSite::class,
                 PublishDeploy::class,
                 PublishDeploymentScript::class,
+                PublishDeploymentScriptWithHooks::class,
                 PublishDNS::class,
                 PublishDomain::class,
                 PublishEmail::class,

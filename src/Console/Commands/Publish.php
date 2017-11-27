@@ -49,6 +49,10 @@ class Publish extends Command
             $this->call('publish:autodeploy');
         }
 
+        if ($this->confirm('Do you want to install a Deployment script with hooks?')) {
+            $this->call('publish:deployment_script_with_hooks');
+        }
+
         $this->info('### SSL. Lets Encrypt will only work on sites with a valid domain (no /etc/hosts/trick) ###');
         $this->info("### Skip the next step if you don't need SSL or not have a valid domain name");
 
