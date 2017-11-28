@@ -45,7 +45,9 @@ use Acacha\ForgePublish\Commands\PublishSites;
 use Acacha\ForgePublish\Commands\PublishSSH;
 use Acacha\ForgePublish\Commands\PublishSSL;
 use Acacha\ForgePublish\Commands\PublishToken;
+use Acacha\ForgePublish\Commands\PublishUpgrade;
 use Acacha\ForgePublish\Commands\PublishURL;
+use Acacha\ForgePublish\Commands\PublishZsh;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -115,7 +117,9 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
                 PublishSSL::class,
                 PublishCertificates::class,
                 PublishToken::class,
+                PublishUpgrade::class,
                 PublishURL::class,
+                PublishZsh::class
             ]);
         }
         

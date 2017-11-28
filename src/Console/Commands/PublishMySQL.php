@@ -96,7 +96,6 @@ class PublishMySQL extends Command
             );
             if ($this->option('wait')) {
                 $this->info('Waiting for database to be installed in Laravel Forge server...');
-                // Wait for database to be installed
                 $this->waitForMySQLDatabaseByName($data['name']);
                 $this->info('Installed!');
             }

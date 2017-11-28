@@ -129,7 +129,7 @@ class PublishInstall extends Command
                 $this->line("Database name: " . $mysql_data['name']);
                 $this->line("Database user: " . $mysql_data['user']);
                 if ($this->confirm('Do you want to create this database and user in production?')) {
-                    $this->call('publish:mysql', array_merge($mysql_data,['--wait']));
+                    $this->call('publish:mysql', array_merge($mysql_data,['--wait' => true]));
                 }
                 $this->databaseAlreadyConfigured = true;
             }
