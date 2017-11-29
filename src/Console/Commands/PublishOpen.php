@@ -54,7 +54,6 @@ class PublishOpen extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
     }
-
 }

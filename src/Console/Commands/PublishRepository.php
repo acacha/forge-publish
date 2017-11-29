@@ -16,7 +16,6 @@ use Illuminate\Console\Command;
  */
 class PublishRepository extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled, ChecksServer, ChecksSite;
 
     /**
@@ -87,8 +86,8 @@ class PublishRepository extends Command
         $this->abortCommandExecution();
         $this->info("Installing Github repository on Laravel Forge Site...");
 
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_git_repository_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_git_repository_uri'));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         $url = config('forge-publish.url') . $uri;
 
         $this->http->post($url,
@@ -111,13 +110,12 @@ class PublishRepository extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->repository = $this->checkEnv('repository','ACACHA_FORGE_GITHUB_REPO','argument');
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
+        $this->repository = $this->checkEnv('repository', 'ACACHA_FORGE_GITHUB_REPO', 'argument');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
 
         $this->checkServerAndAbort($this->server);
         $this->checkSiteAndAbort($this->site);
     }
-
 }

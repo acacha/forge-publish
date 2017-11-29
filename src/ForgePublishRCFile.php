@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\File;
  *
  * @package Acacha\Llum
  */
-class ForgePublishRCFile {
+class ForgePublishRCFile
+{
 
     /**
      * Relative path to llumrc file.

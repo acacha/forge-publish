@@ -1,6 +1,7 @@
 <?php
 
 namespace Acacha\ForgePublish\Commands;
+
 use Acacha\ForgePublish\Commands\Traits\PossibleEmails;
 
 /**
@@ -60,8 +61,9 @@ class PublishEmail extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
-        $default = ! empty( $emails = $this->getPossibleEmails()) ? $emails[0]: '';
+    protected function default()
+    {
+        $default = ! empty($emails = $this->getPossibleEmails()) ? $emails[0]: '';
         return fp_env($this->envVar()) ? fp_env($this->envVar()) : $default;
     }
 
@@ -70,7 +72,6 @@ class PublishEmail extends SaveEnvVariable
      */
     protected function value()
     {
-        return $this->anticipate( $this->questionText(), $this->getPossibleEmails(), $this->default());
+        return $this->anticipate($this->questionText(), $this->getPossibleEmails(), $this->default());
     }
-
 }

@@ -55,7 +55,6 @@ use Illuminate\Support\ServiceProvider;
  */
 class AcachaForgePublishServiceProvider extends ServiceProvider
 {
-
     public function register()
     {
         if (!defined('ACACHA_FORGE_PUBLISH_PATH')) {
@@ -135,5 +134,4 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
             ACACHA_FORGE_PUBLISH_PATH .'/config/forge-publish.php' => config_path('forge-publish.php'),
         ]);
     }
-
 }

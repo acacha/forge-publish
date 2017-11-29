@@ -57,7 +57,8 @@ class PublishURL extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         return fp_env($this->envVar()) ? fp_env($this->envVar()) : $this->getDefaultAPIURL();
     }
 

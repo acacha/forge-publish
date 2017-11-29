@@ -69,21 +69,20 @@ class PublishEnv extends Command
     public function handle()
     {
         $this->abortCommandExecution();
-        if (! $this->argument('action') || $this->argument('action') == 'list' ) {
+        if (! $this->argument('action') || $this->argument('action') == 'list') {
             $this->listEnvVariables();
             return;
         }
 
-        if ( $this->argument('action') == 'edit' ) {
+        if ($this->argument('action') == 'edit') {
             $this->editEnvVariables();
             return;
         }
 
-        if ( $this->argument('action') == 'check' ) {
+        if ($this->argument('action') == 'check') {
             $this->checkEnvVariable();
             return;
         }
-
     }
 
     /**
@@ -109,7 +108,7 @@ class PublishEnv extends Command
     {
         $key = $this->checkKey();
         $output = $this->execSSH("cd $this->domain;cat .env");
-        if (str_contains($output,$key)) {
+        if (str_contains($output, $key)) {
             $this->info("Key $key found in remote environment file");
         } else {
             $this->error("Key $key NOT found in remote environment file");
@@ -135,9 +134,8 @@ class PublishEnv extends Command
      */
     protected function abortCommandExecution()
     {
-
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
 
         $this->abortIfNoSSHConnection();
     }

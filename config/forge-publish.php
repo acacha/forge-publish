@@ -184,7 +184,7 @@ return [
   | if you kwnow what you are doing.
   */
 
-  'post_lets_encrypt_uri' => env('ACACHA_FORGE_POST_LETS_ENCRYPT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates/letsencrypt'),
+  'post_lets_encrypt_uri' => env('ACACHA_FORGE_POST_LETS_ENCRYPT_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates/letsencrypt'),
 
   /*
   |--------------------------------------------------------------------------
@@ -197,7 +197,7 @@ return [
   | if you kwnow what you are doing.
   */
 
-  'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deploy'),
+  'post_auto_deploy_uri' => env('ACACHA_FORGE_POST_AUTO_DEPLOY_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deploy'),
 
     /*
   |--------------------------------------------------------------------------
@@ -210,7 +210,7 @@ return [
   | if you kwnow what you are doing.
   */
 
-  'get_check_token_uri' => env('ACACHA_FORGE_GET_CHECK_TOKEN_URI','/api/v1/check_token'),
+  'get_check_token_uri' => env('ACACHA_FORGE_GET_CHECK_TOKEN_URI', '/api/v1/check_token'),
 
 
   /*
@@ -224,7 +224,7 @@ return [
   | if you kwnow what you are doing.
   */
 
-  'get_certificates_uri' => env('ACACHA_FORGE_GET_CERTIFICATES_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates'),
+  'get_certificates_uri' => env('ACACHA_FORGE_GET_CERTIFICATES_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/certificates'),
 
 
   /*
@@ -237,7 +237,7 @@ return [
   | This value could be overwriten using ACACHA_FORGE_POST_DEPLOY_SITE_URI env variable
   | if you kwnow what you are doing.
   */
-  'post_deploy_site_uri' => env('ACACHA_FORGE_POST_DEPLOY_SITE_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/deploy'),
+  'post_deploy_site_uri' => env('ACACHA_FORGE_POST_DEPLOY_SITE_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/deploy'),
 
   /*
   |--------------------------------------------------------------------------
@@ -249,7 +249,7 @@ return [
   | This value could be overwriten using ACACHA_FORGE_POST_MYSQL_URI env variable
   | if you kwnow what you are doing.
   */
-  'post_mysql_uri' => env('ACACHA_FORGE_POST_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
+  'post_mysql_uri' => env('ACACHA_FORGE_POST_MYSQL_URI', '/api/v1/user/servers/{forgeserver}/mysql'),
 
 
   /*
@@ -262,7 +262,7 @@ return [
   | This value could be overwriten using ACACHA_FORGE_GET_MYSQL_URI env variable
   | if you kwnow what you are doing.
   */
-  'get_mysql_uri' => env('ACACHA_FORGE_GET_MYSQL_URI','/api/v1/user/servers/{forgeserver}/mysql'),
+  'get_mysql_uri' => env('ACACHA_FORGE_GET_MYSQL_URI', '/api/v1/user/servers/{forgeserver}/mysql'),
 
     /*
   |--------------------------------------------------------------------------
@@ -274,7 +274,7 @@ return [
   | This value could be overwriten using ACACHA_FORGE_POST_MYSQL_USERS_URI env variable
   | if you kwnow what you are doing.
   */
-    'post_mysql_users_uri' => env('ACACHA_FORGE_POST_MYSQL_USERS_URI','/api/v1/user/servers/{forgeserver}/mysql_users'),
+    'post_mysql_users_uri' => env('ACACHA_FORGE_POST_MYSQL_USERS_URI', '/api/v1/user/servers/{forgeserver}/mysql_users'),
 
 
     /*
@@ -287,7 +287,7 @@ return [
     | This value could be overwriten using ACACHA_FORGE_GET_MYSQL_USERS_URI env variable
     | if you kwnow what you are doing.
     */
-    'get_mysql_users_uri' => env('ACACHA_FORGE_GET_MYSQL_USERS_URI','/api/v1/user/servers/{forgeserver}/mysql_users'),
+    'get_mysql_users_uri' => env('ACACHA_FORGE_GET_MYSQL_USERS_URI', '/api/v1/user/servers/{forgeserver}/mysql_users'),
 
     /*
     |--------------------------------------------------------------------------
@@ -299,7 +299,7 @@ return [
     | This value could be overwriten using ACACHA_FORGE_SHOW_DEPLOYMENT_SCRIPT_URI env variable
     | if you kwnow what you are doing.
     */
-    'show_deployment_script_uri' => env('ACACHA_FORGE_SHOW_DEPLOYMENT_SCRIPT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
+    'show_deployment_script_uri' => env('ACACHA_FORGE_SHOW_DEPLOYMENT_SCRIPT_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
 
     /*
     |--------------------------------------------------------------------------
@@ -311,6 +311,6 @@ return [
     | This value could be overwriten using ACACHA_FORGE_UPDATE_DEPLOYMENT_URI env variable
     | if you kwnow what you are doing.
     */
-    'update_deployment_script_uri' => env('ACACHA_FORGE_UPDATE_DEPLOYMENT_URI','/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
+    'update_deployment_script_uri' => env('ACACHA_FORGE_UPDATE_DEPLOYMENT_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
 
 ];

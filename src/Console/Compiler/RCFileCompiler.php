@@ -7,7 +7,8 @@ namespace Acacha\ForgePublish\Compiler;
  *
  * @package Acacha\ForgePublish\Compiler
  */
-class RCFileCompiler {
+class RCFileCompiler
+{
 
     /**
      * Compile the template using the given data.
@@ -18,8 +19,7 @@ class RCFileCompiler {
      */
     public function compile($template, $data)
     {
-        foreach($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $template = preg_replace("/\\$$key\\$/i", $value, $template);
         }
         return $template;

@@ -14,14 +14,13 @@ use Illuminate\Console\Command;
  */
 class PublishCertificates extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
-     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /**
+    * The name and signature of the console command.
+    *
+    * @var string
+    */
     protected $signature = 'publish:certificates {--server=} {--site=} {--dump}';
 
     /**
@@ -87,7 +86,7 @@ class PublishCertificates extends Command
             ]
         );
 
-        $certificates = json_decode($response->getBody(),true) ;
+        $certificates = json_decode($response->getBody(), true) ;
         if ($this->option('dump')) {
             dump($certificates);
         }
@@ -124,8 +123,8 @@ class PublishCertificates extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.get_certificates_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.get_certificates_uri'));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         return config('forge-publish.url') . $uri;
     }
 
@@ -134,9 +133,8 @@ class PublishCertificates extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
-
 }

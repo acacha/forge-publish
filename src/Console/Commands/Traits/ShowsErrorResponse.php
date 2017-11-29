@@ -18,7 +18,7 @@ trait ShowsErrorResponse
     {
         $this->error('And error occurs connecting to the api url: ' . $this->url);
         if ($e->getResponse()) {
-            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
+            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase());
         } else {
             $this->error('Exception occurs. Message: ' . $e->getMessage());
         }

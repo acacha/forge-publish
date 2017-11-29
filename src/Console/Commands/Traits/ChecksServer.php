@@ -4,7 +4,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
  * Trait ChecksServer.
- * 
+ *
  * @package Acacha\ForgePublish\Commands\Traits
  */
 trait ChecksServer
@@ -16,7 +16,8 @@ trait ChecksServer
      *
      * @param null $server
      */
-    protected function checkServerAndAbort($server = null) {
+    protected function checkServerAndAbort($server = null)
+    {
         $server = $server ? $server : fp_env('ACACHA_FORGE_SERVER');
         if (! $this->checkServer($server)) {
             $this->error('Server ' . $server . ' not valid');
@@ -33,7 +34,8 @@ trait ChecksServer
      * @param null $servers
      * @return bool
      */
-    protected function checkValue($env_var, $field, $value = null, $servers = null) {
+    protected function checkValue($env_var, $field, $value = null, $servers = null)
+    {
         $value = $value ? $value : fp_env($env_var);
         $servers = $servers ? $servers : $this->obtainServers();
         return in_array($value, collect($servers)->pluck($field)->toArray());
@@ -56,8 +58,9 @@ trait ChecksServer
      * @param null $servers
      * @return bool
      */
-    protected function checkServer($server = null, $servers = null) {
-        return $this->checkValue('ACACHA_FORGE_SERVER','forge_id',$server, $servers);
+    protected function checkServer($server = null, $servers = null)
+    {
+        return $this->checkValue('ACACHA_FORGE_SERVER', 'forge_id', $server, $servers);
     }
 
     /**
@@ -67,8 +70,9 @@ trait ChecksServer
      * @param null $servers
      * @return bool
      */
-    protected function checkIp($ip = null, $servers = null) {
-        return $this->checkValue('ACACHA_FORGE_IP_ADDRESS','ipAddress',$ip, $servers);
+    protected function checkIp($ip = null, $servers = null)
+    {
+        return $this->checkValue('ACACHA_FORGE_IP_ADDRESS', 'ipAddress', $ip, $servers);
     }
 
     /**
@@ -78,8 +82,8 @@ trait ChecksServer
      * @param null $servers
      * @return bool
      */
-    protected function checkServerName($server_name = null, $servers = null) {
-        return $this->checkValue('ACACHA_FORGE_SERVER_NAME','name',$server_name, $servers);
+    protected function checkServerName($server_name = null, $servers = null)
+    {
+        return $this->checkValue('ACACHA_FORGE_SERVER_NAME', 'name', $server_name, $servers);
     }
-
 }

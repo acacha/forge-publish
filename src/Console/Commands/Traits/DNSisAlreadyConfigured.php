@@ -18,14 +18,16 @@ trait DNSisAlreadyConfigured
      */
     protected function dnsResolutionIsOk($domain = null, $ip = null)
     {
-        if ($this->dnsAlreadyResolved) return true;
+        if ($this->dnsAlreadyResolved) {
+            return true;
+        }
 
         $domain = $domain ? $domain: $this->obtainDomain();
         $ip = $ip ? $ip: $this->obtainIp();
 
-        if ($domain != null && $ip != null ) {
-            $resolved_ip = gethostbyname ($domain);
-            if ( $resolved_ip != $domain && $resolved_ip == $ip ) {
+        if ($domain != null && $ip != null) {
+            $resolved_ip = gethostbyname($domain);
+            if ($resolved_ip != $domain && $resolved_ip == $ip) {
                 $this->dnsAlreadyResolved = true;
                 return true;
             }
@@ -38,8 +40,9 @@ trait DNSisAlreadyConfigured
      *
      * @return mixed
      */
-    protected function obtainDomain(){
-        return $this->domain ? $this->domain : fp_env('ACACHA_FORGE_DOMAIN',null);
+    protected function obtainDomain()
+    {
+        return $this->domain ? $this->domain : fp_env('ACACHA_FORGE_DOMAIN', null);
     }
 
     /**
@@ -47,9 +50,8 @@ trait DNSisAlreadyConfigured
      *
      * @return mixed
      */
-    protected function obtainIp(){
-        return $this->ip ? $this->ip : fp_env('ACACHA_FORGE_IP_ADDRESS',null);
+    protected function obtainIp()
+    {
+        return $this->ip ? $this->ip : fp_env('ACACHA_FORGE_IP_ADDRESS', null);
     }
-
-
 }

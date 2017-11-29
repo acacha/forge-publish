@@ -20,21 +20,21 @@ abstract class SaveEnvVariable extends Command
      *
      * @return mixed
      */
-    protected abstract function envVar();
+    abstract protected function envVar();
 
     /**
      * Argument key.
      *
      * @return mixed
      */
-    protected abstract function argKey();
+    abstract protected function argKey();
 
     /**
      * Question text.
      *
      * @return mixed
      */
-    protected abstract function questionText();
+    abstract protected function questionText();
 
     /**
      * SaveEnvVariable constructor.
@@ -71,14 +71,16 @@ abstract class SaveEnvVariable extends Command
     /**
      * Before.
      */
-    protected function before() {
+    protected function before()
+    {
         //
     }
 
     /**
      * After.
      */
-    protected function after() {
+    protected function after()
+    {
         //
     }
 
@@ -103,8 +105,8 @@ abstract class SaveEnvVariable extends Command
     /**
      * Default.
      */
-    protected function default() {
+    protected function default()
+    {
         return '';
     }
-
 }

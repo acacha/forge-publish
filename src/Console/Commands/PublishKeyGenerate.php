@@ -15,7 +15,6 @@ use Illuminate\Console\Command;
  */
 class PublishKeyGenerate extends Command
 {
-
     use ChecksEnv, RunsSSHCommands;
 
     /**
@@ -86,10 +85,11 @@ class PublishKeyGenerate extends Command
      *
      * @return bool
      */
-    protected function keyIsAlreadyInstalled() {
+    protected function keyIsAlreadyInstalled()
+    {
         $key = 'APP_KEY=base64:';
         $output = $this->execSSH("cd $this->domain;cat .env");
-        if (str_contains($output,$key)) {
+        if (str_contains($output, $key)) {
             return true;
         }
         return false;
@@ -100,10 +100,9 @@ class PublishKeyGenerate extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
 
         $this->abortIfNoSSHConnection();
     }
-
 }

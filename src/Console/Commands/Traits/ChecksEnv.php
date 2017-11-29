@@ -4,7 +4,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
  * Trait ChecksEnv.
- * 
+ *
  * @package Acacha\ForgePublish\Commands\Traits
  */
 trait ChecksEnv
@@ -20,7 +20,7 @@ trait ChecksEnv
     protected function checkEnv($option, $env_var, $type = 'option')
     {
         $value = $this->$type($option) ? $this->$type($option) : fp_env($env_var);
-        if ( !$value) {
+        if (!$value) {
             $this->error("No env var $env_var found. Please run php artisan publish:init");
             die();
         }

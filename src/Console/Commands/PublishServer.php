@@ -108,7 +108,8 @@ class PublishServer extends SaveEnvVariable
      */
     protected function before()
     {
-        while (! $this->confirm('Do you have a validated server assigned at http:://forge.acacha.com?')) {}
+        while (! $this->confirm('Do you have a validated server assigned at http:://forge.acacha.com?')) {
+        }
         $this->servers = $this->fetchServers();
         if (empty($this->servers)) {
             $this->error('No valid servers assigned to user!');
@@ -137,7 +138,8 @@ class PublishServer extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         return array_search(fp_env('ACACHA_FORGE_SERVER'), $this->server_ids);
     }
 
@@ -146,8 +148,7 @@ class PublishServer extends SaveEnvVariable
      */
     protected function value()
     {
-        $server_name = $this->choice( $this->questionText(), $this->server_names, $this->default());
+        $server_name = $this->choice($this->questionText(), $this->server_names, $this->default());
         return $this->server = $this->getForgeIdServer($this->servers, $server_name);
     }
-
 }

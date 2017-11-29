@@ -34,7 +34,9 @@ class PublishInit extends Command
     {
         $this->info('Hello! Together we are going to config Acacha Laravel Forge publish ...');
 
-        if (! ForgePublishRCFile::exists()) $this->call('publish:rc');;
+        if (! ForgePublishRCFile::exists()) {
+            $this->call('publish:rc');
+        };
 
         $this->confirmAnUserIsCreatedInAcachaLaravelForge();
 
@@ -59,7 +61,6 @@ class PublishInit extends Command
         $this->call('publish:github');
 
         $this->finish();
-
     }
 
     /**
@@ -72,7 +73,8 @@ class PublishInit extends Command
         $this->info('');
         $this->error('Please use Github Social Login for login!!!');
 
-        while (! $this->confirm('Do you have an user created at http:://forge.acacha.com?')) {}
+        while (! $this->confirm('Do you have an user created at http:://forge.acacha.com?')) {
+        }
     }
 
     /**
@@ -80,9 +82,11 @@ class PublishInit extends Command
      */
     protected function login()
     {
-        if ( fp_env('ACACHA_FORGE_ACCESS_TOKEN')) {
+        if (fp_env('ACACHA_FORGE_ACCESS_TOKEN')) {
             $this->info('You have a token already configured in your environment.');
-            if (! $this->confirm('Do you want to relogin?')) return;
+            if (! $this->confirm('Do you want to relogin?')) {
+                return;
+            }
         }
 
         $this->info('I need permissions to operate in Acacha Forge in your name...');
@@ -96,8 +100,7 @@ class PublishInit extends Command
             $this->call('publish:login', [
                 'email' => fp_env('ACACHA_FORGE_EMAIL')
             ]);
-        }
-        else {
+        } else {
             $this->call('publish:token');
         }
     }

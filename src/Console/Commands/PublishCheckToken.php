@@ -83,8 +83,11 @@ class PublishCheckToken extends Command
      * Abort command execution.
      *
      */
-    protected function abortCommandExecution() {
-        if ( ! $this->argument('token') ) $this->dieIfNoEnvFileIsFound();
-        $this->token = $this->checkEnv('token','ACACHA_FORGE_ACCESS_TOKEN','argument');    }
-
+    protected function abortCommandExecution()
+    {
+        if (! $this->argument('token')) {
+            $this->dieIfNoEnvFileIsFound();
+        }
+        $this->token = $this->checkEnv('token', 'ACACHA_FORGE_ACCESS_TOKEN', 'argument');
+    }
 }

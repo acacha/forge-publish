@@ -93,11 +93,10 @@ class PublishEnvProduction extends Command
      */
     protected function abortCommandExecution()
     {
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
 
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
-
-        if ( ! File::exists($this->localPath = base_path('.env.production'))) {
+        if (! File::exists($this->localPath = base_path('.env.production'))) {
             $this->error('File ' . $this->localPath . ' not found!');
             die();
         }

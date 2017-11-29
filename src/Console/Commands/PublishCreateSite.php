@@ -113,7 +113,7 @@ class PublishCreateSite extends Command
      *
      * @return array|int|null|string
      */
-    protected function getValue($value, $env_var , $command)
+    protected function getValue($value, $env_var, $command)
     {
         if ($this->argument($value)) {
             return $this->argument($value);
@@ -129,7 +129,7 @@ class PublishCreateSite extends Command
      */
     protected function getForgeServer()
     {
-        return $this->getValue('server', 'ACACHA_FORGE_SERVER' , 'server');
+        return $this->getValue('server', 'ACACHA_FORGE_SERVER', 'server');
     }
 
     /**
@@ -139,7 +139,7 @@ class PublishCreateSite extends Command
      */
     protected function getDomain()
     {
-        return $this->getValue('domain', 'ACACHA_FORGE_DOMAIN' , 'domain');
+        return $this->getValue('domain', 'ACACHA_FORGE_DOMAIN', 'domain');
     }
 
     /**
@@ -149,7 +149,7 @@ class PublishCreateSite extends Command
      */
     protected function getProjectType()
     {
-        return $this->getValue('project_type', 'ACACHA_FORGE_PROJECT_TYPE' , 'project_type');
+        return $this->getValue('project_type', 'ACACHA_FORGE_PROJECT_TYPE', 'project_type');
     }
 
     /**
@@ -159,7 +159,7 @@ class PublishCreateSite extends Command
      */
     protected function getSiteDirectory()
     {
-        return $this->getValue('site_directory', 'ACACHA_FORGE_SITE_DIRECTORY' , 'site_directory');
+        return $this->getValue('site_directory', 'ACACHA_FORGE_SITE_DIRECTORY', 'site_directory');
     }
 
     /**
@@ -177,7 +177,7 @@ class PublishCreateSite extends Command
         $this->url = $this->obtainApiEndPointURL();
         $site = $this->createSiteOnForge();
         $this->waitForSite($site['id']);
-        $this->addValueToEnv('ACACHA_FORGE_SITE',$site['id']);
+        $this->addValueToEnv('ACACHA_FORGE_SITE', $site['id']);
         $this->info('The site has been added to Forge');
     }
 
@@ -196,7 +196,8 @@ class PublishCreateSite extends Command
     /**
      * Create site on Forge.
      */
-    protected function createSiteOnForge() {
+    protected function createSiteOnForge()
+    {
         try {
             $this->info('Creating site ' . $this->domain . ' on server ' . $this->server);
             $response =  $this->http->post($this->url, [
@@ -210,7 +211,7 @@ class PublishCreateSite extends Command
                     'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
                 ]
             ]);
-            return json_decode($response->getBody(),true);
+            return json_decode($response->getBody(), true);
         } catch (\Exception $e) {
             $this->showErrorAndDie($e);
             return null;
@@ -220,8 +221,9 @@ class PublishCreateSite extends Command
     /**
      * Obtain API endpoint URL.
      */
-    protected function obtainApiEndPointURL() {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_sites_uri'));
+    protected function obtainApiEndPointURL()
+    {
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_sites_uri'));
         return config('forge-publish.url') . $uri;
     }
 
@@ -242,8 +244,9 @@ class PublishCreateSite extends Command
     {
         $this->sites = $this->fetchSites(fp_env('ACACHA_FORGE_SERVER'));
         $this->site = fp_env('ACACHA_FORGE_SITE');
-        if (in_array($this->site, collect($this->sites)->pluck('id')->toArray())) return true;
+        if (in_array($this->site, collect($this->sites)->pluck('id')->toArray())) {
+            return true;
+        }
         return in_array($this->domain, collect($this->sites)->pluck('name')->toArray());
     }
-
 }

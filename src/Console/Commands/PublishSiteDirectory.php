@@ -57,7 +57,8 @@ class PublishSiteDirectory extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         return $default = fp_env($this->envVar()) ? fp_env($this->envVar()) : $this->defaultValue();
     }
 
@@ -70,5 +71,4 @@ class PublishSiteDirectory extends SaveEnvVariable
     {
         return config('forge-publish.site_directory');
     }
-
 }

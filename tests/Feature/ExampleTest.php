@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\App;
  *
  * @package Tests\Feature
  */
-class ExampleTest  extends TestCase
+class ExampleTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,6 +21,4 @@ class ExampleTest  extends TestCase
         App::setLocale('en');
 //        $this->withoutExceptionHandling();
     }
-
-
 }

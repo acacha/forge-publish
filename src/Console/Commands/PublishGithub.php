@@ -57,9 +57,10 @@ class PublishGithub extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         $default = $this->getRepoFromGithubConfig();
-        if ( ! $default) {
+        if (! $default) {
             $this->error('No Github Repository found!');
             if ($this->confirm('Do you want to run llum github:init command (requires llum installed!)?')) {
                 passthru('llum github:init');
@@ -76,15 +77,17 @@ class PublishGithub extends SaveEnvVariable
     protected function getRepoFromGithubConfig()
     {
         $remote = `git remote get-url origin 2> /dev/null`;
-        if ( ! starts_with($remote,['git@github.com:','https://github.com/'])) return '';
+        if (! starts_with($remote, ['git@github.com:','https://github.com/'])) {
+            return '';
+        }
 
-        if ( starts_with ( $remote ,'git@github.com:')) {
+        if (starts_with($remote, 'git@github.com:')) {
             // git@github.com:acacha/forge-publish.git
             return explode('.', explode(":", $remote)[1])[0];
         }
-        if ( starts_with ( $remote ,'https://github.com/')) {
+        if (starts_with($remote, 'https://github.com/')) {
 //            https://github.com/acacha/llum.git
-            return explode('.', str_replace('https://github.com/','', $remote))[0];
+            return explode('.', str_replace('https://github.com/', '', $remote))[0];
         }
     }
 }

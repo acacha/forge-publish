@@ -34,7 +34,6 @@ class Publish extends Command
      */
     public function handle()
     {
-
         $this->call('publish:repository');
 
         $this->call('publish:dns');
@@ -66,5 +65,4 @@ class Publish extends Command
 
         $this->info("I have finished publishing you project into Laravel Forge server! Congratulations and enjoy!");
     }
-
 }
