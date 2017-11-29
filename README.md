@@ -4,6 +4,7 @@
 [![License](https://poser.pugx.org/acacha/forge-publish/license)](https://packagist.org/packages/acacha/forge-publish)
 [![Build Status][ico-travis]][link-travis]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![StyleCI](https://styleci.io/repos/109800934/shield?branch=master)](https://styleci.io/repos/109800934)
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Monthly Downloads](https://poser.pugx.org/acacha/forge-publish/d/monthly)](https://packagist.org/packages/acacha/forge-publish)
