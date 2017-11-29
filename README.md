@@ -1,11 +1,14 @@
 # forge-publish
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
+[![Latest Stable Version](https://poser.pugx.org/acacha/forge-publish/v/stable)](https://packagist.org/packages/acacha/forge-publish)[![Software License][ico-license]](LICENSE.md)
+[![License](https://poser.pugx.org/acacha/forge-publish/license)](https://packagist.org/packages/acacha/forge-publish)
 [![Build Status][ico-travis]][link-travis]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
+[![Monthly Downloads](https://poser.pugx.org/acacha/forge-publish/d/monthly)](https://packagist.org/packages/acacha/forge-publish)
+[![Daily Downloads](https://poser.pugx.org/acacha/forge-publish/d/daily)](https://packagist.org/packages/acacha/forge-publish)
+[![composer.lock](https://poser.pugx.org/acacha/forge-publish/composerlock)](https://packagist.org/packages/acacha/forge-publish)
 
 Laravel artisan command to automate publish on Laravel Forge
 
