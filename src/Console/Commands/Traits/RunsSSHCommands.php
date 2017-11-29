@@ -18,15 +18,19 @@ trait RunsSSHCommands
      * @param null $server
      * @param bool $verbose
      */
-    protected function runScp( $file, $destination_path , $server = null, $verbose = false)
+    protected function runScp($file, $destination_path, $server = null, $verbose = false)
     {
         $recursive_option = '';
-        if (is_dir($file)) $recursive_option = ' -r';
+        if (is_dir($file)) {
+            $recursive_option = ' -r';
+        }
         $server = $server ? $server : $this->hostNameForConfigFile();
         $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';
         $full_command = "scp -F ${ssh_config_file}$recursive_option $file $server:$destination_path";
 
-        if ($verbose) $this->info($full_command);
+        if ($verbose) {
+            $this->info($full_command);
+        }
         passthru($full_command);
     }
 
@@ -36,7 +40,7 @@ trait RunsSSHCommands
      * @param $command
      * @param $server
      */
-    protected function runSSH( $command, $server = null)
+    protected function runSSH($command, $server = null)
     {
         $server = $server ? $server : $this->hostNameForConfigFile();
         $ssh_config_file = $_SERVER['HOME'] . '/.ssh/config';

@@ -4,7 +4,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
  * Trait ChecksForRootPermission.
- * 
+ *
  * @package Acacha\ForgePublish\Commands\Traits
  */
 trait ChecksForRootPermission

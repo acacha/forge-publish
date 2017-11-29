@@ -14,7 +14,6 @@ use Illuminate\Console\Command;
  */
 class PublishDeploy extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
@@ -88,7 +87,6 @@ class PublishDeploy extends Command
                 ]
             ]
         );
-
     }
 
     /**
@@ -98,8 +96,8 @@ class PublishDeploy extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_deploy_site_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_deploy_site_uri'));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         return config('forge-publish.url') . $uri;
     }
 
@@ -108,8 +106,8 @@ class PublishDeploy extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 }

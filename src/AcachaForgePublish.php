@@ -7,5 +7,4 @@ namespace Acacha\ForgePublish;
  */
 class AcachaForgePublish
 {
-
 }

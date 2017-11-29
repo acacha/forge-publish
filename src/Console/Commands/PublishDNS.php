@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\File;
  */
 class PublishDNS extends Command
 {
-
     use ChecksForRootPermission, DNSisAlreadyConfigured, ChecksEnv;
 
     /**
@@ -76,7 +75,7 @@ class PublishDNS extends Command
 
         $type = $this->option('type') ?
             $this->option('type') :
-            $this->choice('Which system do you want to use?',['hosts'],0);
+            $this->choice('Which system do you want to use?', ['hosts'], 0);
 
         if ($type != 'hosts') {
             //TODO Support Other services OpenDNS/Hover.com? DNS service wiht API
@@ -85,7 +84,7 @@ class PublishDNS extends Command
             die();
         }
 
-        $this->addEntryToEtcHostsFile($this->domain,$this->ip);
+        $this->addEntryToEtcHostsFile($this->domain, $this->ip);
         $this->info('File ' . self::ETC_HOSTS . ' configured ok');
     }
 
@@ -98,7 +97,7 @@ class PublishDNS extends Command
     protected function addEntryToEtcHostsFile($domain, $ip)
     {
         $content = "\n# Forge server\n$ip $domain\n";
-        File::append(self::ETC_HOSTS,$content);
+        File::append(self::ETC_HOSTS, $content);
     }
 
     /**
@@ -106,10 +105,12 @@ class PublishDNS extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN', 'argument');
-        $this->ip = $this->checkEnv('ip','ACACHA_FORGE_IP_ADDRESS','argument');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN', 'argument');
+        $this->ip = $this->checkEnv('ip', 'ACACHA_FORGE_IP_ADDRESS', 'argument');
 
-        if ($this->dnsResolutionIsOk()) return ;
+        if ($this->dnsResolutionIsOk()) {
+            return ;
+        }
 
         $this->checkForRootPermission();
     }

@@ -73,7 +73,7 @@ class PublishSite extends SaveEnvVariable
         $this->http = $http;
     }
 
-        /**
+    /**
      * Env var to set.
      *
      * @return mixed
@@ -117,11 +117,14 @@ class PublishSite extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         $current_value = fp_env('ACACHA_FORGE_SITE');
-        if ( $current_value ) {
+        if ($current_value) {
             $site_name = $this->getSiteName($this->sites, $current_value);
-            if ($site_name) return $site_name;
+            if ($site_name) {
+                return $site_name;
+            }
         }
         return fp_env('ACACHA_FORGE_DOMAIN');
     }
@@ -133,17 +136,17 @@ class PublishSite extends SaveEnvVariable
     {
         $default=null;
         $choices = $this->site_names ;
-        if ($result = array_search($this->default,$this->site_names)) {
+        if ($result = array_search($this->default, $this->site_names)) {
             $default = $result;
         } else {
             $newChoice = 'Create new Site using domain name: ' . fp_env('ACACHA_FORGE_DOMAIN');
             $choices = array_merge([$newChoice], $this->site_names);
-            $default = array_search($newChoice,$this->site_names);
+            $default = array_search($newChoice, $this->site_names);
         }
 
-        $site_name = $this->choice( $this->questionText(), $choices, $default);
+        $site_name = $this->choice($this->questionText(), $choices, $default);
         $site_id = $this->getSiteId($this->sites, $site_name);
-        if ( ! $site_id ) {
+        if (! $site_id) {
             $this->call('publish:create_site');
             return fp_env('ACACHA_FORGE_SITE');
         } else {
@@ -151,7 +154,4 @@ class PublishSite extends SaveEnvVariable
             return $site_id;
         }
     }
-
-
-
 }

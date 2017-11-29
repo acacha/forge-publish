@@ -53,5 +53,4 @@ class PublishToken extends SaveEnvVariable
     {
         return 'Personal Access Token?';
     }
-
 }

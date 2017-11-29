@@ -69,9 +69,11 @@ class PublishLogin extends Command
         $emails = $this->getPossibleEmails();
         $email = $this->argument('email') ?
             $this->argument('email') :
-            $this->anticipate('Email?',$emails,$current_value = fp_env('ACACHA_FORGE_EMAIL'));
+            $this->anticipate('Email?', $emails, $current_value = fp_env('ACACHA_FORGE_EMAIL'));
 
-        if($email != fp_env('ACACHA_FORGE_EMAIL')) $this->addValueToEnv('ACACHA_FORGE_EMAIL', $email);
+        if ($email != fp_env('ACACHA_FORGE_EMAIL')) {
+            $this->addValueToEnv('ACACHA_FORGE_EMAIL', $email);
+        }
 
         $password = $this->secret('Password?');
 
@@ -92,9 +94,9 @@ class PublishLogin extends Command
             $this->showErrorAndDie($e);
         }
 
-        $body = json_decode( (string) $response->getBody());
+        $body = json_decode((string) $response->getBody());
 
-        if(!isset($body->access_token)) {
+        if (!isset($body->access_token)) {
             $this->error("The URL $this->url doesn't return an access_token!");
             die();
         }
@@ -113,5 +115,4 @@ class PublishLogin extends Command
     {
         $this->dieIfNoEnvFileIsFound();
     }
-
 }

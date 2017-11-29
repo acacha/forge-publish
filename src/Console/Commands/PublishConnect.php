@@ -68,7 +68,6 @@ class PublishConnect extends Command
         parent::__construct();
         $this->http = $http;
         $this->parser = $parser;
-
     }
 
     /**
@@ -86,9 +85,10 @@ class PublishConnect extends Command
      * Abort command execution.
      *
      */
-    protected function abortCommandExecution() {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+    protected function abortCommandExecution()
+    {
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
     }
 
     /**
@@ -98,8 +98,9 @@ class PublishConnect extends Command
      */
     protected function defaultShell()
     {
-        if ($this->parser->getDefaultShell() == '') return 'bash';
+        if ($this->parser->getDefaultShell() == '') {
+            return 'bash';
+        }
         return $this->parser->getDefaultShell();
     }
-
 }

@@ -16,7 +16,7 @@ trait ItFetchesServers
     {
         $url = config('forge-publish.url') . config('forge-publish.user_servers_uri');
         try {
-            $response = $this->http->get($url,[
+            $response = $this->http->get($url, [
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
                     'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
@@ -25,7 +25,7 @@ trait ItFetchesServers
         } catch (\Exception $e) {
             $this->error('And error occurs connecting to the api url: ' . $url);
             dd($e);
-            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
+            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase());
             return [];
         }
         return json_decode((string) $response->getBody());
@@ -40,7 +40,7 @@ trait ItFetchesServers
      */
     protected function getForgeIdServer($servers, $server_name)
     {
-        $found_server = $this->searchServer($servers,'name',$server_name);
+        $found_server = $this->searchServer($servers, 'name', $server_name);
         return $found_server->first() ? $found_server->first()->forge_id : null;
     }
 
@@ -53,7 +53,7 @@ trait ItFetchesServers
      */
     protected function getForgeName($servers, $server_id)
     {
-        $found_server = $this->searchServer($servers,'forge_id',$server_id);
+        $found_server = $this->searchServer($servers, 'forge_id', $server_id);
         return $found_server->first() ? $found_server->first()->name : null;
     }
 
@@ -66,7 +66,7 @@ trait ItFetchesServers
      */
     protected function serverIpAddress($servers, $server_id)
     {
-        $found_server = $this->searchServer($servers,'forge_id',$server_id);
+        $found_server = $this->searchServer($servers, 'forge_id', $server_id);
         return $found_server->first() ? $found_server->first()->ipAddress : null;
     }
 
@@ -78,10 +78,10 @@ trait ItFetchesServers
      * @param $value
      * @return static
      */
-    protected function searchServer($servers,$property,$value) {
+    protected function searchServer($servers, $property, $value)
+    {
         return collect($servers)->filter(function ($server) use ($property, $value) {
             return $server->$property == $value;
         });
     }
-
 }

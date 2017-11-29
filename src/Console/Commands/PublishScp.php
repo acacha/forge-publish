@@ -69,7 +69,7 @@ class PublishScp extends Command
     {
         $this->abortCommandExecution();
         $file = $this->argument('file');
-        $this->runScp(base_path($file),$this->domain,null,true);
+        $this->runScp(base_path($file), $this->domain, null, true);
     }
 
     /**
@@ -77,9 +77,8 @@ class PublishScp extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
         $this->abortIfNoSSHConnection();
     }
-
 }

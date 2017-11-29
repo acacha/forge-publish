@@ -1,6 +1,7 @@
 <?php
 
 namespace Acacha\ForgePublish\Commands\Traits;
+
 use Illuminate\Support\Facades\File;
 
 /**
@@ -22,8 +23,11 @@ trait PossibleEmails
         $github_email = null;
         $github_email = str_replace(array("\r", "\n"), '', shell_exec('git config user.email'));
 
-        if(filter_var($github_email, FILTER_VALIDATE_EMAIL)) return [ $github_email ];
-        else return [];
+        if (filter_var($github_email, FILTER_VALIDATE_EMAIL)) {
+            return [ $github_email ];
+        } else {
+            return [];
+        }
     }
 
     /**
@@ -31,7 +35,9 @@ trait PossibleEmails
      */
     protected function checkGit()
     {
-        if (File::exists('/usr/bin/git')) return;
+        if (File::exists('/usr/bin/git')) {
+            return;
+        }
         $this->info('Git not found in your system');
         $this->info('Installing git with sudo apt-get install git');
         passthru('sudo apt-get install git');

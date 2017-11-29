@@ -4,7 +4,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
  * Trait ChecksToken.
- * 
+ *
  * @package Acacha\ForgePublish\Commands\Traits
  */
 trait ChecksToken
@@ -15,8 +15,8 @@ trait ChecksToken
      * @param $token
      * @return bool
      */
-    protected function checkToken($token) {
-
+    protected function checkToken($token)
+    {
         try {
             $response = $this->http->get($this->checkTokenURL(), [
                 'headers' => [
@@ -26,7 +26,9 @@ trait ChecksToken
             ]);
             $content = json_decode($response->getBody()->getContents());
             if (isset($content->message)) {
-                if ($content->message === 'Token is valid') return true;
+                if ($content->message === 'Token is valid') {
+                    return true;
+                }
             }
         } catch (\Exception $e) {
             return false;

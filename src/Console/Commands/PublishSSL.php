@@ -14,7 +14,6 @@ use Illuminate\Console\Command;
  */
 class PublishSSL extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
@@ -108,8 +107,8 @@ class PublishSSL extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_lets_encrypt_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_lets_encrypt_uri'));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         return config('forge-publish.url') . $uri;
     }
 
@@ -118,10 +117,9 @@ class PublishSSL extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
-        $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
-
 }

@@ -14,7 +14,6 @@ use Illuminate\Console\Command;
  */
 class PublishAutodeploy extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
@@ -80,8 +79,8 @@ class PublishAutodeploy extends Command
 
         $this->info("$action autodeploy on Laravel Forge Site...");
 
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_auto_deploy_uri'));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_auto_deploy_uri'));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         $url = config('forge-publish.url') . $uri;
 
         $this->http->$http_method($url,
@@ -94,7 +93,6 @@ class PublishAutodeploy extends Command
         );
 
         $this->info("Autodeploy on Laravel Forge Site $actionp!");
-
     }
 
     /**
@@ -102,9 +100,8 @@ class PublishAutodeploy extends Command
      */
     protected function abortCommandExecution()
     {
-      $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-      $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
-      $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
+        $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
-
 }

@@ -13,5 +13,4 @@ if (! function_exists('fp_env')) {
         $env = (new Loader(base_path('.env')))->parse()->toArray();
         return array_key_exists($variable, $env) ? $env[$variable] : $default;
     }
-
 }

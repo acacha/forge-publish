@@ -57,7 +57,7 @@ class PublishRc extends Command
 
         $ssh_shell = $this->argument('ssh_shell') ?
             $this->argument('ssh_shell') :
-            $this->choice('Shell to use in SSH?',['bash','zsh'],0);
+            $this->choice('Shell to use in SSH?', ['bash','zsh'], 0);
 
         $data = [
             "ACACHA_FORGE_PUBLISH_DOMAIN_PREFIX" => $domain_suffix,
@@ -68,7 +68,6 @@ class PublishRc extends Command
             file_get_contents($this->getStubPath()),
             $data);
         return file_put_contents(ForgePublishRCFile::path(), $content);
-
     }
 
     /**
@@ -76,8 +75,8 @@ class PublishRc extends Command
      *
      * @return string
      */
-    protected function getStubPath() {
+    protected function getStubPath()
+    {
         return __DIR__ . '/stubs/forgepublishrc.stub';
     }
-
 }

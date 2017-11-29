@@ -4,7 +4,7 @@ namespace Acacha\ForgePublish\Commands\Traits;
 
 /**
  * Trait ChecksSite.
- * 
+ *
  * @package Acacha\ForgePublish\Commands\Traits
  */
 trait ChecksSite
@@ -16,7 +16,8 @@ trait ChecksSite
      *
      * @return bool
      */
-    protected function checkSite() {
+    protected function checkSite()
+    {
         $sites = $this->fetchSites(fp_env('ACACHA_FORGE_SERVER'));
         return in_array(fp_env('ACACHA_FORGE_SITE'), collect($sites)->pluck('id')->toArray());
     }
@@ -26,12 +27,12 @@ trait ChecksSite
      *
      * @param null $site
      */
-    protected function checkSiteAndAbort($site = null) {
+    protected function checkSiteAndAbort($site = null)
+    {
         $site = $site ? $site : fp_env('ACACHA_FORGE_SITE');
         if (! $this->checkSite($site)) {
             $this->error('Site ' . $site . '  not valid');
             die();
         }
     }
-
 }

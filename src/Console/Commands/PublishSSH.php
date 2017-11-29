@@ -127,7 +127,7 @@ class PublishSSH extends Command
      */
     protected function checkForSSHClientOrInstall()
     {
-        if(! File::exists(self::USR_BIN_SSH)) {
+        if (! File::exists(self::USR_BIN_SSH)) {
             $this->info('No SSH client found on your system (' . self::USR_BIN_SSH .')!');
             $this->installSshClient();
         } else {
@@ -140,7 +140,7 @@ class PublishSSH extends Command
      */
     protected function checkForSSHKeysOrCreate()
     {
-        if ( File::exists($_SERVER['HOME'] . self::SSH_ID_RSA_PRIV) ) {
+        if (File::exists($_SERVER['HOME'] . self::SSH_ID_RSA_PRIV)) {
             $this->info('SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')...');
         } else {
             $this->info('No SSH keys found on your system (~' . self::SSH_ID_RSA_PRIV .')!');
@@ -150,7 +150,6 @@ class PublishSSH extends Command
 
     protected function obtainServersInfo()
     {
-
         $this->obtainServers();
         $this->obtainServer();
     }
@@ -181,7 +180,6 @@ class PublishSSH extends Command
                     die();
                 }
                 $this->server_name = $this->argument('server_name');
-
             } else {
                 if (fp_env('ACACHA_FORGE_SERVER')) {
                     $this->server = fp_env('ACACHA_FORGE_SERVER');
@@ -208,7 +206,7 @@ class PublishSSH extends Command
      */
     protected function endPointAPIURL()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_ssh_keys_uri'));
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_ssh_keys_uri'));
         return config('forge-publish.url') . $uri;
     }
 
@@ -231,7 +229,9 @@ class PublishSSH extends Command
             $this->error("An error has been succeded: $contents");
             die();
         }
-        if ($result->status == 'installed') $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server " . $this->server_name . ' (' . $this->server . ')');
+        if ($result->status == 'installed') {
+            $this->info("The SSH Key ($keyName) has been correctly installed in Laravel Forge Server " . $this->server_name . ' (' . $this->server . ')');
+        }
     }
 
     /**
@@ -281,16 +281,18 @@ class PublishSSH extends Command
 
         $host_string = "Host " . $hostname;
 
-        if( strpos(file_get_contents($ssh_config_file), $host_string) !== false) {
+        if (strpos(file_get_contents($ssh_config_file), $host_string) !== false) {
             $this->info("SSH config for host: $host_string already exists");
             return;
         }
 
         $this->info("Adding server config to SSH config file $ssh_config_file");
-        if (! File::exists($ssh_config_file)) touch($ssh_config_file);
+        if (! File::exists($ssh_config_file)) {
+            touch($ssh_config_file);
+        }
         $ip_address = $this->ip_address();
         $config_string = "\n$host_string\n  Hostname $ip_address \n  User forge\n  IdentityFile /home/sergi/.ssh/id_rsa\n  Port 22\n  StrictHostKeyChecking no\n";
-        File::append($ssh_config_file,$config_string);
+        File::append($ssh_config_file, $config_string);
 
         $this->info('The following config has been added:' . $config_string);
     }
@@ -319,11 +321,11 @@ class PublishSSH extends Command
      */
     protected function validateIpAddress($ip_address)
     {
-        if ( ! filter_var($ip_address, FILTER_VALIDATE_IP) ) {
+        if (! filter_var($ip_address, FILTER_VALIDATE_IP)) {
             $this->error("$ip_address is not a valid ip address! Exiting!");
             die();
         }
-        if ( ! $this->checkIp($ip_address, $this->servers)) {
+        if (! $this->checkIp($ip_address, $this->servers)) {
             $this->error("$ip_address doesn't match any of your IP addreses Forge Servers");
             die();
         }
@@ -335,8 +337,11 @@ class PublishSSH extends Command
     protected function testSSHConnection()
     {
         $this->info('Testing connection...');
-        if ( $this->checkSSHConnection() ) $this->info('Connection tested ok!');
-        else $this->error('Error connnecting to server!');
+        if ($this->checkSSHConnection()) {
+            $this->info('Connection tested ok!');
+        } else {
+            $this->error('Error connnecting to server!');
+        }
     }
 
     /**
@@ -367,5 +372,4 @@ class PublishSSH extends Command
         $this->info('Running sudo apt-get install ssh');
         passthru('sudo apt-get install openssh-client');
     }
-
 }

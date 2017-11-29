@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 
 use Illuminate\Console\Command;
 
-
 /**
  * Class PublishSites.
  *
@@ -71,7 +70,7 @@ class PublishSites extends Command
     {
         $this->abortCommandExecution();
 
-        $this->sites = $this->fetchSites( $server = fp_env('ACACHA_FORGE_SERVER'));
+        $this->sites = $this->fetchSites($server = fp_env('ACACHA_FORGE_SERVER'));
         $server_name = $this->serverName($server);
         $this->info("Sites on server $server_name ($server)");
 
@@ -101,7 +100,6 @@ class PublishSites extends Command
         }
 
         $this->table($headers, $rows);
-
     }
 
     /**
@@ -112,7 +110,7 @@ class PublishSites extends Command
      */
     protected function serverName($server)
     {
-        return $this->getForgeName($this->fetchServers(),$server);
+        return $this->getForgeName($this->fetchServers(), $server);
     }
 
     /**

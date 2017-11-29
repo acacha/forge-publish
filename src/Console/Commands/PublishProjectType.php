@@ -57,7 +57,8 @@ class PublishProjectType extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         return $default = fp_env($this->envVar()) ? $this->searchProjectType(fp_env($this->envVar())) : $this->defaultValue();
     }
 
@@ -94,8 +95,9 @@ class PublishProjectType extends SaveEnvVariable
      */
     protected function searchProjectType($project_type = null)
     {
-        if ( ! $project_type ) $project_type = config('forge-publish.project_type');
-        return array_search ( $project_type, config('forge-publish.project_types') );
+        if (! $project_type) {
+            $project_type = config('forge-publish.project_type');
+        }
+        return array_search($project_type, config('forge-publish.project_types'));
     }
-
 }

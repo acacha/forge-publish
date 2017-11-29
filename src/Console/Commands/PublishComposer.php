@@ -14,7 +14,6 @@ use Illuminate\Console\Command;
  */
 class PublishComposer extends Command
 {
-
     use ChecksEnv, RunsSSHCommands;
 
     /**
@@ -80,10 +79,9 @@ class PublishComposer extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
 
         $this->abortIfNoSSHConnection();
     }
-
 }

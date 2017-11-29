@@ -107,10 +107,10 @@ class PublishInstall extends Command
                 goto check_env_production;
             }
         } else {
-            if ( ! File::exists($gitIgnore = base_path('.gitignore')) ) {
+            if (! File::exists($gitIgnore = base_path('.gitignore'))) {
                 $this->error("Be careful! File $gitIgnore doesn't exists and you have a $productionEnv file. Be sure you are not publishing sensible data to your repo!");
             } else {
-                if( strpos(file_get_contents($gitIgnore),".env.production") === false) {
+                if (strpos(file_get_contents($gitIgnore), ".env.production") === false) {
                     $this->error("Be careful! File $gitIgnore doesn't have $productionEnv file. Be sure you are not publishing sensible data to your repo!");
                 }
             }
@@ -121,7 +121,7 @@ class PublishInstall extends Command
 
             $mysql_data = $this->obtainMySQLDatabaseInfoFromEnv(base_path('.env.production'));
 
-            if ( ! $mysql_data) {
+            if (! $mysql_data) {
                 $this->error('Not all MYSQL info (DB_CONNECTION=mysql,DB_DATABASE,DB_USER,DB_PASSWORD,) found in .env production');
             } else {
                 $this->info("We have found a MYSQL database and user configuration in your .env.production file.");
@@ -129,13 +129,13 @@ class PublishInstall extends Command
                 $this->line("Database name: " . $mysql_data['name']);
                 $this->line("Database user: " . $mysql_data['user']);
                 if ($this->confirm('Do you want to create this database and user in production?')) {
-                    $this->call('publish:mysql', array_merge($mysql_data,['--wait' => true]));
+                    $this->call('publish:mysql', array_merge($mysql_data, ['--wait' => true]));
                 }
                 $this->databaseAlreadyConfigured = true;
             }
         }
 
-        if ( ! $this->databaseAlreadyConfigured) {
+        if (! $this->databaseAlreadyConfigured) {
             if ($this->confirm('Do you want to create a database in production?')) {
                 $mysql_data['name'] = $this->ask('Database?');
                 $mysql_data['user'] = $this->ask('User?');
@@ -145,13 +145,13 @@ class PublishInstall extends Command
         }
 
         if ($this->confirm('Do you wish run migrations on production?')) {
-            $this->call('publish:artisan',[
+            $this->call('publish:artisan', [
                 'artisan_command' => 'migrate --force',
             ]);
         }
 
         if ($this->confirm('Do you want to seed database on production?')) {
-            $this->call('publish:artisan',[
+            $this->call('publish:artisan', [
                 'artisan_command' => 'db:seed --force',
             ]);
         }
@@ -167,18 +167,21 @@ class PublishInstall extends Command
     {
         $env = (new Loader($file))->parse()->toArray();
 
-        if ( ! array_key_exists('DB_CONNECTION',$env)  || $env['DB_CONNECTION'] != 'mysql' ) return null;
+        if (! array_key_exists('DB_CONNECTION', $env)  || $env['DB_CONNECTION'] != 'mysql') {
+            return null;
+        }
 
-        if ( ! array_key_exists('DB_DATABASE',$env) ||
-             ! array_key_exists('DB_USERNAME',$env) ||
-             ! array_key_exists('DB_PASSWORD',$env)) return null;
+        if (! array_key_exists('DB_DATABASE', $env) ||
+             ! array_key_exists('DB_USERNAME', $env) ||
+             ! array_key_exists('DB_PASSWORD', $env)) {
+            return null;
+        }
 
         return [
           'name' => $env['DB_DATABASE'],
           'user' => $env['DB_USERNAME'],
           'password' => $env['DB_PASSWORD'],
         ];
-
     }
 
     /**
@@ -186,10 +189,9 @@ class PublishInstall extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->domain = $this->checkEnv('domain','ACACHA_FORGE_DOMAIN');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->domain = $this->checkEnv('domain', 'ACACHA_FORGE_DOMAIN');
 
         $this->abortIfNoSSHConnection();
     }
-
 }

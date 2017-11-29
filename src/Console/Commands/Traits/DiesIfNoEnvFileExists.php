@@ -16,7 +16,7 @@ trait DiesIfNoEnvFileExists
      */
     protected function dieIfNoEnvFileIsFound()
     {
-        if (! File::exists(base_path('.env')) ) {
+        if (! File::exists(base_path('.env'))) {
             $this->info('No .env file found!');
             $this->info('Skipping...');
             die();

@@ -62,16 +62,16 @@ class PublishGitDependencies extends Command
     {
         $this->abortCommandExecution();
 
-        if ( empty($ignored_repos = $this->ignoredRepos())) {
+        if (empty($ignored_repos = $this->ignoredRepos())) {
             $this->error('Sorry no ignored local github repos found in the current folder. Skipping');
             return;
         }
 
-        $files_to_publish = $this->choice('Which Github projects in local do you want to publish (you could select multiple values separated by coma)?', $ignored_repos ,null,null,true);
+        $files_to_publish = $this->choice('Which Github projects in local do you want to publish (you could select multiple values separated by coma)?', $ignored_repos, null, null, true);
 
         foreach ((array) $files_to_publish as $file) {
             $repository_url= $this->repositoryURL($file);
-            $file = starts_with($file,'/') ? str_after($file, '/') : $file;
+            $file = starts_with($file, '/') ? str_after($file, '/') : $file;
             $this->call('publish:git', [
                 'git_command' => "clone $repository_url $file"
             ]);
@@ -87,9 +87,13 @@ class PublishGitDependencies extends Command
 
         $ignored_files = [];
         foreach ($lines as $line) {
-            $file = preg_replace( "/\r|\n/", "", $line );
-            if (!File::exists(base_path($file)) || ! is_dir(base_path($file))) continue;
-            if (! $this->folderContainsValidGithubRepo($file)) continue;
+            $file = preg_replace("/\r|\n/", "", $line);
+            if (!File::exists(base_path($file)) || ! is_dir(base_path($file))) {
+                continue;
+            }
+            if (! $this->folderContainsValidGithubRepo($file)) {
+                continue;
+            }
             $ignored_files[] = $file;
         }
         return $ignored_files;
@@ -115,7 +119,7 @@ class PublishGitDependencies extends Command
      */
     protected function isAGithubRepo($remote)
     {
-        if ( ! starts_with($remote,['git@github.com:','https://github.com/'])) {
+        if (! starts_with($remote, ['git@github.com:','https://github.com/'])) {
             return false;
         }
         return true;
@@ -127,10 +131,13 @@ class PublishGitDependencies extends Command
      * @param $file
      * @return mixed
      */
-    protected function remoteGithub($file) {
+    protected function remoteGithub($file)
+    {
         $path = base_path($file);
-        if ( ! File::exists($path . '/.git')) return '';
-        return preg_replace( "/\r|\n/", "", `cd $path;git remote get-url origin 2> /dev/null` );
+        if (! File::exists($path . '/.git')) {
+            return '';
+        }
+        return preg_replace("/\r|\n/", "", `cd $path;git remote get-url origin 2> /dev/null`);
     }
 
     /**
@@ -153,7 +160,8 @@ class PublishGitDependencies extends Command
      *
      * @return string
      */
-    protected function ignored_files_path(){
+    protected function ignored_files_path()
+    {
         return base_path('.gitignore');
     }
 
@@ -162,12 +170,11 @@ class PublishGitDependencies extends Command
      */
     protected function abortCommandExecution()
     {
-        if(! File::exists($path = $this->ignored_files_path())) {
+        if (! File::exists($path = $this->ignored_files_path())) {
             $this->error("$path file not exists");
             die();
         }
 
         $this->abortIfNoSSHConnection();
     }
-
 }

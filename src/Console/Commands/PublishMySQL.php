@@ -15,7 +15,6 @@ use Illuminate\Console\Command;
  */
 class PublishMySQL extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled, WaitsForMySQLDatabase;
 
     /**
@@ -99,8 +98,8 @@ class PublishMySQL extends Command
                 $this->waitForMySQLDatabaseByName($data['name']);
                 $this->info('Installed!');
             }
-        } catch(\GuzzleHttp\Exception\ServerException $se) {
-            if( str_contains($se->getResponse()->getBody()->getContents(), 'The given data failed to pass validation') ) {
+        } catch (\GuzzleHttp\Exception\ServerException $se) {
+            if (str_contains($se->getResponse()->getBody()->getContents(), 'The given data failed to pass validation')) {
                 $this->error('Skipping installation. Some of the data you provided already exists in server');
             }
         } catch (\Exception $e) {
@@ -111,8 +110,8 @@ class PublishMySQL extends Command
     /**
      * List MySQL databases.
      */
-    protected function listMySQLDatabases() {
-
+    protected function listMySQLDatabases()
+    {
         $databases = $this->fetchMySQLDatabases();
 
         if ($this->option('dump')) {
@@ -146,7 +145,7 @@ class PublishMySQL extends Command
     protected function checkParameters()
     {
         if ($this->argument('user')) {
-            if ( ! $this->argument('password')) {
+            if (! $this->argument('password')) {
                 $this->error('Password argument is required if user argument is provided!');
                 die();
             }
@@ -180,7 +179,7 @@ class PublishMySQL extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_mysql_uri'));
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_mysql_uri'));
         return config('forge-publish.url') . $uri;
     }
 
@@ -190,7 +189,7 @@ class PublishMySQL extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 }

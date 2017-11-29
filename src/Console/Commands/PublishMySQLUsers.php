@@ -14,7 +14,6 @@ use Illuminate\Console\Command;
  */
 class PublishMySQLUsers extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
@@ -90,7 +89,8 @@ class PublishMySQLUsers extends Command
     /**
      * List MySQL users.
      */
-    protected function listMySQLUsers() {
+    protected function listMySQLUsers()
+    {
         $this->url = $this->obtainAPIURLEndpointForList();
         $response = $this->http->get($this->url, [
                 'headers' => [
@@ -100,7 +100,7 @@ class PublishMySQLUsers extends Command
             ]
         );
 
-        $users = json_decode($response->getBody(),true) ;
+        $users = json_decode($response->getBody(), true) ;
 
 
         if ($this->option('dump')) {
@@ -134,7 +134,7 @@ class PublishMySQLUsers extends Command
     protected function checkParameters()
     {
         if ($this->argument('user')) {
-            if ( ! $this->argument('password')) {
+            if (! $this->argument('password')) {
                 $this->error('Password argument is required if user argument is provided!');
                 die();
             }
@@ -168,7 +168,7 @@ class PublishMySQLUsers extends Command
      */
     protected function obtainAPIURLEndpoint()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.post_mysql_users_uri'));
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.post_mysql_users_uri'));
         return config('forge-publish.url') . $uri;
     }
 
@@ -179,7 +179,7 @@ class PublishMySQLUsers extends Command
      */
     protected function obtainAPIURLEndpointForList()
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.get_mysql_users_uri'));
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.get_mysql_users_uri'));
         return config('forge-publish.url') . $uri;
     }
 
@@ -188,7 +188,7 @@ class PublishMySQLUsers extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 }

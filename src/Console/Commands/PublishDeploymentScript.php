@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\File;
  */
 class PublishDeploymentScript extends Command
 {
-
     use ChecksEnv, DiesIfEnvVariableIsnotInstalled;
 
     /**
@@ -113,7 +112,7 @@ class PublishDeploymentScript extends Command
 
         $this->url = $this->obtainAPIURLEndpoint('update_deployment_script_uri');
 
-        if ( ! File::exists($this->file)) {
+        if (! File::exists($this->file)) {
             $this->error("File " . $this->file . " doesn't exists");
             die();
         }
@@ -137,8 +136,8 @@ class PublishDeploymentScript extends Command
      */
     protected function obtainAPIURLEndpoint($type)
     {
-        $uri = str_replace('{forgeserver}', $this->server , config('forge-publish.' . $type));
-        $uri = str_replace('{forgesite}', $this->site , $uri);
+        $uri = str_replace('{forgeserver}', $this->server, config('forge-publish.' . $type));
+        $uri = str_replace('{forgesite}', $this->site, $uri);
         return config('forge-publish.url') . $uri;
     }
 
@@ -147,8 +146,8 @@ class PublishDeploymentScript extends Command
      */
     protected function abortCommandExecution()
     {
-        $this->server = $this->checkEnv('server','ACACHA_FORGE_SERVER');
-        $this->site = $this->checkEnv('site','ACACHA_FORGE_SITE');
+        $this->server = $this->checkEnv('server', 'ACACHA_FORGE_SERVER');
+        $this->site = $this->checkEnv('site', 'ACACHA_FORGE_SITE');
         $this->dieIfEnvVarIsNotInstalled('ACACHA_FORGE_ACCESS_TOKEN');
     }
 }

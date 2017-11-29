@@ -1,6 +1,7 @@
 <?php
 
 namespace Acacha\ForgePublish\Commands;
+
 use Acacha\ForgePublish\Parser\ForgePublishRCParser;
 
 /**
@@ -75,7 +76,8 @@ class PublishDomain extends SaveEnvVariable
      * Default proposed value when asking.
      *
      */
-    protected function default() {
+    protected function default()
+    {
         return $default = fp_env('ACACHA_FORGE_DOMAIN') ? fp_env('ACACHA_FORGE_DOMAIN') : $this->defaultDomain();
     }
 
@@ -86,8 +88,9 @@ class PublishDomain extends SaveEnvVariable
      */
     protected function defaultDomain()
     {
-        if ($suffix = $this->parser->getDomainSuffix()) return strtolower(camel_case(basename(getcwd()))) . '.' . $suffix;
+        if ($suffix = $this->parser->getDomainSuffix()) {
+            return strtolower(camel_case(basename(getcwd()))) . '.' . $suffix;
+        }
         return '';
     }
-
 }

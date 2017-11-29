@@ -51,10 +51,14 @@ trait ChecksSSHConnection
     {
         $server = $server ? $server : $this->hostNameForConfigFile();
         $ssh_config_file =  $ssh_config_file ? $ssh_config_file : $this->sshConfigFile();
-        if ($verbose) $this->info("timeout 10 ssh -F $ssh_config_file -q " . $server . ' exit; echo $?');
+        if ($verbose) {
+            $this->info("timeout 10 ssh -F $ssh_config_file -q " . $server . ' exit; echo $?');
+        }
 
         $ret = exec("timeout 10 ssh -F $ssh_config_file -q " . $server . ' "exit"; echo $?');
-        if ($ret == 0 ) return true;
+        if ($ret == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -71,5 +75,4 @@ trait ChecksSSHConnection
             die();
         }
     }
-
 }

@@ -12,11 +12,11 @@ trait ItFetchesSites
     /**
      * Fetch sites
      */
-    protected function fetchSites ($server_id)
+    protected function fetchSites($server_id)
     {
         $url = config('forge-publish.url') . config('forge-publish.user_sites_uri') . '/' . $server_id;
         try {
-            $response = $this->http->get($url,[
+            $response = $this->http->get($url, [
                 'headers' => [
                     'X-Requested-With' => 'XMLHttpRequest',
                     'Authorization' => 'Bearer ' . fp_env('ACACHA_FORGE_ACCESS_TOKEN')
@@ -24,7 +24,7 @@ trait ItFetchesSites
             ]);
         } catch (\Exception $e) {
             $this->error('And error occurs connecting to the api url: ' . $url);
-            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase() );
+            $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase());
             return [];
         }
         return json_decode((string) $response->getBody());
@@ -43,7 +43,9 @@ trait ItFetchesSites
             return $site->name === $site_name;
         })->first();
 
-        if ( $site_found ) return $site_found;
+        if ($site_found) {
+            return $site_found;
+        }
         return null;
     }
 
@@ -60,7 +62,9 @@ trait ItFetchesSites
             return $site->id === $site_id;
         })->first();
 
-        if ( $site_found ) return $site_found;
+        if ($site_found) {
+            return $site_found;
+        }
         return null;
     }
 
@@ -73,7 +77,9 @@ trait ItFetchesSites
      */
     protected function getSiteName($sites, $site_id)
     {
-        if ($site = $this->getSite($sites,$site_id)) return $site->name;
+        if ($site = $this->getSite($sites, $site_id)) {
+            return $site->name;
+        }
         return null;
     }
 
@@ -86,7 +92,9 @@ trait ItFetchesSites
      */
     protected function getSiteId($sites, $site_name)
     {
-        if ($site = $this->getSiteByName($sites,$site_name)) return $site->id;
+        if ($site = $this->getSiteByName($sites, $site_name)) {
+            return $site->id;
+        }
         return null;
     }
 }

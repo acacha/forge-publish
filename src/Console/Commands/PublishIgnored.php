@@ -62,19 +62,18 @@ class PublishIgnored extends Command
     {
         $this->abortCommandExecution();
 
-        if ( empty($ignored_files = $this->ignoredFiles())) {
+        if (empty($ignored_files = $this->ignoredFiles())) {
             $this->error('Sorry no ignored files found in the current folder. Skipping');
             return;
         }
 
-        $files_to_publish = $this->choice('Which ignored files do you want to publish (you could select multiple values separated by coma)?', $ignored_files,null,null,true);
+        $files_to_publish = $this->choice('Which ignored files do you want to publish (you could select multiple values separated by coma)?', $ignored_files, null, null, true);
 
         foreach ((array) $files_to_publish as $file) {
             $this->call('publish:scp', [
                 'file' => $file
             ]);
         }
-
     }
 
     /**
@@ -86,8 +85,10 @@ class PublishIgnored extends Command
 
         $ignored_files = [];
         foreach ($lines as $line) {
-            $file = preg_replace( "/\r|\n/", "", $line );
-            if (!File::exists(base_path($file))) continue;
+            $file = preg_replace("/\r|\n/", "", $line);
+            if (!File::exists(base_path($file))) {
+                continue;
+            }
             $ignored_files[] = $file;
         }
         return $ignored_files;
@@ -98,7 +99,8 @@ class PublishIgnored extends Command
      *
      * @return string
      */
-    protected function path(){
+    protected function path()
+    {
         return base_path('.gitignore');
     }
 
@@ -107,12 +109,11 @@ class PublishIgnored extends Command
      */
     protected function abortCommandExecution()
     {
-        if(! File::exists($path = $this->path())) {
+        if (! File::exists($path = $this->path())) {
             $this->error("$path file not exists");
             die();
         }
 
         $this->abortIfNoSSHConnection();
     }
-
 }
