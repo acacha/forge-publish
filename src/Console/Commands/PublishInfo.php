@@ -107,7 +107,7 @@ class PublishInfo extends Command
      */
     protected function server()
     {
-        return $this->check('ACACHA_FORGE_SITE', 'checkServer');
+        return $this->check('ACACHA_FORGE_SERVER', 'checkServer');
     }
 
     /**
