@@ -6,36 +6,37 @@ use Acacha\ForgePublish\Commands\Traits\AborstIfEnvVariableIsnotInstalled;
 use Acacha\ForgePublish\Commands\Traits\InteractsWithAssignments;
 use Acacha\ForgePublish\Commands\Traits\InteractsWithEnvironment;
 use Acacha\ForgePublish\Commands\Traits\InteractsWithLocalGithub;
+use Acacha\ForgePublish\Commands\Traits\ItFetchesAssignments;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 /**
- * Class PublishAssignment.
+ * Class PublishUpdateAssignment.
  *
  * @package Acacha\ForgePublish\Commands
  */
-class PublishAssignment extends Command
+class PublishUpdateAssignment extends Command
 {
-
-    use InteractsWithLocalGithub, InteractsWithEnvironment, AborstIfEnvVariableIsnotInstalled, InteractsWithAssignments;
+    use InteractsWithEnvironment, AborstIfEnvVariableIsnotInstalled, InteractsWithAssignments, ItFetchesAssignments;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'publish:assignment {name? : The name description} 
-                                               {repository_uri? : The repository URI} 
-                                               {repository_type? : The repository type} 
-                                               {forge_site? : The Laravel Forge site id} 
-                                               {forge_server? : The Laravel Forge Server}';
+    protected $signature = 'publish:update_assignment {assignment? : The assignment to update}
+                                                        {name? : The name description}
+                                                        {repository_uri? : The repository URI}
+                                                        {repository_type? : The repository type}
+                                                        {forge_site? : The Laravel Forge site id}
+                                                        {forge_server? : The Laravel Forge Server}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new assignment using current project';
+    protected $description = 'Updates an assignment';
 
     /**
      * Server names.
@@ -45,7 +46,21 @@ class PublishAssignment extends Command
     protected $http;
 
     /**
-     * Assignment name.
+     * Assignments.
+     *
+     * @var []
+     */
+    protected $assignments;
+
+    /**
+     * Assignment.
+     *
+     * @var integer
+     */
+    protected $assignment;
+
+    /**
+     * Assignment name
      *
      * @var String
      */
@@ -73,12 +88,6 @@ class PublishAssignment extends Command
     protected $forge_site;
 
     /**
-     * Existing assignment
-     * @var
-     */
-    protected $existingAssignment;
-
-    /**
      * Laravel Forge server id.
      *
      * @var String
@@ -103,44 +112,27 @@ class PublishAssignment extends Command
     {
         $this->abortCommandExecution();
 
-        $this->existingAssignment = fp_env('ACACHA_FORGE_ASSIGNMENT');
-
-        if ($this->existingAssignment) $this->error('An assignment with id : ' . $this->existingAssignment . ' already exists! Updating...' );
-
+        $this->assignment = $this->argument('assignment') ? $this->argument('assignment') : $this->askAssignment();
         $this->assignmentName = $this->argument('name') ? $this->argument('name') : $this->askName();
         $this->repository_uri = $this->argument('repository_uri') ? $this->argument('repository_uri') : $this->askRepositoryUri();
         $this->repository_type = $this->argument('repository_type') ? $this->argument('repository_type') : $this->askRepositoryType();
         $this->forge_site = $this->argument('forge_site') ? $this->argument('forge_site') : $this->askForgeSite();
         $this->forge_server = $this->argument('forge_server') ? $this->argument('forge_server') : $this->askForgeServer();
 
-        if (! $this->existingAssignment) {
-            $this->createAssignment();
-            $this->info('Assignment created ok!');
-        } else {
-            $this->call('publish:update_assignment', [
-               'assignment' => $this->existingAssignment,
-               'name' => $this->assignmentName,
-               'repository_uri' => $this->repository_uri,
-               'repository_type' => $this->repository_type,
-               'forge_site' => $this->forge_site,
-               'forge_server' => $this->forge_server,
-            ]);
-        }
-
-        $this->call('publish:assignment_groups');
-        $this->call('publish:assignment_users');
+        $this->updateAssignment();
     }
 
     /**
-     * Create assignment.
+     * Update assignment.
      *
      * @return array|mixed
      */
-    protected function createAssignment()
+    protected function updateAssignment()
     {
-        $url = config('forge-publish.url') . config('forge-publish.store_assignment_uri');
+        $uri = str_replace('{assignment}', $this->assignment, config('forge-publish.update_assignment_uri'));
+        $url = config('forge-publish.url') . $uri;
         try {
-            $response = $this->http->post($url, [
+            $response = $this->http->put($url, [
                 'form_params' => [
                     'name' => $this->assignmentName,
                     'repository_uri' => $this->repository_uri,
@@ -156,11 +148,9 @@ class PublishAssignment extends Command
         } catch (\Exception $e) {
             $this->error('And error occurs connecting to the api url: ' . $url);
             $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase());
-            return;
+            return [];
         }
-        $assignment = json_decode((string) $response->getBody());
-        $this->addValueToEnv('ACACHA_FORGE_ASSIGNMENT', $assignment->id);
-        return $assignment;
+        return json_decode((string) $response->getBody());
     }
 
     /**

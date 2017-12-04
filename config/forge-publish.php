@@ -349,4 +349,64 @@ return [
   */
   'update_assignment_uri' => env('ACACHA_FORGE_UPDATE_ASSIGNMENT_URI', '/api/v1/assignment/{assignment}'),
 
+    /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE SHOW ASSIGNMENT URI ENDPOINT. Default: /api/v1/assignment/{assignment
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge show teacher assignments URI endpoint: /api/v1/assignment/{assignment
+  |
+  | This value could be overwritten using ACACHA_FORGE_SHOW_ASSIGNMENT_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'show_assignment_uri' => env('ACACHA_FORGE_SHOW_ASSIGNMENT_URI', '/api/v1/assignment/{assignment}'),
+
+    /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE LIST GROUPS URI ENDPOINT. Default: /api/v1/group
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge list groups URI endpoint: /api/v1/group
+  |
+  | This value could be overwritten using ACACHA_FORGE_LIST_GROUPS_URI env variable
+  | if you kwnow what you are doing.
+  */
+   'list_groups_uri' => env('ACACHA_FORGE_LIST_GROUPS_URI', '/api/v1/group'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE LIST GROUPS URI ENDPOINT. Default: /api/v1/users
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge list users URI endpoint: /api/v1/users
+  |
+  | This value could be overwritten using ACACHA_FORGE_LIST_USERS_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'list_users_uri' => env('ACACHA_FORGE_LIST_USERS_URI', '/api/v1/users'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE ASSIGN GROUP TO ASSIGNMENT URI ENDPOINT. Default: /assignment/{assignment}/group/{group}
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge assign group to assignment uri endpoint: /assignment/{assignment}/group/{group}
+  |
+  | This value could be overwritten using ACACHA_FORGE_ASSIGN_GROUP_TO_ASSIGNMENT_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'assign_group_to_assignment_uri' => env('ACACHA_FORGE_ASSIGN_GROUP_TO_ASSIGNMENT_URI', '/api/v1/assignment/{assignment}/group/{group}'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE ASSIGN USER TO ASSIGNMENT URI ENDPOINT. Default: /assignment/{assignment}/user/{user}
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge assign user to assignment uri endpoint: /assignment/{assignment}/user/{user}
+  |
+  | This value could be overwritten using ACACHA_FORGE_ASSIGN_USER_TO_ASSIGNMENT_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'assign_user_to_assignment_uri' => env('ACACHA_FORGE_ASSIGN_USER_TO_ASSIGNMENT_URI', '/api/v1/assignment/{assignment}/user/{user}'),
+
 ];

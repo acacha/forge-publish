@@ -5,13 +5,16 @@ namespace Acacha\ForgePublish\Providers;
 use Acacha\ForgePublish\Commands\Publish;
 use Acacha\ForgePublish\Commands\PublishArtisan;
 use Acacha\ForgePublish\Commands\PublishAssignment;
+use Acacha\ForgePublish\Commands\PublishAssignmentGroups;
 use Acacha\ForgePublish\Commands\PublishAssignments;
+use Acacha\ForgePublish\Commands\PublishAssignmentUsers;
 use Acacha\ForgePublish\Commands\PublishAutodeploy;
 use Acacha\ForgePublish\Commands\PublishCertificates;
 use Acacha\ForgePublish\Commands\PublishCheckToken;
 use Acacha\ForgePublish\Commands\PublishComposer;
 use Acacha\ForgePublish\Commands\PublishConnect;
 use Acacha\ForgePublish\Commands\PublishCreateSite;
+use Acacha\ForgePublish\Commands\PublishDeleteAssignment;
 use Acacha\ForgePublish\Commands\PublishDeploy;
 use Acacha\ForgePublish\Commands\PublishDeploymentScript;
 use Acacha\ForgePublish\Commands\PublishDeploymentScriptWithHooks;
@@ -41,12 +44,14 @@ use Acacha\ForgePublish\Commands\PublishRc;
 use Acacha\ForgePublish\Commands\PublishScp;
 use Acacha\ForgePublish\Commands\PublishServer;
 use Acacha\ForgePublish\Commands\PublishServername;
+use Acacha\ForgePublish\Commands\PublishShowAssignment;
 use Acacha\ForgePublish\Commands\PublishSite;
 use Acacha\ForgePublish\Commands\PublishSiteDirectory;
 use Acacha\ForgePublish\Commands\PublishSites;
 use Acacha\ForgePublish\Commands\PublishSSH;
 use Acacha\ForgePublish\Commands\PublishSSL;
 use Acacha\ForgePublish\Commands\PublishToken;
+use Acacha\ForgePublish\Commands\PublishUpdateAssignment;
 use Acacha\ForgePublish\Commands\PublishUpgrade;
 use Acacha\ForgePublish\Commands\PublishURL;
 use Acacha\ForgePublish\Commands\PublishZsh;
@@ -76,6 +81,11 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PublishAssignment::class,
+                PublishShowAssignment::class,
+                PublishUpdateAssignment::class,
+                PublishDeleteAssignment::class,
+                PublishAssignmentGroups::class,
+                PublishAssignmentUsers::class,
                 PublishAssignments::class,
                 PublishArtisan::class,
                 PublishAutodeploy::class,
