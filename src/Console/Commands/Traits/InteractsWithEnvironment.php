@@ -2,7 +2,6 @@
 
 namespace Acacha\ForgePublish\Commands\Traits;
 
-use function Couchbase\passthruDecoder;
 use Illuminate\Support\Facades\File;
 
 /**

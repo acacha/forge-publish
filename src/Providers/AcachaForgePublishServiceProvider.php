@@ -4,6 +4,8 @@ namespace Acacha\ForgePublish\Providers;
 
 use Acacha\ForgePublish\Commands\Publish;
 use Acacha\ForgePublish\Commands\PublishArtisan;
+use Acacha\ForgePublish\Commands\PublishAssignment;
+use Acacha\ForgePublish\Commands\PublishAssignments;
 use Acacha\ForgePublish\Commands\PublishAutodeploy;
 use Acacha\ForgePublish\Commands\PublishCertificates;
 use Acacha\ForgePublish\Commands\PublishCheckToken;
@@ -73,6 +75,8 @@ class AcachaForgePublishServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                PublishAssignment::class,
+                PublishAssignments::class,
                 PublishArtisan::class,
                 PublishAutodeploy::class,
                 PublishCheckToken::class,

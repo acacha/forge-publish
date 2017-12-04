@@ -313,4 +313,40 @@ return [
     */
     'update_deployment_script_uri' => env('ACACHA_FORGE_UPDATE_DEPLOYMENT_URI', '/api/v1/user/servers/{forgeserver}/sites/{forgesite}/deployment/script'),
 
+    /*
+   |--------------------------------------------------------------------------
+   | ACACHA FORGE TEACHER ASSIGNMENTS URI ENDPOINT. Default: /api/v1/teacher/assignment
+   |--------------------------------------------------------------------------
+   |
+   | Acacha Forge teacher assignments URI endpoint: /api/v1/teacher/assignment
+   |
+   | This value could be overwriten using ACACHA_FORGE_TEACHER_ASSIGNMENTS_URI env variable
+   | if you kwnow what you are doing.
+   */
+    'teacher_assignments_uri' => env('ACACHA_FORGE_TEACHER_ASSIGNMENTS_URI', '/api/v1/teacher/assignment'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE STORE ASSIGNMENT URI ENDPOINT. Default: /api/v1/assignment
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge store teacher assignments URI endpoint: /api/v1/assignment
+  |
+  | This value could be overwriten using ACACHA_FORGE_STORE_ASSIGNMENT_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'store_assignment_uri' => env('ACACHA_FORGE_STORE_ASSIGNMENT_URI', '/api/v1/assignment'),
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACACHA FORGE UPDATE ASSIGNMENT URI ENDPOINT. Default: /api/v1/assignment/{assignment
+  |--------------------------------------------------------------------------
+  |
+  | Acacha Forge update teacher assignments URI endpoint: /api/v1/assignment/{assignment
+  |
+  | This value could be overwritten using ACACHA_FORGE_UPDATE_ASSIGNMENT_URI env variable
+  | if you kwnow what you are doing.
+  */
+  'update_assignment_uri' => env('ACACHA_FORGE_UPDATE_ASSIGNMENT_URI', '/api/v1/assignment/{assignment}'),
+
 ];

@@ -2,6 +2,8 @@
 
 namespace Acacha\ForgePublish\Commands;
 
+use Acacha\ForgePublish\Commands\Traits\InteractsWithLocalGithub;
+
 /**
  * Class PublishGit.
  *
@@ -9,6 +11,8 @@ namespace Acacha\ForgePublish\Commands;
  */
 class PublishGithub extends SaveEnvVariable
 {
+    use InteractsWithLocalGithub;
+
     /**
      * The name and signature of the console command.
      *
@@ -67,27 +71,5 @@ class PublishGithub extends SaveEnvVariable
             }
         }
         return fp_env($this->envVar()) ? fp_env($this->envVar()) : $default;
-    }
-
-    /**
-     * Get github repo from github.
-     *
-     * @return string
-     */
-    protected function getRepoFromGithubConfig()
-    {
-        $remote = `git remote get-url origin 2> /dev/null`;
-        if (! starts_with($remote, ['git@github.com:','https://github.com/'])) {
-            return '';
-        }
-
-        if (starts_with($remote, 'git@github.com:')) {
-            // git@github.com:acacha/forge-publish.git
-            return explode('.', explode(":", $remote)[1])[0];
-        }
-        if (starts_with($remote, 'https://github.com/')) {
-//            https://github.com/acacha/llum.git
-            return explode('.', str_replace('https://github.com/', '', $remote))[0];
-        }
     }
 }
