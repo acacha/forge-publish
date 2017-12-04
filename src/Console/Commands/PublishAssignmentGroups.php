@@ -89,6 +89,10 @@ class PublishAssignmentGroups extends Command
                     ]
                 ]);
             } catch (\Exception $e) {
+                if ($e->getResponse()->getStatusCode() == 422) {
+                    $this->error('The group is already assigned');
+                    return;
+                }
                 $this->error('And error occurs connecting to the api url: ' . $url);
                 $this->error('Status code: ' . $e->getResponse()->getStatusCode() . ' | Reason : ' . $e->getResponse()->getReasonPhrase());
                 return [];
