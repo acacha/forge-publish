@@ -69,7 +69,7 @@ class PublishInit extends Command
     protected function confirmAnUserIsCreatedInAcachaLaravelForge()
     {
         $this->info('');
-        $this->info('Please visit and login on http:://forge.acacha.com.');
+        $this->info('Please visit and login on http://forge.acacha.org');
         $this->info('');
         $this->error('Please use Github Social Login for login!!!');
 

@@ -67,6 +67,10 @@ class PublishAssignmentUsers extends Command
 
         $this->users = $this->option('user') ? $this->argument('user') : $this->askForUsers();
 
+        if (count($this->users) == 0) {
+            $this->info('Skipping users...');
+            return;
+        }
         $this->assignUsersToAssignment();
 
     }
@@ -132,9 +136,14 @@ class PublishAssignmentUsers extends Command
     {
         $default = 0;
         $users = $this->users();
-        $user_names = collect($users)->pluck('name')->toArray();
+        $user_names = array_merge(
+            ['Skip'],
+            collect($users)->pluck('name')->toArray()
+        );
+
         $selected_user_names =  $this->choice('Users?', $user_names ,$default, null, true);
 
+        if ($selected_user_names == 0) return null;
         $users = collect($users)->filter(function ($user) use ($selected_user_names) {
             return in_array($user->name,$selected_user_names);
         });
